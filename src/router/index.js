@@ -7,16 +7,27 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    redirect: '/podlist'
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/podlist',
+    name: 'podlist',
+    component: () => import('../views/PodList.vue')
+  },
+  {
+    path: '/vmlist',
+    name: 'vmlist',
+    component: () => import('../views/VMList.vue')
+  },
+  {
+    path: '/vmcreate',
+    name: 'vmcreate',
+    component: () => import('../views/VMCreate.vue')
+  },
+  {
+    path: '/template1',
+    name: 'template1',
+    component: () => import('../views/TemplateView.vue')
   }
 ]
 

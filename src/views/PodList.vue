@@ -1,0 +1,784 @@
+<template>
+  <div class="podarea">
+    <!-- 头部标题操作 -->
+    <el-row :gutter="0">
+      <el-col :span="10" :offset="0"
+        ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+          容器列表
+        </p></el-col
+      >
+      <el-col :span="2" :offset="12">
+        <el-button
+          @click="openCreatePod"
+          icon="el-icon-circle-plus-outline"
+          size="medium"
+          round
+          plain
+          >添加容器</el-button
+        >
+      </el-col>
+    </el-row>
+    <!-- 表格区域 -->
+    <el-table
+      :data="
+        poddata
+          .slice((curpage - 1) * pagesize, curpage * pagesize)
+          .filter(
+            (data) =>
+              !psearch ||
+              data.metadata.name.toLowerCase().includes(psearch.toLowerCase())
+          )
+      "
+      style="width: 100%"
+      empty-text="暂无容器"
+      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+    >
+      <el-table-column
+        width="280"
+        sortable
+        label="容器名称"
+        prop="metadata.name"
+      >
+      </el-table-column>
+      <el-table-column
+        width="350"
+        sortable
+        label="镜像"
+        prop="spec.containers[0].image"
+      >
+      </el-table-column>
+      <el-table-column
+        width="150"
+        sortable
+        label="命名空间"
+        prop="metadata.namespace"
+      >
+      </el-table-column>
+      <el-table-column sortable label="节点" prop="spec.nodeName">
+      </el-table-column>
+      <el-table-column width="100" sortable label="状态" prop="status.phase">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status.phase === 'Pending'" type="warning"
+            >挂起</el-tag
+          >
+          <el-tag v-else-if="scope.row.status.phase === 'Running'">运行</el-tag>
+          <el-tag v-else type="success">成功</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        width="100"
+        sortable
+        label="是否可用"
+        prop="metadata.annotations.status"
+      >
+        <template slot-scope="scope">
+          <el-tag
+            v-if="scope.row.metadata.annotations.status === 'Yes'"
+            type="success"
+            >可用</el-tag
+          >
+          <el-tag v-else type="danger">不可用</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        sortable
+        label="创建时间"
+        prop="metadata.creationTimestamp"
+      >
+      </el-table-column>
+      <el-table-column width="210" align="right">
+        <template slot="header">
+          <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
+        </template>
+        <template slot-scope="scope">
+          <el-button-group>
+            <!-- 迁移界面 -->
+            <el-popover placement="right" width="300" trigger="click">
+              <el-form
+                label-position="top"
+                label-width="80px"
+                :model="migrate_form"
+                :status-icon="true"
+                :rules="migrate_rules"
+                ref="migrate_form"
+              >
+                <el-form-item label="请选择要迁移的节点" prop="nodename">
+                  <el-select
+                    style="width: 100%"
+                    v-model="migrate_form.nodename"
+                    clearable
+                    placeholder="请选择要迁移的节点"
+                  >
+                    <el-option
+                      v-for="item in nodename_options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value"
+                    >
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item size="large">
+                  <div style="text-align: right">
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      @click="migrate_sumbit('migrate_form')"
+                      >确定迁移</el-button
+                    >
+                  </div>
+                </el-form-item>
+              </el-form>
+              <el-button slot="reference" plain type="info" size="mini"
+                >迁移</el-button
+              >
+            </el-popover>
+            <el-button
+              @click="startPod(scope.$index, scope.row)"
+              v-if="scope.row.metadata.annotations.status === 'No'"
+              size="mini"
+              type="success"
+              >启动</el-button
+            >
+            <el-button
+              @click="stopPod(scope.$index, scope.row)"
+              v-else
+              size="mini"
+              type="warning"
+              >停止</el-button
+            >
+            <el-button plain size="mini" type="danger">删除</el-button>
+          </el-button-group>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 分页栏 -->
+    <div v-if="poddata.length != 0" style="margin-top: 30px">
+      <el-pagination
+        :current-page.sync="curpage"
+        :page-sizes="[10, 20, 30, 40, 50]"
+        :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper"
+        :total="totalpod"
+        background
+      >
+      </el-pagination>
+    </div>
+    <!-- 添加Pod对话框 -->
+    <el-dialog title="添加Pod" :visible.sync="createpodvisible">
+      <el-form
+        label-position="top"
+        label-width="80px"
+        :model="cp_form"
+        :status-icon="true"
+        :rules="cp_rules"
+        ref="cp_form"
+      >
+        <el-form-item label="Pod名称" prop="podName">
+          <el-input
+            v-model="cp_form.podName"
+            placeholder="请输入Pod名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="命名空间" prop="namespace">
+          <!-- <el-input v-model="cp_form.namespace"></el-input> -->
+          <el-select
+            style="width: 100%"
+            v-model="cp_form.namespace"
+            clearable
+            placeholder="请选择命名空间"
+          >
+            <el-option
+              v-for="item in namespace_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="选择节点" prop="nodename">
+          <!-- <el-input v-model="cp_form.containerImage"></el-input> -->
+          <el-select
+            style="width: 100%"
+            v-model="cp_form.nodename"
+            clearable
+            placeholder="请选择节点"
+          >
+            <el-option
+              v-for="item in nodename_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="所属容器" prop="containerInfoList">
+          <el-popover
+            style="margin-right: 10px"
+            placement="top-start"
+            :title="container.containerName"
+            width="200"
+            trigger="hover"
+            :key="container.containerName"
+            v-for="container in cp_form.containerInfoList"
+          >
+            <el-descriptions :column="1" size="mini">
+              <el-descriptions-item label="镜像">{{
+                container.containerImage
+              }}</el-descriptions-item>
+              <el-descriptions-item label="端口号">{{
+                container.port
+              }}</el-descriptions-item>
+            </el-descriptions>
+            <el-tag
+              slot="reference"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(container)"
+              type="info"
+              effect="plain"
+            >
+              {{ container.containerName }}
+            </el-tag>
+          </el-popover>
+          <el-card class="con-card" v-if="addvisible" shadow="hover">
+            <div slot="header" class="clearfix">
+              <el-row :gutter="20">
+                <el-col :span="12" :offset="0">
+                  <span
+                    >添加第
+                    {{ cp_form.containerInfoList.length + 1 }}
+                    个新容器</span
+                  >
+                </el-col>
+                <el-col :span="3" :offset="3">
+                  <el-button
+                    @click="addcontainer('tmp_con_info')"
+                    icon="el-icon-check"
+                    size="mini"
+                    circle
+                    plain
+                    type="success"
+                  ></el-button>
+                </el-col>
+                <el-col :span="3" :offset="0">
+                  <el-button
+                    @click="resetForm('tmp_con_info')"
+                    icon="el-icon-refresh-right"
+                    size="mini"
+                    circle
+                  ></el-button>
+                </el-col>
+                <el-col :span="3" :offset="0">
+                  <el-button
+                    @click="closeadd"
+                    icon="el-icon-close"
+                    size="mini"
+                    circle
+                    plain
+                    type="danger"
+                  ></el-button>
+                </el-col>
+              </el-row>
+            </div>
+            <el-form
+              label-position="top"
+              :model="tmp_con_info"
+              :status-icon="true"
+              :rules="tmp_con_rules"
+              ref="tmp_con_info"
+            >
+              <el-form-item label="容器名称" prop="containerName">
+                <el-input
+                  v-model="tmp_con_info.containerName"
+                  placeholder="请输入容器名称"
+                  clearable
+                ></el-input>
+              </el-form-item>
+              <el-form-item label="容器镜像" prop="containerImage">
+                <el-select
+                  style="width: 100%"
+                  v-model="tmp_con_info.containerImage"
+                  clearable
+                  placeholder="请选择容器镜像"
+                >
+                  <el-option
+                    v-for="item in containerImage_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="端口号" prop="port">
+                <el-input
+                  v-model="tmp_con_info.port"
+                  placeholder="请输入端口号"
+                ></el-input>
+              </el-form-item>
+            </el-form>
+          </el-card>
+          <el-button
+            class="button-new-tag"
+            v-else
+            size="small"
+            @click="showInputCon"
+            >添加容器</el-button
+          >
+        </el-form-item>
+        <el-form-item size="large">
+          <div class="cp-sbm-area">
+            <el-button round @click="resetForm('cp_form')">清空输入</el-button>
+            <el-button round type="primary" @click="cp_sumbit('cp_form')"
+              >立即创建</el-button
+            >
+          </div>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+    <!-- 添加Pod-抽屉 -->
+    <!-- <el-drawer
+      :visible.sync="createpodvisible1"
+      direction="ltr"
+      ref="drawer"
+      custom-class="cp-drawer"
+    >
+      <div slot="title" class="cp-head">添加容器</div>
+      <div class="cp-content">
+        <el-form
+          label-position="top"
+          label-width="80px"
+          :model="cp_form"
+          :status-icon="true"
+          :rules="cp_rules"
+          ref="cp_form"
+        >
+          <el-form-item label="容器名称" prop="podName">
+            <el-input v-model="cp_form.podName"></el-input>
+          </el-form-item>
+          <el-form-item label="命名空间" prop="namespace">
+            <el-input v-model="cp_form.namespace"></el-input>
+          </el-form-item>
+          <el-form-item label="ContainerName" prop="containerName">
+            <el-input v-model="cp_form.containerName"></el-input>
+          </el-form-item>
+          <el-form-item label="ContainerImage" prop="containerImage">
+            <el-input v-model="cp_form.containerImage"></el-input>
+          </el-form-item>
+          <el-form-item size="large">
+            <div class="cp-sbm-area">
+              <el-button round @click="resetForm('cp_form')"
+                >清空输入</el-button
+              >
+              <el-button round type="primary" @click="cp_sumbit('cp_form')"
+                >立即创建</el-button
+              >
+            </div>
+          </el-form-item>
+        </el-form>
+      </div>
+    </el-drawer> -->
+  </div>
+</template>
+
+<script>
+export default {
+  name: "PodList",
+  data() {
+    // 自定义验证规则
+    var checkcmpimage = (rule, value, callback) => {
+      console.log(value);
+      if (value.length < 1) {
+        // 不足，提示不足
+        return callback(
+          new Error(
+            "请添加至少一个容器"
+          )
+        );
+      }
+      callback();
+    };
+    return {
+      // 动态容器相关
+      addvisible: false,
+      tmp_con_info: {
+        containerName: "",
+        containerImage: "",
+        port: "80",
+      },
+      tmp_con_rules: {
+        containerName: [
+          { required: true, message: "请输入容器名称", trigger: "blur" },
+        ],
+        containerImage: [
+          { required: true, message: "请选择容器镜像", trigger: "change" },
+        ],
+        port: [{ required: true, message: "请输入端口号", trigger: "blur" }],
+      },
+      // 命名空间选项
+      namespace_options: [
+        {
+          value: "default",
+          label: "默认",
+        },
+      ],
+      // 容器镜像选项
+      containerImage_options: [
+        {
+          value: "rancher/klipper-helm:v0.8.2-build20230815",
+          label: "rancher/klipper-helm:v0.8.2-build20230815",
+        },
+        {
+          value: "rancher/klipper-lb:v0.4.4",
+          label: "rancher/klipper-lb:v0.4.4",
+        },
+        {
+          value: "rancher/local-path-provisioner:v0.0.24",
+          label: "rancher/local-path-provisioner:v0.0.24",
+        },
+        {
+          value: "rancher/mirrored-coredns-coredns:1.10.1",
+          label: "rancher/mirrored-coredns-coredns:1.10.1",
+        },
+        {
+          value: "rancher/mirrored-metrics-server:v0.6.3",
+          label: "rancher/mirrored-metrics-server:v0.6.3",
+        },
+        {
+          value: "rancher/mirrored-library-traefik:2.10.5",
+          label: "rancher/mirrored-library-traefik:2.10.5",
+        },
+      ],
+      // 节点名称选项
+      nodename_options: [
+        {
+          value: "server1",
+          label: "server1",
+        },
+      ],
+      baseurl: "http://127.0.0.1:8080",
+      poddata: [],
+      psearch: "",
+      isstart: false,
+      curpage: 1,
+      totalpod: 0,
+      pagesize: 10,
+      createpodvisible: false,
+      cp_form: {
+        podName: "",
+        namespace: "",
+        nodename: "",
+        containerInfoList: [],
+      },
+      migrate_form: {
+        nodename: "",
+      },
+      // 添加容器校验规则
+      cp_rules: {
+        podName: [
+          { required: true, message: "请输入Pod名称", trigger: "blur" },
+        ],
+        namespace: [
+          { required: true, message: "请选择命名空间", trigger: "change" },
+        ],
+        nodename: [
+          { required: true, message: "请选择节点", trigger: "change" },
+        ],
+        containerInfoList: [
+          { validator: checkcmpimage, trigger: "change" },
+        ],
+      },
+      migrate_rules: {
+        nodename: [
+          {
+            required: true,
+            message: "请选择迁移的节点名称",
+            trigger: "change",
+          },
+        ],
+      },
+    };
+  },
+  mounted() {
+    this.getPodList();
+  },
+  methods: {
+    // 动态添加容器相关
+    showInputCon() {
+      this.addvisible = true;
+    },
+    closeadd() {
+      this.addvisible = false;
+    },
+    addcontainer(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.cp_form.containerInfoList.push(
+            JSON.parse(JSON.stringify(this.tmp_con_info))
+          );
+          this.addvisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
+    handleClose(tag) {
+      this.cp_form.containerInfoList.splice(
+        this.cp_form.containerInfoList.indexOf(tag),
+        1
+      );
+    },
+    // 打开添加容器抽屉
+    openCreatePod() {
+      this.createpodvisible = true;
+    },
+    // 获取容器列表数据
+    getPodList() {
+      this.$axios
+        .get(this.baseurl + "/workload/getPodList")
+        .then((res) => {
+          this.poddata = JSON.parse(res.data.result).items;
+          this.totalpod = JSON.parse(res.data.result).items.length;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    // 启动容器
+    startPod(idx, row) {
+      this.$axios({
+        method: "post",
+        url: this.baseurl + "/workload/startPod",
+        data: {
+          podName: this.poddata[idx].metadata.name,
+          podNamespace: this.poddata[idx].metadata.namespace,
+        },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }).then(
+        (res) => {
+          console.log(res);
+          this.$notify.success({
+            title: "操作通知",
+            message: "容器 " + this.poddata[idx].metadata.name + " 启动成功",
+            position: "bottom-right",
+          });
+          this.poddata[idx].metadata.annotations.status = "Yes";
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    // 停止容器
+    stopPod(idx, row) {
+      this.$axios({
+        method: "post",
+        url: this.baseurl + "/workload/stopPod",
+        data: {
+          podName: this.poddata[idx].metadata.name,
+          podNamespace: this.poddata[idx].metadata.namespace,
+        },
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }).then(
+        (res) => {
+          console.log(res);
+          this.$notify.success({
+            title: "操作通知",
+            message: "容器 " + this.poddata[idx].metadata.name + " 停止成功",
+            position: "bottom-right",
+          });
+          this.poddata[idx].metadata.annotations.status = "No";
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    },
+    // 添加容器
+    cp_sumbit(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$axios({
+            method: "post",
+            url: this.baseurl + "/workload/createPod",
+            data: {
+              podName: this.cp_form.podName,
+              namespace: this.cp_form.namespace,
+              containerName: this.cp_form.containerName,
+              containerImage: this.cp_form.containerImage,
+            },
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }).then(
+            (res) => {
+              console.log(res);
+              if (res.data[0] === "E") {
+                this.$notify.error({
+                  title: "创建失败",
+                  message: res.data,
+                  position: "bottom-right",
+                });
+              } else {
+                this.$notify.success({
+                  title: "完成通知",
+                  message: "容器 " + this.cp_form.podName + " 创建成功",
+                  position: "bottom-right",
+                });
+                this.getPodList();
+              }
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "创建失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
+          );
+          this.createpodvisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
+    cmp_sumbit(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$notify.success({
+            title: "完成通知",
+            message: "容器 " + this.cmp_form.podName + " 创建成功",
+            position: "bottom-right",
+          });
+          this.createpodvisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
+    migrate_sumbit(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$notify.success({
+            title: "完成通知",
+            message: "完成迁移",
+            position: "bottom-right",
+          });
+          this.createpodvisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
+    // 重置表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+  },
+};
+</script>
+
+<style>
+.con-card {
+  width: 40%;
+}
+
+.podarea {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 15px;
+}
+
+/* 动态容器名称 */
+.el-tag + .el-tag {
+  margin-left: 10px;
+}
+.button-new-tag {
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 110px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+
+/*带背景的分页按钮背景色begin*/
+.el-pagination.is-background .el-pager li:not(.disabled).active {
+  background-color: #08c0b9;
+  color: #fff;
+}
+.el-pagination.is-background .el-pager li.active {
+  color: #fff;
+  cursor: default;
+}
+.el-pagination.is-background .el-pager li:hover {
+  color: #08c0b9;
+}
+.el-pagination.is-background .el-pager li:not(.disabled):hover {
+  color: #08c0b9;
+}
+.el-pagination.is-background .el-pager li:not(.disabled).active:hover {
+  background-color: #08c0b9;
+  color: #fff;
+}
+/*带背景的分页按钮背景色end*/
+
+/*不带背景的分页按钮背景色begin*/
+.el-pager li.active {
+  color: #08c0b9;
+  cursor: default;
+}
+.el-pagination .el-pager li:hover {
+  color: #08c0b9;
+}
+.el-pagination .el-pager li:not(.disabled):hover {
+  color: #08c0b9;
+}
+/*不带背景的分页按钮背景色end*/
+
+.cp-head {
+  font-size: 50px;
+  font-weight: 500;
+  color: #fff;
+  background-color: #08c0b9;
+}
+
+.cp-content {
+  padding: 40px;
+  background-color: #fff;
+  height: 100%;
+}
+
+.cp-sbm-area {
+  padding-top: 70px;
+  text-align: right;
+}
+
+.cp-drawer {
+  background-color: #08c0b9;
+}
+</style>
