@@ -615,12 +615,12 @@ export default {
             url: this.baseurl + "/workload/createPod",
             data: {
               podName: this.cp_form.podName,
-              namespace: this.cp_form.namespace,
-              containerName: this.cp_form.containerName,
-              containerImage: this.cp_form.containerImage,
+              podNamespace: this.cp_form.namespace,
+              podNodeName: this.cp_form.nodename,
+              containerInfoList: this.cp_form.containerInfoList
             },
             headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
+              "Content-Type": "application/json",
             },
           }).then(
             (res) => {
