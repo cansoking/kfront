@@ -10,17 +10,27 @@
       </a>
     </div>
     <el-menu
-      :default-openeds="['vm', 'template']"
+      :default-openeds="['vm', 'template', 'pod']"
       :default-active="$route.path"
       background-color="#303641"
       text-color="#8d97ad"
       router
       active-text-color="#ffffff"
     >
-      <el-menu-item index="/podlist" route="podlist">
-        <i class="el-icon-coin"></i>
-        <span slot="title">容器管理</span>
-      </el-menu-item>
+      <el-submenu index="pod">
+        <template slot="title">
+          <i class="el-icon-coin"></i>
+          <span>Pod管理</span>
+        </template>
+        <el-menu-item index="/podlist" route="podlist">
+          <i class="el-icon-pie-chart"></i>
+          <span slot="title">Pod列表</span>
+        </el-menu-item>
+        <el-menu-item index="/deploy" route="deploy">
+          <i class="el-icon-set-up"></i>
+          <span slot="title">部署列表</span>
+        </el-menu-item>
+      </el-submenu>
       <el-submenu index="vm">
         <template slot="title">
           <i class="el-icon-copy-document"></i>

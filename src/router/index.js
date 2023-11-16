@@ -15,6 +15,11 @@ const routes = [
     component: () => import('../views/PodList.vue')
   },
   {
+    path: '/deploy',
+    name: 'deploy',
+    component: () => import('../views/DeployView.vue')
+  },
+  {
     path: '/vmlist',
     name: 'vmlist',
     component: () => import('../views/VMList.vue')

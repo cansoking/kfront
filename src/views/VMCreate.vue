@@ -24,13 +24,20 @@
           </el-col>
           <el-col :span="12" :offset="0">
             <el-form-item label="内存" prop="memory">
-              <el-input
+              <el-select
                 style="width: 60%"
                 v-model="formData.memory"
-                placeholder="请输入内存大小"
+                clearable
+                placeholder="请选择内存大小(GiB)"
               >
-                <template slot="append">GiB</template>
-              </el-input>
+                <el-option
+                  v-for="item in memory_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -38,11 +45,20 @@
         <el-row :gutter="30">
           <el-col :span="12" :offset="0">
             <el-form-item label="CPU个数" prop="cpuNum">
-              <el-input
+              <el-select
                 style="width: 60%"
                 v-model="formData.cpuNum"
-                placeholder="请输入CPU个数"
-              ></el-input>
+                clearable
+                placeholder="请选择CPU个数"
+              >
+                <el-option
+                  v-for="item in cpunum_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
@@ -118,6 +134,59 @@ export default {
           value: "arm",
         },
       ],
+      cpunum_options: [
+        {
+          label: '1 个',
+          value: '1',
+        },
+        {
+          label: '2 个',
+          value: '2',
+        },
+        {
+          label: '4 个',
+          value: '4',
+        },
+        {
+          label: '6 个',
+          value: '6',
+        },
+        {
+          label: '8 个',
+          value: '8',
+        },
+        {
+          label: '10 个',
+          value: '10',
+        }
+      ],
+      memory_options: [
+      {
+          label: '1 GiB',
+          value: '1'
+        },{
+          label: '2 GiB',
+          value: '2'
+        },{
+          label: '4 GiB',
+          value: '4'
+        },{
+          label: '6 GiB',
+          value: '6'
+        },{
+          label: '8 GiB',
+          value: '8'
+        },{
+          label: '16 GiB',
+          value: '16'
+        },{
+          label: '24 GiB',
+          value: '24'
+        },{
+          label: '32 GiB',
+          value: '32'
+        }
+      ],
       // 虚拟机信息
       formData: {
         name: "",
@@ -131,9 +200,9 @@ export default {
           { required: true, message: "请输入虚拟机名称", trigger: "blur" },
         ],
         memory: [
-          { required: true, message: "请输入内存大小", trigger: "blur" },
+          { required: true, message: "请选择内存大小", trigger: "change" },
         ],
-        cpuNum: [{ required: true, message: "请输入CPU个数", trigger: "blur" }],
+        cpuNum: [{ required: true, message: "请选择CPU个数", trigger: "change" }],
         OStype: [
           { required: true, message: "请选择系统类型", trigger: "change" },
         ],
