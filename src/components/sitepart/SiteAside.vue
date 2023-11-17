@@ -39,10 +39,6 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">虚拟机列表</span>
         </el-menu-item>
-        <el-menu-item index="/vmcreate" route="vmcreate">
-          <i class="el-icon-folder-add"></i>
-          <span slot="title">创建虚拟机</span>
-        </el-menu-item>
       </el-submenu>
       <el-submenu index="image">
         <template slot="title">
@@ -73,7 +69,7 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">模板管理1</span>
         </el-menu-item>
-        <el-menu-item index="/template2" route="template2">
+        <el-menu-item index="/template2" route="template2"> 
           <i class="el-icon-folder-add"></i>
           <span slot="title">模板管理2</span>
         </el-menu-item>

@@ -207,6 +207,14 @@
           :status-icon="true"
           ref="buildvmtem_form"
       >
+      <el-form-item label="请输入虚拟机名称" prop="vmname">
+          <el-input
+              v-model="buildvmtem_form.vmname"
+              placeholder="请输入虚拟机名称"
+           ></el-input>
+        </el-form-item>
+
+
         <el-form-item label="模版名称" prop="name">
           <el-input
               v-model="buildvmtem_form.name"
@@ -256,7 +264,7 @@
               class="upload-demo"
               drag
               ref="upload"
-              :action="baseurl + '/addVirtual'"
+              :action="baseurl + '/Template/addVirtual'"
               :multiple="false"
               :data="buildvmtem_form"
               accept=".iso"
@@ -271,13 +279,13 @@
             <div class="el-upload__text">
               将文件拖到此处，或<em>点击上传</em>
             </div>
-            <div class="el-upload__tip" slot="tip">*只能上传.iso文件</div>
+            <div class="el-upload__tip" slot="tip">*只能上传.iso/ .qemu2/ .img文件</div> 
           </el-upload>
         </el-form-item>
 
 
         <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
-          <el-button round type="primary" @click="buildvmtem_sumbit('buildvmtem_form')"
+          <el-button round type="primary" @click="buildvmtem_sumbit('buildvmtem_form')" 
           >立即创建
           </el-button>
         </div>
@@ -295,7 +303,7 @@ export default {
   name: "VMLogList",
   data() {
     return {
-      baseurl: "http://localhost:8080",
+      baseurl: "http://192.168.243.143:8080",
       curpage: 1,
       totalvmtem: 0,
       pagesize: 10,
@@ -347,12 +355,14 @@ export default {
         OStype:'',
       },
       editvmtem_form: {
+        id:'',
         name: "",
         memory: '',
         cpuNum: "",
         OStype:'',
       },
       buildvmtem_form: {
+        vmname:"",
         name: "",
         memory: '',
         cpuNum: "",
@@ -360,8 +370,8 @@ export default {
       },
       // 添加容器校验规则
       vmtem_rules: {
-        name: [
-          {required: true, message: "请输入模版名称", trigger: "blur"},
+        vmname: [
+          {required: true, message: "请输入虚拟机名称", trigger: "blur"},
         ],
         OStype: [
           {required: true, message: "请选择操作系统类型", trigger: "change"},
@@ -381,7 +391,7 @@ export default {
   methods: {
     getVMTem(){
       this.$axios
-          .get("http://localhost:8080/Template/selectAll")
+          .get("http://192.168.243.143:8080/Template/selectAll")
           .then((res) => {
             if(res.data.success) {
               this.vmtemdata = res.data.content
@@ -429,7 +439,7 @@ export default {
           // 提交表单，创建容器
           this.$axios({
             method: "post",
-            url: "http://localhost:8080/Template/insert",  //换成实际地址
+            url: "http://192.168.243.143:8080/Template/insert",  //换成实际地址
             data: this.vmtem_form,
             headers: {
               "Content-Type": "application/json",
@@ -448,7 +458,7 @@ export default {
                     message: "模版" + this.vmtem_form.name + " 创建成功",
                     position: "bottom-right",
                   });
-                  // this.getVMTem();
+                  this.getVMTem();
                 }
               },
               (err) => {
@@ -474,7 +484,7 @@ export default {
           // 提交表单，创建容器
           this.$axios({
             method: "post",
-            url: "http://localhost:8080/Template/update",  //换成实际地址
+            url: "http://192.168.243.143:8080/Template/update",  //换成实际地址
             data: this.editvmtem_form,
             headers: {
               "Content-Type": "application/json",
@@ -493,7 +503,7 @@ export default {
                     message: "模版" + this.editvmtem_form.name + " 修改成功",
                     position: "bottom-right",
                   });
-                  // this.getVMTem();
+                   this.getVMTem();
                 }
               },
               (err) => {
@@ -523,7 +533,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete("http://localhost:8080/Template/delete/" + row.id).then((response) => {
+            .delete("http://192.168.243.143:8080/Template/delete/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");
@@ -541,6 +551,7 @@ export default {
       });
     },
     edit(row) {
+      this.editvmtem_form.id = row.id;
       this.editvmtem_form.name = row.name;
       this.editvmtem_form.memory = row.memory;
       this.editvmtem_form.cpuNum = row.cpuNum;
@@ -561,7 +572,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete("http://localhost:8080/workload/deleteVMLog/" + row.id).then((response) => {
+            .delete("http://192.168.243.143:8080/workload/deleteVMLog/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");
@@ -583,19 +594,17 @@ export default {
     },
     handleBeforeUpload(file) {
       console.log(file);
-      var iso = file.name.substring(file.name.lastIndexOf(".") + 1);
-      const suffix = iso === "iso";
-      if (!suffix) {
-        this.$message.error("只能上传ISO文件！");
+      var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
+      if (suffix!="iso"&&suffix!="img"&&suffix!="qcow2") {
+        this.$message.error("只能上传iso、img或qcow2格式的文件！");
         return false;
       }
-      return suffix;
     },
     sucupload(response, file, fileList) {
-      if (response === "yes") {
+      if (response === "ok") {
         this.$notify.success({
           title: "创建成功",
-          message: "虚拟机 " + this.formData.name + " 创建成功！",
+          message: "虚拟机 " + this.buildvmtem_form.vmname + " 创建成功！",
           position: "bottom-right",
           duration: 6000,
         });
