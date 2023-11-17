@@ -207,7 +207,7 @@
           :status-icon="true"
           ref="buildvmtem_form"
       >
-<el-form-item label="请输入虚拟机名称" prop="vmname">
+      <el-form-item label="请输入虚拟机名称" prop="vmname">
           <el-input
               v-model="buildvmtem_form.vmname"
               placeholder="请输入虚拟机名称"
@@ -279,13 +279,13 @@
             <div class="el-upload__text">
               将文件拖到此处，或<em>点击上传</em>
             </div>
-            <div class="el-upload__tip" slot="tip">*只能上传.iso文件</div>
+            <div class="el-upload__tip" slot="tip">*只能上传.iso/ .qemu2/ .img文件</div> 
           </el-upload>
         </el-form-item>
 
 
         <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
-          <el-button round type="primary" @click="buildvmtem_sumbit('buildvmtem_form')"
+          <el-button round type="primary" @click="buildvmtem_sumbit('buildvmtem_form')" 
           >立即创建
           </el-button>
         </div>
@@ -594,19 +594,17 @@ export default {
     },
     handleBeforeUpload(file) {
       console.log(file);
-      var iso = file.name.substring(file.name.lastIndexOf(".") + 1);
-      const suffix = iso === "iso";
-      if (!suffix) {
-        this.$message.error("只能上传ISO文件！");
+      var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
+      if (suffix!="iso"&&suffix!="img"&&suffix!="qcow2") {
+        this.$message.error("只能上传iso、img或qcow2格式的文件！");
         return false;
       }
-      return suffix;
     },
     sucupload(response, file, fileList) {
       if (response === "ok") {
         this.$notify.success({
           title: "创建成功",
-          message: "虚拟机 " + this.buildvmtem_form.name + " 创建成功！",
+          message: "虚拟机 " + this.buildvmtem_form.vmname + " 创建成功！",
           position: "bottom-right",
           duration: 6000,
         });
