@@ -10,7 +10,6 @@
       </a>
     </div>
     <el-menu
-      :default-openeds="['vm', 'template', 'pod']"
       :default-active="$route.path"
       background-color="#303641"
       text-color="#8d97ad"
@@ -39,6 +38,26 @@
         <el-menu-item index="/vmlist" route="vmlist">
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">虚拟机列表</span>
+        </el-menu-item>
+      </el-submenu>
+      <el-submenu index="image">
+        <template slot="title">
+          <i class="el-icon-copy-document"></i>
+          <span>镜像管理</span>
+        </template>
+        <el-menu-item index="/imagelist" route="imagelist">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">容器镜像</span>
+        </el-menu-item>
+      </el-submenu>
+      <el-submenu index="virstorage">
+        <template slot="title">
+          <i class="el-icon-copy-document"></i>
+          <span>虚拟存储</span>
+        </template>
+        <el-menu-item index="/pervolume" route="pervolume">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">持久卷</span>
         </el-menu-item>
       </el-submenu>
       <el-submenu index="template">

@@ -53,6 +53,16 @@ const routes = [
     name: 'loglist',
     component: () => import('../views/LogList.vue')
   },
+  {
+    path: '/imagelist',
+    name: 'imagelist',
+    component: () => import('../views/ImageList.vue')
+  },
+  {
+    path: '/pervolume',
+    name: 'pervolume',
+    component: () => import('../views/PerVolumeView.vue')
+  },
 ]
 
 const router = new VueRouter({
