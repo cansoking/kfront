@@ -147,7 +147,7 @@
               type="warning"
               >停止</el-button
             >
-            <el-button plain size="mini" type="danger">删除</el-button>
+            <el-button @click="deletePod(scope.$index, scope.row)" plain size="mini" type="danger">删除</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -393,11 +393,7 @@ export default {
       console.log(value);
       if (value.length < 1) {
         // 不足，提示不足
-        return callback(
-          new Error(
-            "请添加至少一个容器"
-          )
-        );
+        return callback(new Error("请添加至少一个容器"));
       }
       callback();
     };
@@ -487,9 +483,7 @@ export default {
         nodename: [
           { required: true, message: "请选择节点", trigger: "change" },
         ],
-        containerInfoList: [
-          { validator: checkcmpimage, trigger: "change" },
-        ],
+        containerInfoList: [{ validator: checkcmpimage, trigger: "change" }],
       },
       migrate_rules: {
         nodename: [
@@ -558,9 +552,11 @@ export default {
         data: {
           podName: this.poddata[idx].metadata.name,
           podNamespace: this.poddata[idx].metadata.namespace,
+          podNodeName: this.poddata[idx].spec.nodename,
+          containerInfoList: [],
         },
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
       }).then(
         (res) => {
@@ -574,6 +570,11 @@ export default {
         },
         (err) => {
           console.log(err);
+          this.$notify.error({
+            title: "操作失败",
+            message: "请检查网络连接设置",
+            position: "bottom-right",
+          });
         }
       );
     },
@@ -585,9 +586,11 @@ export default {
         data: {
           podName: this.poddata[idx].metadata.name,
           podNamespace: this.poddata[idx].metadata.namespace,
+          podNodeName: this.poddata[idx].spec.nodename,
+          containerInfoList: [],
         },
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          "Content-Type": "application/json",
         },
       }).then(
         (res) => {
@@ -601,6 +604,11 @@ export default {
         },
         (err) => {
           console.log(err);
+          this.$notify.error({
+            title: "操作失败",
+            message: "请检查网络连接设置",
+            position: "bottom-right",
+          });
         }
       );
     },
@@ -617,7 +625,7 @@ export default {
               podName: this.cp_form.podName,
               podNamespace: this.cp_form.namespace,
               podNodeName: this.cp_form.nodename,
-              containerInfoList: this.cp_form.containerInfoList
+              containerInfoList: this.cp_form.containerInfoList,
             },
             headers: {
               "Content-Type": "application/json",
@@ -656,22 +664,38 @@ export default {
         }
       });
     },
-    cmp_sumbit(formName) {
-      // 校验表单
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          // 提交表单，创建容器
+    // 删除容器
+    deletePod(idx, row) {
+      this.$axios({
+        method: "post",
+        url: this.baseurl + "/workload/deletePod",
+        data: {
+          podName: this.poddata[idx].metadata.name,
+          podNamespace: this.poddata[idx].metadata.namespace,
+          podNodeName: this.poddata[idx].spec.nodename,
+          containerInfoList: [],
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(
+        (res) => {
           this.$notify.success({
-            title: "完成通知",
-            message: "容器 " + this.cmp_form.podName + " 创建成功",
+            title: "操作通知",
+            message: "容器 " + this.poddata[idx].metadata.name + "删除成功",
             position: "bottom-right",
           });
-          this.createpodvisible = false;
-        } else {
-          console.log("表单验证不通过");
-          return false;
+          this.getPodList();
+        },
+        (err) => {
+          console.log(err);
+          this.$notify.error({
+            title: "删除失败",
+            message: "请检查网络连接设置",
+            position: "bottom-right",
+          });
         }
-      });
+      );
     },
     migrate_sumbit(formName) {
       // 校验表单
