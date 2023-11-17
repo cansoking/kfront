@@ -269,7 +269,7 @@ export default {
       console.log(this.fileList[0])
       this.$axios({
         method: "post",
-        url: this.baseurl + "/deployment/createDeployment?yamlFile="+formData,
+        url: this.baseurl + "/deployment/createDeployment",
         data: formData,
         headers: {
           "Content-Type": "multipart/form-data;charset=utf-8"
