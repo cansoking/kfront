@@ -33,7 +33,26 @@ const routes = [
     path: '/template1',
     name: 'template1',
     component: () => import('../views/TemplateView.vue')
-  }
+  },
+  {
+    path: '/podlog',
+    name: 'podlog',
+    component: () => import('../views/PodLogList.vue')
+  },
+  {
+    path: '/loglist',
+    name: 'loglist',
+    component: () => import('../views/LogList.vue')
+  },
+  {
+    path: '/vmtemlist',
+    name: 'vmtemlist',
+    component: () => import('../views/VMTemplateView.vue')
+  },{
+    path: '/loglist',
+    name: 'loglist',
+    component: () => import('../views/LogList.vue')
+  },
 ]
 
 const router = new VueRouter({
