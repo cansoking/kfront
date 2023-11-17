@@ -7,6 +7,30 @@
           部署列表
         </p></el-col
       >
+      <el-col :span="6" :offset="8">
+        <template>
+          <el-upload
+              ref="upload"
+              class="upload-demo"
+              action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+              :limit="1"
+              :on-change="handleChange"
+              :http-request="uploadFile"
+              accept=".yaml"
+              :file-list="fileList"
+              :on-exceed="handleExceed"
+              :auto-upload="false"
+          >
+            <template #trigger>
+              <el-button type="primary">select file</el-button>
+            </template>
+            <el-button class="ml-3" type="success" @click="submitUpload">
+              upload to server
+            </el-button>
+
+          </el-upload>
+        </template>
+      </el-col>
     </el-row>
     <!-- 表格区域 -->
     <el-table
@@ -61,9 +85,17 @@
           <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
         </template>
         <template slot-scope="scope">
+          <el-button-group>
           <div style="text-align: center;">
-            <el-button plain type="danger">删除</el-button>
+            <el-button plain type="danger" @click="delDeployment(scope.row.metadata.name)">删除</el-button>
           </div>
+          <div style="text-align: center;">
+            <el-button plain type="warning" @click="stopDeployment(scope.row.metadata.name)">暂停</el-button>
+          </div>
+            <div style="text-align: center;">
+              <el-button plain type="success" @click="startDeployment(scope.row.metadata.name)">启动</el-button>
+            </div>
+          </el-button-group>
         </template>
       </el-table-column>
     </el-table>
@@ -82,7 +114,10 @@
   </div>
 </template>
   
-  <script>
+  <script >
+import {del} from "vue";
+
+
 export default {
   name: "DeployView",
   mounted() {
@@ -96,9 +131,13 @@ export default {
       curpage: 1,
       totaldp: 0,
       pagesize: 10,
+      fileList: [],
+      fileType: [ "yaml"],
     };
   },
   methods: {
+
+    del,
     // 获取Deployment列表数据
     getVMList() {
       this.$axios
@@ -111,6 +150,152 @@ export default {
           console.log("errors", err);
         });
     },
+    delDeployment(name) {
+      console.log(name)
+      this.$axios({
+        method: "post",
+        url: this.baseurl + "/deployment/deleteDeployment?deploymentName="+name,
+        data: {
+          deploymentName: name,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(
+          (res) => {
+            this.$notify.success({
+              title: "操作通知",
+              message: "应用 " + name + "删除成功",
+              position: "bottom-right",
+            });
+            this.getVMList();
+          },
+          (err) => {
+            console.log(err);
+            this.$notify.error({
+              title: "删除失败",
+              message: "请检查网络连接设置",
+              position: "bottom-right",
+            });
+          }
+      );
+    },
+    stopDeployment(name) {
+      console.log(name)
+      this.$axios({
+        method: "get",
+        url: this.baseurl + "/deployment/stopDeployment?deploymentName="+name,
+        data: {
+          deploymentName: name,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(
+          (res) => {
+            this.$notify.success({
+              title: "操作通知",
+              message: "应用 " + name + "暂停成功",
+              position: "bottom-right",
+            });
+            setTimeout(() => {
+              this.getVMList();
+            }, 1000);
+          },
+          (err) => {
+            console.log(err);
+            this.$notify.error({
+              title: "暂停失败",
+              message: "请检查网络连接设置",
+              position: "bottom-right",
+            });
+          }
+      );
+    },
+    startDeployment(name) {
+      console.log(name)
+      this.$axios({
+        method: "get",
+        url: this.baseurl + "/deployment/startDeployment?deploymentName="+name,
+        data: {
+          deploymentName: name,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(
+          (res) => {
+            this.$notify.success({
+              title: "操作通知",
+              message: "应用 " + name + "启动成功",
+              position: "bottom-right",
+            });
+            setTimeout(() => {
+              this.getVMList();
+            }, 1000);
+
+
+          },
+          (err) => {
+            console.log(err);
+            this.$notify.error({
+              title: "暂停失败",
+              message: "请检查网络连接设置",
+              position: "bottom-right",
+            });
+          }
+      );
+    },
+    handleChange (file, fileList) {
+      this.fileList = fileList;
+      // console.log(this.fileList, "sb");
+    },
+    //自定义上传文件
+    uploadFile (file) {
+      this.formData.append("file", file.file);
+      // console.log(file.file, "sb2");
+    },
+    handleExceed(){
+      this.$message({
+        type:'warning',
+        message:'超出最大上传文件数量的限制！'
+      });return
+    },
+    submitUpload(){
+      //上传文件的需要formdata类型;所以要转
+      let formData = new FormData();
+      formData.append("yamlFile", this.fileList[0]);//拿到存在fileList的文件存放到formData中
+      console.log(formData)
+      console.log(this.fileList[0])
+      this.$axios({
+        method: "post",
+        url: this.baseurl + "/deployment/createDeployment?yamlFile="+formData,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data;charset=utf-8"
+        },
+      }).then(
+          (res) => {
+            this.$notify.success({
+              title: "操作通知",
+              message: "应用 " + name + "暂停成功",
+              position: "bottom-right",
+            });
+            setTimeout(() => {
+              this.getVMList();
+            }, 1000);
+          },
+          (err) => {
+            console.log(err);
+            this.$notify.error({
+              title: "暂停失败",
+              message: "请检查网络连接设置",
+              position: "bottom-right",
+            });
+          }
+      );
+    },
+
   },
 };
 </script>
