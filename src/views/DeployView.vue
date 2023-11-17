@@ -34,28 +34,36 @@
       </el-table-column>
       <el-table-column width="600" sortable label="标签" prop="metadata.labels">
         <template slot-scope="scope">
-          {{ JSON.stringify(scope.row.metadata.labels).replaceAll("{", "").replaceAll("}", "").replaceAll('"', "") }}
+          {{
+            JSON.stringify(scope.row.metadata.labels)
+              .replaceAll("{", "")
+              .replaceAll("}", "")
+              .replaceAll('"', "")
+          }}
         </template>
       </el-table-column>
       <el-table-column width="80" sortable label="Pod" prop="pod">
         <template slot-scope="scope">
-          {{ scope.row.status.readyReplicas ? scope.row.status.readyReplicas : 0 }}/{{ scope.row.status.replicas }}
+          {{
+            scope.row.status.readyReplicas ? scope.row.status.readyReplicas : 0
+          }}/{{ scope.row.status.replicas }}
         </template>
       </el-table-column>
-      <el-table-column width="200" sortable label="创建时间" prop="metadata.creationTimestamp">
+      <el-table-column
+        width="200"
+        sortable
+        label="创建时间"
+        prop="metadata.creationTimestamp"
+      >
       </el-table-column>
       <el-table-column align="right">
         <template slot="header">
-          <el-input
-            v-model="psearch"
-            size="mini"
-            placeholder="输入名称搜索"
-          />
+          <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
         </template>
         <template slot-scope="scope">
-          <el-button-group>
+          <div style="text-align: center;">
             <el-button plain type="danger">删除</el-button>
-          </el-button-group>
+          </div>
         </template>
       </el-table-column>
     </el-table>

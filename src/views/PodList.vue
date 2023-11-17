@@ -91,48 +91,53 @@
           <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
         </template>
         <template slot-scope="scope">
-          <el-button-group>
-            <!-- 迁移界面 -->
-            <el-popover placement="right" width="300" trigger="click">
-              <el-form
-                label-position="top"
-                label-width="80px"
-                :model="migrate_form"
-                :status-icon="true"
-                :rules="migrate_rules"
-                ref="migrate_form"
-              >
-                <el-form-item label="请选择要迁移的节点" prop="nodename">
-                  <el-select
-                    style="width: 100%"
-                    v-model="migrate_form.nodename"
-                    clearable
-                    placeholder="请选择要迁移的节点"
+          <!-- 迁移界面 -->
+          <el-popover
+            ref="popover"
+            placement="right"
+            width="300"
+            trigger="click"
+          >
+            <el-form
+              label-position="top"
+              label-width="80px"
+              :model="migrate_form"
+              :status-icon="true"
+              :rules="migrate_rules"
+              ref="migrate_form"
+            >
+              <el-form-item label="请选择要迁移的节点" prop="nodename">
+                <el-select
+                  style="width: 100%"
+                  v-model="migrate_form.nodename"
+                  clearable
+                  placeholder="请选择要迁移的节点"
+                >
+                  <el-option
+                    v-for="item in nodename_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
                   >
-                    <el-option
-                      v-for="item in nodename_options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item size="large">
-                  <div style="text-align: right">
-                    <el-button
-                      size="mini"
-                      type="primary"
-                      @click="migrate_sumbit('migrate_form')"
-                      >确定迁移</el-button
-                    >
-                  </div>
-                </el-form-item>
-              </el-form>
-              <el-button slot="reference" plain type="info" size="mini"
-                >迁移</el-button
-              >
-            </el-popover>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item size="large">
+                <div style="text-align: right">
+                  <el-button
+                    size="mini"
+                    type="primary"
+                    @click="migrate_sumbit('migrate_form')"
+                    >确定迁移</el-button
+                  >
+                </div>
+              </el-form-item>
+            </el-form>
+          </el-popover>
+          <el-button-group>
+            <el-button v-popover:popover plain type="info" size="mini"
+              >迁移</el-button
+            >
             <el-button
               @click="startPod(scope.$index, scope.row)"
               v-if="scope.row.metadata.annotations.status === 'No'"
@@ -147,7 +152,13 @@
               type="warning"
               >停止</el-button
             >
-            <el-button @click="deletePod(scope.$index, scope.row)" plain size="mini" type="danger">删除</el-button>
+            <el-button
+              @click="deletePod(scope.$index, scope.row)"
+              plain
+              size="mini"
+              type="danger"
+              >删除</el-button
+            >
           </el-button-group>
         </template>
       </el-table-column>
