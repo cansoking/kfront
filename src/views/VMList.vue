@@ -97,7 +97,7 @@
                 style="width: 60%"
                 v-model="formData.name"
                 placeholder="请输入虚拟机名称"
-              ></el-input>
+                @blur="validName()"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
@@ -312,6 +312,15 @@ export default {
     },
     openCreateVM(){
       this.buildvmvisible = true;
+    },
+
+    validName() {
+      if (this.formData.name.includes('.')) {
+        // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
+        this.$notify.error({
+          message: '虚拟机名字不能包括特殊字符',
+        });
+      }
     },
 
     // 上传失败

@@ -2,8 +2,14 @@
   <div class="podarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-
-      <el-col>
+      <el-row :gutter="0">
+        <el-col :span="10" :offset="0"
+        ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+          容器日志列表
+        </p></el-col
+        >
+      </el-row>
+      <el-col style="margin-bottom: 5px">
         <el-cascader
             v-model="searchpod"
             :options="casoption"
@@ -26,24 +32,26 @@
           empty-text="暂无容器日志"
           :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
       >
-        <!--      <el-table-column  sortable label="ID" prop="id">-->
-        <!--      </el-table-column>-->
-        <el-table-column  sortable label="容器名" width="300" prop="podName">
+        <el-table-column  sortable label="容器名"  prop="podName">
         </el-table-column>
-        <el-table-column sortable label="命令空间" width="150"  prop="spaces">
+        <el-table-column sortable label="命令空间"   prop="spaces">
         </el-table-column>
-        <el-table-column sortable label="日志内容" prop="podContent">
+        <el-table-column sortable label="日志内容" prop="displayContent">
         </el-table-column>
-        <el-table-column sortable label="生成时间" prop="AddTime" width="200">
+        <el-table-column sortable label="生成时间" prop="AddTime">
         </el-table-column>
         <el-table-column
             fixed="right"
-            label="操作" width="150">
+            label="操作" >
           <template slot-scope="scope">
             <el-button
                 size="mini"
+                type="success"
+                @click="lookLog(scope.$index, scope.row)">查看详细日志</el-button>
+            <el-button
+                size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -61,6 +69,12 @@
         ></el-pagination>
       </div>
     </el-col>
+    <el-dialog title="详细日志"
+               :visible.sync="logvisible">
+      <el-card shadow="never">
+        {{ logcontent }}
+      </el-card>
+    </el-dialog>
   </div>
 </template>
 
@@ -78,6 +92,8 @@ export default {
       starttime: '',
       endtime:"",
       searchpod:'',
+      logvisible:false,
+      logcontent:'',
       options: [],
       casoption:[],
       props: {
@@ -101,6 +117,10 @@ export default {
           })
           .catch((err) => {
           });
+    },
+    lookLog(index, row){
+      this.logvisible = true;
+      this.logcontent = row.podContent;
     },
     transformData(data) {
         for(var i=0;i<data.length;i++){

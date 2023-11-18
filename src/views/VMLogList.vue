@@ -3,7 +3,15 @@
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
 
-      <el-col>
+          <el-col :span="10" :offset="0"
+          ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+            虚拟机日志列表
+          </p></el-col
+          >
+        </el-row>
+
+
+      <el-col style="margin-bottom: 5px">
         <el-select v-model="searchvm" placeholder="请选择虚拟机">
           <el-option
               v-for="item in options"
@@ -11,7 +19,6 @@
               :label="item.label"
               :value="item.value">
           </el-option>
-
         </el-select>
         <el-date-picker
             v-model="starttime"
@@ -23,7 +30,6 @@
         </el-date-picker>
         <el-button type="primary" @click="getVMLog">查询</el-button>
       </el-col>
-    </el-row>
     <el-col>
       <el-table
           :data="vmlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
@@ -33,20 +39,24 @@
       >
         <!--      <el-table-column  sortable label="ID" prop="id">-->
         <!--      </el-table-column>-->
-        <el-table-column  sortable label="虚拟机名" width="200" prop="vmName">
+        <el-table-column  sortable label="虚拟机名"  prop="vmName">
         </el-table-column>
-        <el-table-column sortable label="日志内容" prop="vmContent">
+        <el-table-column sortable label="日志内容" prop="displayContent">
         </el-table-column>
-        <el-table-column sortable label="生成时间" prop="AddTime" width="200">
+        <el-table-column sortable label="生成时间" prop="AddTime" >
         </el-table-column>
         <el-table-column
             fixed="right"
-            label="操作" width="150">
+            label="操作" >
           <template slot-scope="scope">
             <el-button
                 size="mini"
+                type="success"
+                @click="lookLog(scope.$index, scope.row)">查看详细日志</el-button>
+            <el-button
+                size="mini"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -64,6 +74,12 @@
         ></el-pagination>
       </div>
     </el-col>
+    <el-dialog title="详细日志"
+               :visible.sync="logvisible">
+      <el-card shadow="never">
+        {{logcontent}}
+      </el-card>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,6 +97,8 @@ export default {
       starttime: '',
       endtime:"",
       searchvm:'',
+      logvisible:false,
+      logcontent:'',
       options: [],
       props: {
         value: "value",
@@ -103,6 +121,10 @@ export default {
           })
           .catch((err) => {
           });
+    },
+    lookLog(index, row){
+      this.logvisible = true;
+      this.logcontent = row.vmContent;
     },
     getVMLog() {
       this.starttime = moment(this.starttime).format('YYYY-MM-DD HH:mm:ss')

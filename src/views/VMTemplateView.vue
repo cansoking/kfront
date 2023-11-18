@@ -80,7 +80,7 @@
           :status-icon="true"
           :rules="vmtem_rules"
           ref="vmtem_form"
-      >
+          >
         <el-form-item label="模版名称" prop="name">
           <el-input
               v-model="vmtem_form.name"
@@ -148,7 +148,7 @@
           <el-input
               v-model="editvmtem_form.name"
               placeholder="请输入模版名称"
-          ></el-input>
+              @blur="validName('editvmtem_form')"></el-input>
         </el-form-item>
         <el-form-item label="内存大小" prop="memory">
           <el-input
@@ -211,7 +211,7 @@
           <el-input
               v-model="buildvmtem_form.vmname"
               placeholder="请输入虚拟机名称"
-          ></el-input>
+              @blur="validName('buildvmtem_form')"></el-input>
         </el-form-item>
 
 
@@ -405,6 +405,15 @@ export default {
             console.log("err::::"+err)
           });
    },
+    validName(formname) {
+      if (formname === 'buildvmtem_form' && this.buildvmtem_form.name.includes('.')) {
+        // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
+        this.$notify.error({
+          message: '虚拟机名字不能包括特殊字符',
+        });
+      }
+
+    },
     buildvmtem_sumbit(formName) {
       // 校验表单
       this.$refs[formName].validate((valid) => {
