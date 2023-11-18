@@ -84,7 +84,7 @@
         <template slot-scope="scope">
           <!-- 修改界面 -->
           <el-popover
-            ref="popover"
+            :ref="'popover' + scope.$index"
             placement="right"
             width="300"
             trigger="click"
@@ -120,7 +120,7 @@
           </el-popover>
           <div style="text-align: center">
             <el-button-group>
-              <el-button v-popover:popover plain type="info">修改</el-button>
+              <el-button v-popover="'popover' + scope.$index" plain type="info">修改</el-button>
               <el-button
                 plain
                 type="danger"
