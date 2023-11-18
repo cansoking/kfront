@@ -23,7 +23,7 @@
       <el-table
           :data="podlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
           style="width: 100%"
-          empty-text="暂无日志"
+          empty-text="暂无容器日志"
           :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
       >
         <!--      <el-table-column  sortable label="ID" prop="id">-->
@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column sortable label="日志内容" prop="podContent">
         </el-table-column>
-        <el-table-column sortable label="生成时间" prop="addTime" width="200">
+        <el-table-column sortable label="生成时间" prop="AddTime" width="200">
         </el-table-column>
         <el-table-column
             fixed="right"
@@ -94,7 +94,7 @@ export default {
   methods: {
     getCas() {
       this.$axios
-          .get(this.baseurl+"/workload/getCas")
+          .get(this.baseurl+"/log/getCas")
           .then((res) => {
             console.log(res.data.content)
             this.casoption = this.transformData(res.data.content);
@@ -121,7 +121,7 @@ export default {
       if(this.searchpod.length==2)
          podn = this.searchpod[0]+"/"+this.searchpod[1];
       this.$axios
-          .get(this.baseurl+"/workload/getPodLog", {
+          .get(this.baseurl+"/log/getPodLog", {
             params: {
               podNamespace: podn,
               starttime: this.starttime,
@@ -149,7 +149,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete(this.baseurl+"/workload/deletePodLog/" + row.id).then((response) => {
+            .delete(this.baseurl+"/log/deletePodLog/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");
