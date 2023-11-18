@@ -25,11 +25,11 @@
           <i class="el-icon-pie-chart"></i>
           <span slot="title">Pod列表</span>
         </el-menu-item>
-        <el-menu-item index="/deploy" route="deploy">
-          <i class="el-icon-set-up"></i>
-          <span slot="title">部署列表</span>
-        </el-menu-item>
       </el-submenu>
+      <el-menu-item index="/deploy" route="deploy">
+        <i class="el-icon-set-up"></i>
+        <span slot="title">部署管理</span>
+      </el-menu-item>
       <el-submenu index="vm">
         <template slot="title">
           <i class="el-icon-copy-document"></i>
@@ -69,7 +69,7 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">模板管理1</span>
         </el-menu-item>
-        <el-menu-item index="/template2" route="template2"> 
+        <el-menu-item index="/template2" route="template2">
           <i class="el-icon-folder-add"></i>
           <span slot="title">模板管理2</span>
         </el-menu-item>
