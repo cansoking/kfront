@@ -4,7 +4,7 @@
     <el-row :gutter="0">
       <el-col :span="10" :offset="0"
       ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-        日志列表
+        操作日志列表
       </p></el-col
       >
     </el-row>
@@ -42,7 +42,7 @@
       <el-table
           :data="logdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
           style="width: 100%"
-          empty-text="暂无日志"
+          empty-text="暂无操作日志"
           :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
       >
         <!--      <el-table-column  sortable label="ID" prop="id">-->
@@ -57,9 +57,9 @@
         </el-table-column>
         <el-table-column sortable label="异常输出" prop="operationResult">
         </el-table-column>
-        <el-table-column sortable label="操作时间" prop="addTime">
+        <el-table-column sortable label="操作时间" prop="AddTime">
         </el-table-column>
-        <el-table-column sortable label="请求状态" prop="operationStatus">
+        <el-table-column sortable label="请求状态" prop="OperationStatus">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.operationStatus === false" type="warning">失败</el-tag>
             <el-tag v-else-if="scope.row.operationStatus === true" type="success">成功</el-tag>
@@ -137,7 +137,7 @@ export default {
       this.endtime = moment(this.endtime).format('YYYY-MM-DD HH:mm:ss')
       console.log(this.starttime)
       this.$axios
-          .get(this.baseurl+"/workload/getLogList",{
+          .get(this.baseurl+"/log/getLogList",{
             params:{
               operationModule:this.searchmodule,
               operationStatus:this.searchstate,
@@ -147,6 +147,7 @@ export default {
       })
           .then((res) => {
             this.logdata = res.data.content;
+            console.log(res.data.content)
             this.totallog = res.data.content.length
           })
           .catch((err) => {
@@ -160,7 +161,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete(this.baseurl+"/workload/deleteLog/" + row.id).then((response) => {
+            .delete(this.baseurl+"/log/deleteLog/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");

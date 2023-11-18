@@ -37,7 +37,7 @@
         </el-table-column>
         <el-table-column sortable label="日志内容" prop="vmContent">
         </el-table-column>
-        <el-table-column sortable label="生成时间" prop="addTime" width="200">
+        <el-table-column sortable label="生成时间" prop="AddTime" width="200">
         </el-table-column>
         <el-table-column
             fixed="right"
@@ -96,7 +96,7 @@ export default {
   methods: {
     getVMName() {
       this.$axios
-          .get(this.baseurl+"/workload/getVMName")
+          .get(this.baseurl+"/log/getVMName")
           .then((res) => {
             console.log(res.data.content)
             this.options = res.data.content;
@@ -108,7 +108,7 @@ export default {
       this.starttime = moment(this.starttime).format('YYYY-MM-DD HH:mm:ss')
       this.endtime = moment(this.endtime).format('YYYY-MM-DD HH:mm:ss')
       this.$axios
-          .get(this.baseurl+"/workload/getVMLog", {
+          .get(this.baseurl+"/log/getVMLog", {
                 params: {
                   VMName: this.searchvm,
                   starttime: this.starttime,
@@ -137,7 +137,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete(this.baseurl+"/workload/deleteVMLog/" + row.id).then((response) => {
+            .delete(this.baseurl+"/log/deleteVMLog/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");
