@@ -635,12 +635,10 @@ export default {
             method: "post",
             url: this.baseurl + "/workload/createPod",
             data: {
-              podInfo: {
-                podName: this.cp_form.podName,
-                podNamespace: this.cp_form.namespace,
-                podNodeName: this.cp_form.nodename,
-                containerInfoList: this.cp_form.containerInfoList,
-              },
+              podName: this.cp_form.podName,
+              podNamespace: this.cp_form.namespace,
+              podNodeName: this.cp_form.nodename,
+              containerInfoList: this.cp_form.containerInfoList,
             },
             headers: {
               "Content-Type": "application/json",
