@@ -21,49 +21,65 @@
     <!-- 表格区域 -->
     <el-table
       :data="
-        vmdata
+        vsdata
           .slice((curpage - 1) * pagesize, curpage * pagesize)
           .filter(
             (data) =>
               !psearch ||
-              data.name.toLowerCase().includes(psearch.toLowerCase())
+              data.metadata.name.toLowerCase().includes(psearch.toLowerCase())
           )
       "
       style="width: 100%"
       empty-text="暂无持久卷"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-      <el-table-column width="80" sortable label="持久卷名" prop="id">
+      <el-table-column
+        width="200"
+        sortable
+        label="持久卷名"
+        prop="metadata.name"
+      >
       </el-table-column>
-      <el-table-column width="200" sortable label="容量" prop="name">
+      <el-table-column
+        width="100"
+        sortable
+        label="容量"
+        prop="spec.capacity.storage"
+      >
       </el-table-column>
-      <el-table-column width="100" sortable label="访问模式" prop="state">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
-            >挂起</el-tag
-          >
-          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'"
-            >运行</el-tag
-          >
-          <el-tag v-else type="danger">关机</el-tag>
-        </template>
+      <el-table-column
+        width="200"
+        sortable
+        label="访问模式"
+        prop="spec.accessModes"
+      >
       </el-table-column>
-      <el-table-column width="200" sortable label="回收策略" prop="imageid">
+      <el-table-column
+        width="200"
+        sortable
+        label="回收策略"
+        prop="spec.persistentVolumeReclaimPolicy"
+      >
       </el-table-column>
-      <el-table-column width="200" sortable label="状态" prop="imagevolume">
+      <el-table-column width="200" sortable label="状态" prop="status.phase">
       </el-table-column>
-      <el-table-column width="200" sortable label="声明" prop="imagevolume">
+      <el-table-column
+        width="200"
+        sortable
+        label="声明"
+        prop="spec.claimRef.name"
+      >
       </el-table-column>
-      <el-table-column width="200" sortable label="主机路径" prop="imagevolume">
+      <el-table-column
+        width="200"
+        sortable
+        label="主机路径"
+        prop="spec.hostPath.path"
+      >
       </el-table-column>
       <el-table-column align="right">
         <template slot="header">
-          <el-input
-            style="width: 30%"
-            v-model="psearch"
-            size="mini"
-            placeholder="输入名称搜索"
-          />
+          <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
         </template>
         <template slot-scope="scope">
           <!-- 修改界面 -->
@@ -76,14 +92,14 @@
             <el-form
               label-position="top"
               label-width="80px"
-              :model="migrate_form"
+              :model="editform"
               :status-icon="true"
-              :rules="migrate_rules"
-              ref="migrate_form"
+              :rules="edit_rules"
+              ref="editform"
             >
-              <el-form-item label="容量大小" prop="nodename">
+              <el-form-item label="容量大小" prop="vol">
                 <el-input
-                  v-model="tmpvo"
+                  v-model="editform.vol"
                   placeholder="请输入要修改的容量大小"
                   size="normal"
                   clearable
@@ -95,28 +111,35 @@
                 <div style="text-align: right">
                   <el-button
                     type="primary"
-                    @click="migrate_sumbit('migrate_form')"
+                    @click="edit_submit(scope.$index, scope.row, 'editform')"
                     >确定修改</el-button
                   >
                 </div>
               </el-form-item>
             </el-form>
           </el-popover>
-          <el-button-group>
-            <el-button v-popover:popover plain type="info">修改</el-button>
-            <el-button plain type="danger">删除</el-button>
-          </el-button-group>
+          <div style="text-align: center">
+            <el-button-group>
+              <el-button v-popover:popover plain type="info">修改</el-button>
+              <el-button
+                plain
+                type="danger"
+                @click="deletePerV(scope.$index, scope.row)"
+                >删除</el-button
+              >
+            </el-button-group>
+          </div>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页栏 -->
-    <div v-if="vmdata.length != 0" style="margin-top: 30px">
+    <div v-if="vsdata.length != 0" style="margin-top: 30px">
       <el-pagination
         :current-page.sync="curpage"
         :page-sizes="[10, 20, 30, 40, 50]"
         :page-size.sync="pagesize"
         layout="sizes, total, prev, pager, next, jumper"
-        :total="totalvm"
+        :total="totalvs"
         background
       >
       </el-pagination>
@@ -133,62 +156,65 @@
       >
         <el-row :gutter="20">
           <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷名称" prop="podName">
+            ><el-form-item label="持久卷名称" prop="pvInfo.pvName">
               <el-input
-                v-model="vs_form.podName"
+                v-model="vs_form.pvInfo.pvName"
                 placeholder="请输入持久卷名称"
               ></el-input> </el-form-item
           ></el-col>
           <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷声明名称" prop="podName">
+            ><el-form-item label="持久卷声明名称" prop="pvcInfo.pvcName">
               <el-input
-                v-model="vs_form.podName"
+                v-model="vs_form.pvcInfo.pvcName"
                 placeholder="请输入持久卷声明名称"
               ></el-input> </el-form-item
           ></el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷主机地址" prop="podName">
+            ><el-form-item label="持久卷主机地址" prop="pvInfo.pvPath">
               <el-input
-                v-model="vs_form.podName"
+                v-model="vs_form.pvInfo.pvPath"
                 placeholder="请输入持久卷主机地址"
               ></el-input> </el-form-item
           ></el-col>
           <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷声明命名空间" prop="podName">
+            ><el-form-item
+              label="持久卷声明命名空间"
+              prop="pvcInfo.pvcNamespace"
+            >
               <el-input
-                v-model="vs_form.podName"
+                v-model="vs_form.pvcInfo.pvcNamespace"
                 placeholder="请输入持久卷声明命名空间"
               ></el-input> </el-form-item
           ></el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷容量" prop="podName">
+            ><el-form-item label="持久卷容量" prop="pvInfo.pvQuantity">
               <el-input
-                v-model="vs_form.podName"
+                v-model="vs_form.pvInfo.pvQuantity"
                 placeholder="请输入持久卷容量"
               ></el-input> </el-form-item
           ></el-col>
           <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷声明容量" prop="podName">
+            ><el-form-item label="持久卷声明容量" prop="pvcInfo.pvcQuantity">
               <el-input
-                v-model="vs_form.podName"
+                v-model="vs_form.pvcInfo.pvcQuantity"
                 placeholder="请输入持久卷声明容量"
               ></el-input> </el-form-item
           ></el-col>
         </el-row>
-        <el-form-item label="主节点名称" prop="podName">
+        <el-form-item label="持久卷访问模式" prop="pvInfo.pvAccessMode">
           <el-input
-            v-model="vs_form.podName"
-            placeholder="请输入持久卷主节点名称"
+            v-model="vs_form.pvInfo.pvAccessMode"
+            placeholder="请输入持久卷访问模式"
           ></el-input>
         </el-form-item>
         <el-form-item size="large">
-          <div style="text-align: right; padding-top: 30px;">
-            <el-button round @click="resetForm('cp_form')">清空输入</el-button>
-            <el-button round type="primary" @click="cp_sumbit('cp_form')"
+          <div style="text-align: right; padding-top: 30px">
+            <el-button round @click="resetForm('vs_form')">清空输入</el-button>
+            <el-button round type="primary" @click="vs_sumbit('vs_form')"
               >立即创建</el-button
             >
           </div>
@@ -202,28 +228,201 @@
 export default {
   name: "ImageList",
   mounted() {
-    this.getVMList();
+    this.getPerVList();
   },
   data() {
     return {
       baseurl: "http://127.0.0.1:8080",
-      vmdata: [],
+      vsdata: [],
       psearch: "",
       curpage: 1,
-      totalvm: 0,
+      totalvs: 0,
       pagesize: 10,
       createVirstoreVisible: false,
-      vs_form: {},
+      editform: {
+        vol: "",
+      },
+      vs_form: {
+        vmInfo: {
+          virtualMachineIp: "192.168.91.129",
+          userName: "root",
+          userPassword: "Noi3674.",
+        },
+        pvInfo: {
+          pvName: "example-pv1",
+          pvPath: "/mnt/disks/vol2",
+          pvQuantity: "10Gi",
+          pvAccessMode: "ReadWriteOnce",
+        },
+        pvcInfo: {
+          pvcName: "example-pv7-claim",
+          pvcNamespace: "default",
+          pvcQuantity: "1Gi",
+        },
+      },
+      edit_rules: {
+        vol: {
+          required: true,
+          message: "请输入要修改的容量大小",
+          trigger: "blur",
+        },
+      },
+      vs_rules: {
+        pvInfo: {
+          pvName: {
+            required: true,
+            message: "请输入持久卷名称",
+            trigger: "blur",
+          },
+          pvPath: {
+            required: true,
+            message: "请输入持久卷主机地址",
+            trigger: "blur",
+          },
+          pvQuantity: {
+            required: true,
+            message: "请输入持久卷容量",
+            trigger: "blur",
+          },
+          pvAccessMode: {
+            required: true,
+            message: "请输入持久卷访问模式",
+            trigger: "blur",
+          },
+        },
+        pvcInfo: {
+          pvcName: {
+            required: true,
+            message: "请输入持久卷声明名称",
+            trigger: "blur",
+          },
+          pvcNamespace: {
+            required: true,
+            message: "请输入持久卷声明命名空间",
+            trigger: "blur",
+          },
+          pvcQuantity: {
+            required: true,
+            message: "请输入持久卷声明容量",
+            trigger: "blur",
+          },
+        },
+      },
     };
   },
   methods: {
+    // 修改持久卷容量
+    edit_submit(idx, row, formName) {
+      console.log(formName);
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$axios({
+            method: "post",
+            url: this.baseurl + "/virtuleStorage/updateVs",
+            data: {
+              pvName: this.vsdata[idx].metadata.name,
+              pvPath: this.vsdata[idx].spec.hostPath.path,
+              pvQuantity: this.editform.vol + "Gi",
+              pvAccessMode: this.vsdata[idx].spec.accessModes[0],
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(
+            (res) => {
+              console.log(res);
+              if (res.data[0] === "F") {
+                this.$notify.error({
+                  title: "修改失败",
+                  message: res.data,
+                  position: "bottom-right",
+                });
+              } else {
+                this.$notify.success({
+                  title: "操作通知",
+                  message:
+                    "持久卷 " +
+                    this.vsdata[idx].metadata.name +
+                    " 修改容量成功",
+                  position: "bottom-right",
+                });
+                this.editform.vol = "";
+              }
+              this.getPerVList()
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "修改失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+              this.getPerVList()
+            }
+          );
+          this.createVirstoreVisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
+    // 创建持久卷
+    vs_sumbit(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$axios({
+            method: "post",
+            url: this.baseurl + "/virtuleStorage/createVs",
+            data: this.vs_form,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(
+            (res) => {
+              console.log(res);
+              if (res.data[0] === "F") {
+                this.$notify.error({
+                  title: "创建失败",
+                  message: res.data,
+                  position: "bottom-right",
+                });
+              } else {
+                this.$notify.success({
+                  title: "完成通知",
+                  message: "持久卷 " + this.vs_form.pvInfo.pvName + " 创建成功",
+                  position: "bottom-right",
+                });
+              }
+              this.getPerVList()
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "创建失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
+          );
+          this.createVirstoreVisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
     // 获取虚拟机列表数据
-    getVMList() {
+    getPerVList() {
       this.$axios
-        .get(this.baseurl + "/getVMList")
+        .get(this.baseurl + "/virtuleStorage/vs/list")
         .then((res) => {
-          this.vmdata = res.data;
-          this.totalvm = res.data.length;
+          this.vsdata = JSON.parse(res.data.result).items;
+          this.totalvs = JSON.parse(res.data.result).items.length;
         })
         .catch((err) => {
           console.log("errors", err);
@@ -232,6 +431,52 @@ export default {
     // 打开创建界面
     openCreateVirStore() {
       this.createVirstoreVisible = true;
+    },
+    // 删除持久卷
+    deletePerV(idx, row) {
+      this.$axios({
+        method: "post",
+        url: this.baseurl + "/virtuleStorage/deleteVs",
+        data: {
+          pvName: this.vsdata[idx].metadata.name,
+          pvPath: this.vsdata[idx].spec.hostPath.path,
+          pvQuantity: this.vsdata[idx].spec.capacity.storage,
+          pvAccessMode: this.vsdata[idx].spec.accessModes[0],
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }).then(
+        (res) => {
+          if (res.data[0] === "F") {
+            this.$notify.error({
+              title: "删除失败",
+              message: res.data,
+              position: "bottom-right",
+            });
+          } else {
+            this.$notify.success({
+              title: "操作通知",
+              message: "持久卷 " + this.vs_form.pvInfo.pvName + " 删除成功",
+              position: "bottom-right",
+            });
+          }
+          this.getPerVList()
+        },
+        (err) => {
+          console.log(err);
+          this.$notify.error({
+            title: "删除失败",
+            message: "请检查网络连接设置",
+            position: "bottom-right",
+          });
+          this.getPerVList()
+        }
+      );
+    },
+    // 重置表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
     },
   },
 };

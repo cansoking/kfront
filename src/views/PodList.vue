@@ -94,7 +94,7 @@
           <!-- 迁移界面 -->
           <el-popover
             ref="popover"
-            placement="right"
+            placement="left"
             width="300"
             trigger="click"
           >
@@ -127,7 +127,9 @@
                   <el-button
                     size="mini"
                     type="primary"
-                    @click="migrate_sumbit('migrate_form')"
+                    @click="
+                      migrate_sumbit(scope.$index, scope.row, 'migrate_form')
+                    "
                     >确定迁移</el-button
                   >
                 </div>
@@ -633,10 +635,12 @@ export default {
             method: "post",
             url: this.baseurl + "/workload/createPod",
             data: {
-              podName: this.cp_form.podName,
-              podNamespace: this.cp_form.namespace,
-              podNodeName: this.cp_form.nodename,
-              containerInfoList: this.cp_form.containerInfoList,
+              podInfo: {
+                podName: this.cp_form.podName,
+                podNamespace: this.cp_form.namespace,
+                podNodeName: this.cp_form.nodename,
+                containerInfoList: this.cp_form.containerInfoList,
+              },
             },
             headers: {
               "Content-Type": "application/json",
@@ -708,17 +712,40 @@ export default {
         }
       );
     },
-    migrate_sumbit(formName) {
+    migrate_sumbit(idx, row, formName) {
       // 校验表单
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // 提交表单，创建容器
-          this.$notify.success({
-            title: "完成通知",
-            message: "完成迁移",
-            position: "bottom-right",
-          });
-          this.createpodvisible = false;
+          this.$axios({
+            method: "post",
+            url: this.baseurl + "/workload/editPod",
+            data: {
+              podName: this.poddata[idx].metadata.name,
+              podNamespace: this.poddata[idx].metadata.namespace,
+              podNodeName: this.migrate_form.nodename,
+              containerInfoList: [],
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(
+            (res) => {
+              this.$notify.success({
+                title: "操作通知",
+                message: "容器 " + this.poddata[idx].metadata.name + "迁移成功",
+                position: "bottom-right",
+              });
+              this.getPodList();
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "删除失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
+          );
         } else {
           console.log("表单验证不通过");
           return false;
