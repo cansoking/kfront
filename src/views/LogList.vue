@@ -99,6 +99,7 @@ export default {
   name: "LogList",
   data() {
     return {
+      baseurl: "http://localhost:8080",
       logdata:[],
       pageNum: 1, //当前页
       curpage: 1,
@@ -136,7 +137,7 @@ export default {
       this.endtime = moment(this.endtime).format('YYYY-MM-DD HH:mm:ss')
       console.log(this.starttime)
       this.$axios
-          .get("http://localhost:8080/workload/getLogList",{
+          .get(this.baseurl+"/workload/getLogList",{
             params:{
               operationModule:this.searchmodule,
               operationStatus:this.searchstate,
@@ -159,7 +160,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete("http://localhost:8080/workload/deleteLog/" + row.id).then((response) => {
+            .delete(this.baseurl+"/workload/deleteLog/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");

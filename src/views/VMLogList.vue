@@ -1,13 +1,18 @@
 <template>
-  <div class="podarea">
+  <div class="vmarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
 
       <el-col>
-        <el-cascader
-            v-model="searchpod"
-            :options="casoption"
-        :props="props" clearable placeholder="请选择容器"></el-cascader>
+        <el-select v-model="searchvm" placeholder="请选择虚拟机">
+          <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+          </el-option>
+
+        </el-select>
         <el-date-picker
             v-model="starttime"
             type="datetime" placeholder="请选择开始时间">
@@ -16,23 +21,21 @@
             v-model="endtime"
             type="datetime" placeholder="请选择结束时间">
         </el-date-picker>
-        <el-button type="primary" @click="getPodLog">查询</el-button>
+        <el-button type="primary" @click="getVMLog">查询</el-button>
       </el-col>
     </el-row>
     <el-col>
       <el-table
-          :data="podlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
+          :data="vmlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
           style="width: 100%"
           empty-text="暂无日志"
           :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
       >
         <!--      <el-table-column  sortable label="ID" prop="id">-->
         <!--      </el-table-column>-->
-        <el-table-column  sortable label="容器名" width="300" prop="podName">
+        <el-table-column  sortable label="虚拟机名" width="200" prop="vmName">
         </el-table-column>
-        <el-table-column sortable label="命令空间" width="150"  prop="spaces">
-        </el-table-column>
-        <el-table-column sortable label="日志内容" prop="podContent">
+        <el-table-column sortable label="日志内容" prop="vmContent">
         </el-table-column>
         <el-table-column sortable label="生成时间" prop="addTime" width="200">
         </el-table-column>
@@ -50,13 +53,13 @@
     </el-col>
     <!-- 分页栏 -->
     <el-col>
-      <div v-if="podlogdata.length != 0" style="margin-top: 30px">
+      <div v-if="vmlogdata.length != 0" style="margin-top: 30px">
         <el-pagination
             :current-page.sync="curpage"
             :page-sizes="[10, 20, 30, 40, 50]"
             :page-size.sync="pagesize"
             layout="sizes, total, prev, pager, next, jumper"
-            :total="totalpodlog"
+            :total="totalvmlog"
             background
         ></el-pagination>
       </div>
@@ -67,19 +70,18 @@
 <script>
 import moment from 'moment'
 export default {
-  name: "PodLogList",
+  name: "VMLogList",
   data() {
     return {
       baseurl: "http://localhost:8080",
       curpage: 1,
-      totalpodlog: 0,
+      totalvmlog: 0,
       pagesize: 10,
-      podlogdata:[],
+      vmlogdata:[],
       starttime: '',
       endtime:"",
-      searchpod:'',
+      searchvm:'',
       options: [],
-      casoption:[],
       props: {
         value: "value",
         label: "label",      //展示的lable名字
@@ -88,51 +90,37 @@ export default {
     };
   },
   mounted() {
-    this.getPodLog();
-    this.getCas()
+    this.getVMLog();
+    this.getVMName()
   },
   methods: {
-    getCas() {
+    getVMName() {
       this.$axios
-          .get(this.baseurl+"/workload/getCas")
+          .get(this.baseurl+"/workload/getVMName")
           .then((res) => {
             console.log(res.data.content)
-            this.casoption = this.transformData(res.data.content);
+            this.options = res.data.content;
           })
           .catch((err) => {
           });
     },
-    transformData(data) {
-        for(var i=0;i<data.length;i++){
-          if(data[i].children === null){
-            // children若为空数组，则将children设为undefined
-            data[i].children=undefined;
-          }else {
-            // children若不为空数组，则继续 递归调用 本方法
-            this.transformData(data[i].children);
-          }
-        }
-        return data;
-      },
-    getPodLog() {
+    getVMLog() {
       this.starttime = moment(this.starttime).format('YYYY-MM-DD HH:mm:ss')
       this.endtime = moment(this.endtime).format('YYYY-MM-DD HH:mm:ss')
-      let podn = "";
-      if(this.searchpod.length==2)
-         podn = this.searchpod[0]+"/"+this.searchpod[1];
       this.$axios
-          .get(this.baseurl+"/workload/getPodLog", {
-            params: {
-              podNamespace: podn,
-              starttime: this.starttime,
-              endtime: this.endtime
-            }
-          })
+          .get(this.baseurl+"/workload/getVMLog", {
+                params: {
+                  VMName: this.searchvm,
+                  starttime: this.starttime,
+                  endtime: this.endtime
+                }
+              }
+          )
           .then((res) => {
-            console.log(res);
+            console.log(res.data);
             if(res.data.success) {
-              this.podlogdata = res.data.content
-              this.totalpodlog = res.data.content.length
+              this.vmlogdata = res.data.content
+              this.totalvmlog = res.data.content.length
             }else{
               alert(res.data.msg);
             }
@@ -149,11 +137,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete(this.baseurl+"/workload/deletePodLog/" + row.id).then((response) => {
+            .delete(this.baseurl+"/workload/deleteVMLog/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");
-            this.getPodLog();
+            this.getVMLog();
           } else {
             this.$message.success("删除失败！");
           }
@@ -171,7 +159,7 @@ export default {
 </script>
 
 <style>
-.podarea {
+.vmarea {
   background-color: #fff;
   border-radius: 5px;
   padding: 20px;

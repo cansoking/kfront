@@ -45,6 +45,11 @@ const routes = [
     component: () => import('../views/LogList.vue')
   },
   {
+    path: '/vmimalist',
+    name: 'vmimalist',
+    component: () => import('../views/VMImageView.vue')
+  },
+  {
     path: '/vmtemlist',
     name: 'vmtemlist',
     component: () => import('../views/VMTemplateView.vue')
@@ -62,6 +67,11 @@ const routes = [
     path: '/pervolume',
     name: 'pervolume',
     component: () => import('../views/PerVolumeView.vue')
+  },
+  {
+    path: '/vmlog',
+    name: 'vmlog',
+    component: () => import('../views/VMLogList.vue')
   },
 ]
 

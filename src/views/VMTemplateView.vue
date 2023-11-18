@@ -48,10 +48,10 @@
                 type="warning"
                 @click="edit(scope.row)">修改</el-button>
             <el-tooltip content="以该模版创建虚拟机" placement="top">
-            <el-button
-                size="mini"
-                type="success"
-                @click="build(scope.row)">创建</el-button>
+              <el-button
+                  size="mini"
+                  type="success"
+                  @click="build(scope.row)">创建</el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -91,7 +91,7 @@
           <el-input
               v-model="vmtem_form.memory"
               placeholder="请输入内存大小(单位G)"
-          clearables @blur="validMemory('vmtem_form')"></el-input>
+              clearables @blur="validMemory('vmtem_form')"></el-input>
         </el-form-item>
         <el-form-item label="处理器个数" prop="cpuNum">
           <el-select
@@ -125,12 +125,12 @@
             </el-option>
           </el-select>
         </el-form-item>
-          <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
-            <el-button round @click="resetForm('vmtem_form')">重置</el-button>
-            <el-button round type="primary" @click="vmtem_sumbit('vmtem_form')"
-            >确认
-            </el-button>
-          </div>
+        <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
+          <el-button round @click="resetForm('vmtem_form')">重置</el-button>
+          <el-button round type="primary" @click="vmtem_sumbit('vmtem_form')"
+          >确认
+          </el-button>
+        </div>
       </el-form>
     </el-dialog>
 
@@ -207,11 +207,11 @@
           :status-icon="true"
           ref="buildvmtem_form"
       >
-      <el-form-item label="请输入虚拟机名称" prop="vmname">
+        <el-form-item label="请输入虚拟机名称" prop="vmname">
           <el-input
               v-model="buildvmtem_form.vmname"
               placeholder="请输入虚拟机名称"
-           ></el-input>
+          ></el-input>
         </el-form-item>
 
 
@@ -219,7 +219,7 @@
           <el-input
               v-model="buildvmtem_form.name"
               placeholder="请输入模版名称"
-          disabled ></el-input>
+              disabled ></el-input>
         </el-form-item>
         <el-form-item label="内存大小" prop="memory">
           <el-input
@@ -255,7 +255,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-            disabled>
+                disabled>
             </el-option>
           </el-select>
         </el-form-item>
@@ -279,13 +279,13 @@
             <div class="el-upload__text">
               将文件拖到此处，或<em>点击上传</em>
             </div>
-            <div class="el-upload__tip" slot="tip">*只能上传.iso/ .qemu2/ .img文件</div> 
+            <div class="el-upload__tip" slot="tip">*只能上传.iso/ .qemu2/ .img文件</div>
           </el-upload>
         </el-form-item>
 
 
         <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
-          <el-button round type="primary" @click="buildvmtem_sumbit('buildvmtem_form')" 
+          <el-button round type="primary" @click="buildvmtem_sumbit('buildvmtem_form')"
           >立即创建
           </el-button>
         </div>
@@ -346,7 +346,7 @@ export default {
         {
           value: "ARM",
           label: "ARM",
-        },
+        }
       ],
       vmtem_form: {
         name: "",
@@ -391,7 +391,7 @@ export default {
   methods: {
     getVMTem(){
       this.$axios
-          .get("http://192.168.243.143:8080/Template/selectAll")
+          .get(this.baseurl+"/Template/selectAll")
           .then((res) => {
             if(res.data.success) {
               this.vmtemdata = res.data.content
@@ -439,7 +439,7 @@ export default {
           // 提交表单，创建容器
           this.$axios({
             method: "post",
-            url: "http://192.168.243.143:8080/Template/insert",  //换成实际地址
+            url: this.baseurl+"/Template/insert",  //换成实际地址
             data: this.vmtem_form,
             headers: {
               "Content-Type": "application/json",
@@ -484,7 +484,7 @@ export default {
           // 提交表单，创建容器
           this.$axios({
             method: "post",
-            url: "http://192.168.243.143:8080/Template/update",  //换成实际地址
+            url: this.baseurl+"/Template/update",  //换成实际地址
             data: this.editvmtem_form,
             headers: {
               "Content-Type": "application/json",
@@ -533,7 +533,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete("http://192.168.243.143:8080/Template/delete/" + row.id).then((response) => {
+            .delete(this.baseurl+"/Template/delete/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");
@@ -572,7 +572,7 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$axios
-            .delete("http://192.168.243.143:8080/workload/deleteVMLog/" + row.id).then((response) => {
+            .delete(this.baseurl+"/workload/deleteVMLog/" + row.id).then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("删除成功！");
@@ -594,17 +594,19 @@ export default {
     },
     handleBeforeUpload(file) {
       console.log(file);
-      var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
-      if (suffix!="iso"&&suffix!="img"&&suffix!="qcow2") {
-        this.$message.error("只能上传iso、img或qcow2格式的文件！");
+      var iso = file.name.substring(file.name.lastIndexOf(".") + 1);
+      const suffix = iso === "iso";
+      if (!suffix) {
+        this.$message.error("只能上传ISO文件！");
         return false;
       }
+      return suffix;
     },
     sucupload(response, file, fileList) {
       if (response === "ok") {
         this.$notify.success({
           title: "创建成功",
-          message: "虚拟机 " + this.buildvmtem_form.vmname + " 创建成功！",
+          message: "虚拟机 " + this.buildvmtem_form.name + " 创建成功！",
           position: "bottom-right",
           duration: 6000,
         });
