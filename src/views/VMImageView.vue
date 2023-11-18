@@ -38,10 +38,6 @@
                 size="mini"
                 type="danger"
                 @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-            <el-button
-                size="mini"
-                type="success"
-                @click="download(scope.row)">下载</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -182,7 +178,7 @@ export default {
       var iso = file.name.substring(file.name.lastIndexOf(".") + 1);
       const suffix = iso === "iso";
       if (!suffix) {
-        this.$message.error("只能上传ISO文件！");
+        this.$message.error("只能上传ISO、qcow2、img文件！");
         return false;
       }
       return suffix;
@@ -221,169 +217,7 @@ export default {
           this.$refs.upload.submit();
       }
     },
-    download(row) {
-      window.open("http://localhost:8080/img/"+row.name,'_self');  //  修改IP  前端修改
-      // console.log(row.name)
-      // fetch(fileUrl)
-      //     .then(response => response.blob())
-      //     .then(blob => {
-      //       // 创建一个 <a> 标签
-      //       const link = document.createElement('a');
-      //       link.href = URL.createObjectURL(blob);
-      //       link.download = fileName;
-      //       link.click();
-      //       // 释放 URL 对象
-      //       URL.revokeObjectURL(link.href);
-      //     })
-      //     .catch(error => {
-      //       console.error('下载文件时出错：', error);
-      //     });
-    },
-/*
-    validMemory(formname) {
-      const regex = /^[1-9]\d*(\.\d+)?$/;
-      if (formname === 'vmima_form' && !regex.test(this.vmima_form.memory)) {
-        // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
-        this.$notify.error({
-          message: '请输入正数',
-        });
-      }
-      if (formname === 'editvmima_form' && !regex.test(this.editvmima_form.memory)) {
-        // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
-        this.$notify.error({
-          message: '请输入正数',
-        });
-      }
-    },
-    vmima_sumbit(formName) {
-      // 校验表单
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          // 提交表单，创建容器
-          this.$axios({
-            method: "post",
-            url: "http://192.168.243.143:8080/Template/insert",  //换成实际地址
-            data: this.vmima_form,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }).then(
-              (res) => {
-                if (res.data.success === false) {  //增加失败
-                  this.$notify.error({
-                    title: "创建失败",
-                    message: res.data.msg,
-                    position: "bottom-right",
-                  });
-                } else {
-                  this.$notify.success({
-                    title: "完成通知",
-                    message: "模版" + this.vmima_form.name + " 创建成功",
-                    position: "bottom-right",
-                  });
-                  this.getVMTem();
-                }
-              },
-              (err) => {
-                console.log(err);
-                this.$notify.error({
-                  title: "创建失败",
-                  message: "请检查网络连接设置",
-                  position: "bottom-right",
-                });
-              }
-          );
-          this.createvmimavisible = false;
-        } else {
-          console.log("表单验证不通过");
-          return false;
-        }
-      });
-    },
-    editvmima_sumbit(formName) {
-      // 校验表单
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          // 提交表单，创建容器
-          this.$axios({
-            method: "post",
-            url: "http://192.168.243.143:8080/Template/update",  //换成实际地址
-            data: this.editvmima_form,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }).then(
-              (res) => {
-                if (res.data.success === false) {  //增加失败
-                  this.$notify.error({
-                    title: "修改失败",
-                    message: res.data.msg,
-                    position: "bottom-right",
-                  });
-                } else {
-                  this.$notify.success({
-                    title: "修改通知",
-                    message: "模版" + this.editvmima_form.name + " 修改成功",
-                    position: "bottom-right",
-                  });
-                   this.getVMTem();
-                }
-              },
-              (err) => {
-                console.log(err);
-                this.$notify.error({
-                  title: "修改失败",
-                  message: "请检查网络连接设置",
-                  position: "bottom-right",
-                });
-              }
-          );
-          this.editvmimavisible = false;
-        } else {
-          console.log("表单验证不通过");
-          return false;
-        }
-      });
-    },
-
-    edit(row) {
-      this.editvmima_form.id = row.id;
-      this.editvmima_form.name = row.name;
-      this.editvmima_form.memory = row.memory;
-      this.editvmima_form.cpuNum = row.cpuNum;
-      this.editvmima_form.OStype = row.OStype;
-      this.editvmimavisible = true;
-    },
-
-    create(index, row) {
-      this.$confirm(`您确定删除吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios
-            .delete("http://192.168.243.143:8080/workload/deleteVMLog/" + row.id).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("删除成功！");
-            this.getVMLog();
-          } else {
-            this.$message.success("删除失败！");
-          }
-        })
-      }).catch(() => {
-        // 取消操作
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
-    },
-
-    */
+  
   }
 }
 </script>
