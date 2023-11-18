@@ -39,6 +39,14 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">虚拟机列表</span>
         </el-menu-item>
+              <el-menu-item index="vmtemp" route="vmtemlist">
+        <i class="el-icon-copy-document"></i>
+        <span slot="title">虚拟机模版管理</span>
+      </el-menu-item>
+      <el-menu-item index="vmima" route="vmimalist">
+        <i class="el-icon-copy-document"></i>
+        <span slot="title">虚拟机镜像管理</span>
+      </el-menu-item>
       </el-submenu>
       <el-submenu index="image">
         <template slot="title">
@@ -74,14 +82,6 @@
           <span slot="title">模板管理2</span>
         </el-menu-item>
       </el-submenu>
-      <el-menu-item index="vmtemp" route="vmtemlist">
-        <i class="el-icon-copy-document"></i>
-        <span slot="title">虚拟机模版管理</span>
-      </el-menu-item>
-      <el-menu-item index="vmima" route="vmimalist">
-        <i class="el-icon-copy-document"></i>
-        <span slot="title">虚拟机镜像管理</span>
-      </el-menu-item>
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>

@@ -468,8 +468,8 @@ export default {
           label: "server1",
         },
         {
-          value: "localhost:localdomain",
-          label: "localhost:localdomain",
+          value: "localhost.localdomain",
+          label: "localhost.localdomain",
         },
       ],
       baseurl: "http://127.0.0.1:8080",

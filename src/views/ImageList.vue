@@ -4,7 +4,7 @@
     <el-row :gutter="0">
       <el-col :span="10" :offset="0"
         ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-          镜像列表
+          容器镜像列表
         </p></el-col
       >
       <el-col :span="2" :offset="12">
@@ -21,59 +21,47 @@
     <!-- 表格区域 -->
     <el-table
       :data="
-        vmdata
+        cidata
           .slice((curpage - 1) * pagesize, curpage * pagesize)
           .filter(
             (data) =>
               !psearch ||
-              data.name.toLowerCase().includes(psearch.toLowerCase())
+              data.image.toLowerCase().includes(psearch.toLowerCase())
           )
       "
       style="width: 100%"
-      empty-text="暂无镜像"
+      empty-text="暂无容器镜像"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
       <el-table-column width="80" sortable label="ID" prop="id">
       </el-table-column>
-      <el-table-column width="200" sortable label="镜像名称" prop="name">
+      <el-table-column width="500" sortable label="镜像名称" prop="image">
       </el-table-column>
-      <el-table-column width="100" sortable label="标签" prop="state">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
-            >挂起</el-tag
-          >
-          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'"
-            >运行</el-tag
-          >
-          <el-tag v-else type="danger">关机</el-tag>
-        </template>
+      <el-table-column width="300" sortable label="标签" prop="tag">
       </el-table-column>
       <el-table-column width="200" sortable label="镜像ID" prop="imageid">
       </el-table-column>
-      <el-table-column width="200" sortable label="体积" prop="imagevolume">
+      <el-table-column width="200" sortable label="体积" prop="size">
       </el-table-column>
       <el-table-column align="right">
         <template slot="header">
-          <el-input
-            style="width: 30%"
-            v-model="psearch"
-            size="mini"
-            placeholder="输入名称搜索"
-          />
+          <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
         </template>
         <template slot-scope="scope">
-          <el-button plain type="danger">删除</el-button>
+          <div style="text-align: center">
+            <el-button plain type="danger">删除</el-button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页栏 -->
-    <div v-if="vmdata.length != 0" style="margin-top: 30px">
+    <div v-if="cidata.length != 0" style="margin-top: 30px">
       <el-pagination
         :current-page.sync="curpage"
         :page-sizes="[10, 20, 30, 40, 50]"
         :page-size.sync="pagesize"
         layout="sizes, total, prev, pager, next, jumper"
-        :total="totalvm"
+        :total="totalci"
         background
       >
       </el-pagination>
@@ -113,10 +101,10 @@ export default {
   data() {
     return {
       baseurl: "http://127.0.0.1:8080",
-      vmdata: [],
+      cidata: [],
       psearch: "",
       curpage: 1,
-      totalvm: 0,
+      totalci: 0,
       pagesize: 10,
       uploadimagevisible: false,
     };
@@ -161,13 +149,39 @@ export default {
       }
       return suffix;
     },
-    // 获取虚拟机列表数据
+    // 解析数据
+    data_resolver(sdata) {
+      let res = [];
+      let rows = sdata.split("\n");
+      let i = 1;
+      for (; i < rows.length - 1; i++) {
+        let cols = rows[i].split(" ");
+        let j = 0;
+        cols = cols.filter(function (item) {
+          return item !== "";
+        });
+        res.push({
+          id: i,
+          image: cols[0],
+          tag: cols[1],
+          imageid: cols[2],
+          size: cols[3],
+        });
+      }
+      return res;
+    },
+    // 获取容器镜像列表数据
     getVMList() {
       this.$axios
-        .get(this.baseurl + "/getVMList")
+        .post(this.baseurl + "/containerd/images/list", {
+          virtualMachineIp: "192.168.91.129",
+          userName: "root",
+          userPassword: "Noi3674.",
+        })
         .then((res) => {
-          this.vmdata = res.data;
-          this.totalvm = res.data.length;
+          let s_data = this.data_resolver(res.data.result);
+          this.cidata = s_data;
+          this.totalci = s_data.length;
         })
         .catch((err) => {
           console.log("errors", err);
