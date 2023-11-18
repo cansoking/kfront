@@ -7,7 +7,7 @@
           部署列表
         </p></el-col
       >
-      <el-col :span="2" :offset="12">
+      <el-col :span="2" :offset="10">
         <el-button
           @click="openUploadDeployment"
           icon="el-icon-circle-plus-outline"
@@ -16,6 +16,16 @@
           plain
           >上传部署</el-button
         >
+      </el-col>
+      <el-col :span="2" >
+      <el-button
+          @click="openCreateDeployment"
+          icon="el-icon-circle-plus-outline"
+          size="medium"
+          round
+          plain
+      >添加部署</el-button
+      >
       </el-col>
     </el-row>
     <!-- 表格区域 -->
@@ -139,6 +149,56 @@
         </div>
       </div>
     </el-dialog>
+    <!-- 添加应用对话框 -->
+    <el-dialog title="添加应用" :visible.sync="createDeploymentvisible">
+      <el-form
+          label-position="top"
+          label-width="80px"
+          :model="deployment_form"
+          :status-icon="true"
+          :rules="deployment_rules"
+          ref="deployment_form"
+      >
+        <el-form-item label="应用名称" prop="deploymentName">
+          <el-input
+              v-model="deployment_form.deploymentName"
+              placeholder="请输入应用名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="镜像名称" prop="image">
+          <el-input
+              v-model="deployment_form.image"
+              placeholder="请输入镜像名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="容器端口号" prop="containerPort">
+          <el-input
+              v-model="deployment_form.containerPort"
+              placeholder="请输入容器端口号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="服务端口号" prop="servicePort">
+          <el-input
+              v-model="deployment_form.servicePort"
+              placeholder="请输入服务端口号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="节点端口号" prop="nodePort">
+          <el-input
+              v-model="deployment_form.nodePort"
+              placeholder="请输入节点端口号"
+          ></el-input>
+        </el-form-item>
+        <el-form-item size="large">
+          <div class="cp-sbm-area">
+            <el-button round @click="resetForm('deployment_form')">清空输入</el-button>
+            <el-button round type="primary" @click="deployment_sumbit('deployment_form')"
+            >立即创建</el-button
+            >
+          </div>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
   
@@ -148,7 +208,7 @@ import { del } from "vue";
 export default {
   name: "DeployView",
   mounted() {
-    this.getVMList();
+    this.getDeploymentList();
   },
   data() {
     return {
@@ -160,7 +220,33 @@ export default {
       pagesize: 10,
       fileList: [],
       fileType: ["yaml"],
+      createDeploymentvisible: false,
       uploaddeploymentvisible: false,
+      deployment_form: {
+        deploymentName: "",
+        image: "",
+        containerPort: "",
+        servicePort: "",
+        nodePort: "",
+      },
+      deployment_rules: {
+        deploymentName: [
+          { required: true, message: "请输入应用名称", trigger: "blur" },
+        ],
+        image: [
+          { required: true, message: "请输入镜像名称", trigger: "blur" },
+        ],
+        containerPort: [
+          { required: true, message: "请输入容器端口", trigger: "blur" },
+        ],
+        servicePort: [
+          { required: true, message: "请输入服务端口", trigger: "blur" },
+        ],
+        nodePort: [
+          { required: true, message: "请输入节点端口", trigger: "blur" },
+        ],
+
+      },
     };
   },
   methods: {
@@ -169,8 +255,71 @@ export default {
     openUploadDeployment() {
       this.uploaddeploymentvisible = true;
     },
+    openCreateDeployment() {
+      this.createDeploymentvisible = true;
+    },
+    // 重置表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    // 添加容器
+    deployment_sumbit(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$axios({
+            method: "post",
+            url: this.baseurl + "/deployment/deployByParam",
+            data: {
+              deploymentName: this.deployment_form.deploymentName,
+              image: this.deployment_form.image,
+              containerPort: this.deployment_form.containerPort,
+              servicePort: this.deployment_form.servicePort,
+              nodePort: this.deployment_form.nodePort,
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(
+              (res) => {
+                console.log(res);
+                if (res.data[0] === "E") {
+                  this.$notify.error({
+                    title: "创建失败",
+                    message: res.data,
+                    position: "bottom-right",
+                  });
+                } else {
+                  this.$notify.success({
+                    title: "完成通知",
+                    message: "应用 " + this.deployment_form.deploymentName + " 创建成功",
+                    position: "bottom-right",
+                  });
+                  this.createDeploymentvisible = false
+                  setTimeout(() => {
+                    this.getDeploymentList();
+                  }, 1000);
+                }
+              },
+              (err) => {
+                console.log(err);
+                this.$notify.error({
+                  title: "创建失败",
+                  message: "请检查网络连接设置",
+                  position: "bottom-right",
+                });
+              }
+          );
+          this.createpodvisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
     // 获取Deployment列表数据
-    getVMList() {
+    getDeploymentList() {
       this.$axios
         .get(this.baseurl + "/deployment/list")
         .then((res) => {
@@ -200,7 +349,7 @@ export default {
             message: "应用 " + name + "删除成功",
             position: "bottom-right",
           });
-          this.getVMList();
+          this.getDeploymentList();
         },
         (err) => {
           console.log(err);
@@ -231,7 +380,7 @@ export default {
             position: "bottom-right",
           });
           setTimeout(() => {
-            this.getVMList();
+            this.getDeploymentList();
           }, 1000);
         },
         (err) => {
@@ -264,7 +413,7 @@ export default {
             position: "bottom-right",
           });
           setTimeout(() => {
-            this.getVMList();
+            this.getDeploymentList();
           }, 1000);
         },
         (err) => {
@@ -315,7 +464,7 @@ export default {
             position: "bottom-right",
           });
           setTimeout(() => {
-            this.getVMList();
+            this.getDeploymentList();
           }, 2000);
         },
         (err) => {
