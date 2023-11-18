@@ -86,7 +86,7 @@
             <div class="el-upload__text">
               将文件拖到此处，或<em>点击上传</em>
             </div>
-            <div class="el-upload__tip" slot="tip">*只能上传.iso文件</div>
+            <div class="el-upload__tip" slot="tip">*只能上传.iso/.qcow2/.img文件</div>
           </el-upload>
         </el-form-item>
           <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
@@ -175,9 +175,8 @@ export default {
     },
 
     handleBeforeUpload(file) {
-      var iso = file.name.substring(file.name.lastIndexOf(".") + 1);
-      const suffix = iso === "iso";
-      if (!suffix) {
+      var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
+      if (suffix!==iso&&suffix!==qcow2&&suffix!==img) {
         this.$message.error("只能上传ISO、qcow2、img文件！");
         return false;
       }
