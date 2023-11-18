@@ -467,6 +467,10 @@ export default {
           value: "server1",
           label: "server1",
         },
+        {
+          value: "localhost:localdomain",
+          label: "localhost:localdomain",
+        },
       ],
       baseurl: "http://127.0.0.1:8080",
       poddata: [],
@@ -728,17 +732,25 @@ export default {
             },
           }).then(
             (res) => {
-              this.$notify.success({
-                title: "操作通知",
-                message: "容器 " + this.poddata[idx].metadata.name + "迁移成功",
-                position: "bottom-right",
-              });
+              if (res.data[0] === "E") {
+                this.$notify.error({
+                  title: "迁移失败",
+                  message: res.data,
+                  position: "bottom-right",
+                });
+              } else {
+                this.$notify.success({
+                  title: "操作通知",
+                  message: "容器 " + this.poddata[idx].metadata.name + "迁移成功",
+                  position: "bottom-right",
+                });
+              }
               this.getPodList();
             },
             (err) => {
               console.log(err);
               this.$notify.error({
-                title: "删除失败",
+                title: "迁移失败",
                 message: "请检查网络连接设置",
                 position: "bottom-right",
               });
