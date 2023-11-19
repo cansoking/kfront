@@ -33,7 +33,7 @@
       empty-text="暂无容器镜像"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-      <el-table-column width="80" sortable label="ID" prop="id">
+      <el-table-column width="80" type="index" label="序号">
       </el-table-column>
       <el-table-column width="500" sortable label="镜像名称" prop="image">
       </el-table-column>
@@ -49,7 +49,7 @@
         </template>
         <template slot-scope="scope">
           <div style="text-align: center">
-            <el-button plain type="danger">删除</el-button>
+            <el-button plain type="danger" @click="deleteimage(scope.$index, scope.row)">删除</el-button>
           </div>
         </template>
       </el-table-column>
@@ -73,11 +73,13 @@
           class="upload-demo"
           drag
           ref="upload"
-          :action="baseurl + '#'"
+          :action="baseurl + '/containerd/uploadImage'"
+          :data="formData"
           :multiple="false"
           accept=".tar"
-          :auto-upload="false"
+          :auto-upload="true"
           :limit="1"
+          name="tarFile"
           :before-upload="handleBeforeUpload"
           :on-success="sucupload"
           :on-error="errupload"
@@ -93,6 +95,8 @@
 </template>
   
   <script>
+import { del } from 'vue';
+
 export default {
   name: "ImageList",
   mounted() {
@@ -107,9 +111,44 @@ export default {
       totalci: 0,
       pagesize: 10,
       uploadimagevisible: false,
+      formData: {
+        virtualMachineIp: "192.168.91.129",
+        userName: "root",
+        userPassword: "Noi3674.",
+      },
     };
   },
   methods: {
+    // 删除镜像
+    deleteimage(idx, row) {
+      this.$axios
+        .post(this.baseurl + "/containerd/deleteImage", {
+          vmInfo: this.formData,
+          imageInfo: row
+        })
+        .then((res) => {
+          if (res.data[0] === "I") {
+        this.$notify.success({
+          title: "删除成功",
+          message: "镜像删除成功",
+          position: "bottom-right",
+          duration: 6000,
+        });
+        this.getVMList();
+      } else {
+        this.$notify.error({
+          title: "删除失败",
+          message: response,
+          position: "bottom-right",
+          duration: 6000,
+        });
+        this.getVMList();
+      }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
     // 上传失败
     errupload(err, file, fileList) {
       this.$notify.error({
@@ -118,17 +157,20 @@ export default {
         position: "bottom-right",
         duration: 6000,
       });
+      this.uploadimagevisible = false;
+      this.getVMList();
     },
     // 成功上传文件
     sucupload(response, file, fileList) {
-      if (response === "yes") {
+      if (response[0] === "I") {
         this.$notify.success({
           title: "上传成功",
           message: "镜像上传成功",
           position: "bottom-right",
           duration: 6000,
         });
-        this.$router.push("/vmlist");
+        this.uploadimagevisible = false;
+        this.getVMList();
       } else {
         this.$notify.error({
           title: "上传失败",
@@ -136,6 +178,8 @@ export default {
           position: "bottom-right",
           duration: 6000,
         });
+        this.uploadimagevisible = false;
+        this.getVMList();
       }
     },
     // 控制文件格式
@@ -161,7 +205,6 @@ export default {
           return item !== "";
         });
         res.push({
-          id: i,
           image: cols[0],
           tag: cols[1],
           imageid: cols[2],

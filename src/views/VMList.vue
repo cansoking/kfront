@@ -34,14 +34,20 @@
       empty-text="暂无虚拟机"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
+    <el-table-column
+        type="index"
+        label="序号"
+        width="100"
+      >
+      </el-table-column>
       <el-table-column
-        width="200"
+        width="400"
         sortable
         label="名称"
         prop="name"
       >
       </el-table-column>
-      <el-table-column width="100" sortable label="状态" prop="state">
+      <el-table-column width="300" sortable label="状态" prop="state">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
             >挂起</el-tag

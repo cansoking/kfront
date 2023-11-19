@@ -2,89 +2,95 @@
   <div class="vmarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-
-          <el-col :span="10" :offset="0"
-          ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-            虚拟机日志列表
-          </p></el-col
-          >
-        </el-row>
-
-
-      <el-col style="margin-bottom: 5px">
+      <el-col span="4" :offset="0"
+        ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+          虚拟机日志列表
+        </p></el-col
+      >
+      <el-col span="4" offset="6">
         <el-select v-model="searchvm" placeholder="请选择虚拟机">
           <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
           </el-option>
         </el-select>
-        <el-date-picker
-            v-model="starttime"
-            type="datetime" placeholder="请选择开始时间">
-        </el-date-picker>
-        <el-date-picker
-            v-model="endtime"
-            type="datetime" placeholder="请选择结束时间">
-        </el-date-picker>
-        <el-button type="primary" @click="getVMLog">查询</el-button>
       </el-col>
-    <el-col>
-      <el-table
-          :data="vmlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
-          style="width: 100%"
-          empty-text="暂无日志"
-          :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-      >
-        <!--      <el-table-column  sortable label="ID" prop="id">-->
-        <!--      </el-table-column>-->
-        <el-table-column  sortable label="虚拟机名"  prop="vmName">
-        </el-table-column>
-        <el-table-column sortable label="日志内容" prop="displayContent">
-        </el-table-column>
-        <el-table-column sortable label="生成时间" prop="AddTime" >
-        </el-table-column>
-        <el-table-column
-            fixed="right"
-            label="操作" >
-          <template slot-scope="scope">
-            <el-button
-                size="mini"
-                type="success"
-                @click="lookLog(scope.$index, scope.row)">查看详细日志</el-button>
-            <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-col>
+      <el-col span="4" offset="">
+        <el-date-picker
+          v-model="starttime"
+          type="datetime"
+          placeholder="请选择开始时间"
+        >
+        </el-date-picker>
+      </el-col>
+      <el-col span="4" offset="">
+        <el-date-picker
+          v-model="endtime"
+          type="datetime"
+          placeholder="请选择结束时间"
+        >
+        </el-date-picker>
+      </el-col>
+      <el-col span="1" offset="">
+        <el-button round plain type="primary" @click="getVMLog">查询</el-button>
+      </el-col>
+    </el-row>
+    <el-table
+      :data="vmlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
+      style="width: 100%"
+      empty-text="暂无日志"
+      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+    >
+      <!--      <el-table-column  sortable label="ID" prop="id">-->
+      <!--      </el-table-column>-->
+      <el-table-column type="index" label="序号"> </el-table-column>
+      <el-table-column sortable label="虚拟机名" prop="vmName">
+      </el-table-column>
+      <el-table-column sortable label="日志内容" prop="displayContent">
+      </el-table-column>
+      <el-table-column sortable label="生成时间" prop="AddTime">
+      </el-table-column>
+      <el-table-column fixed="right" label="操作">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="success"
+            @click="lookLog(scope.$index, scope.row)"
+            >查看详细日志</el-button
+          >
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
     <!-- 分页栏 -->
-    <el-col>
-      <div v-if="vmlogdata.length != 0" style="margin-top: 30px">
-        <el-pagination
-            :current-page.sync="curpage"
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size.sync="pagesize"
-            layout="sizes, total, prev, pager, next, jumper"
-            :total="totalvmlog"
-            background
-        ></el-pagination>
-      </div>
-    </el-col>
-    <el-dialog title="详细日志"
-               :visible.sync="logvisible">
+    <div v-if="vmlogdata.length != 0" style="margin-top: 30px">
+      <el-pagination
+        :current-page.sync="curpage"
+        :page-sizes="[10, 20, 30, 40, 50]"
+        :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper"
+        :total="totalvmlog"
+        background
+      ></el-pagination>
+    </div>
+    <el-dialog title="详细日志" :visible.sync="logvisible">
       <el-card shadow="never">
-        {{logcontent}}
+        {{ logcontent }}
       </el-card>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import moment from 'moment'
+import moment from "moment";
 export default {
   name: "VMLogList",
   data() {
@@ -93,91 +99,92 @@ export default {
       curpage: 1,
       totalvmlog: 0,
       pagesize: 10,
-      vmlogdata:[],
-      starttime: '',
-      endtime:"",
-      searchvm:'',
-      logvisible:false,
-      logcontent:'',
+      vmlogdata: [],
+      starttime: "",
+      endtime: "",
+      searchvm: "",
+      logvisible: false,
+      logcontent: "",
       options: [],
       props: {
         value: "value",
-        label: "label",      //展示的lable名字
-        children:"children"    //展示子级
+        label: "label", //展示的lable名字
+        children: "children", //展示子级
       },
     };
   },
   mounted() {
     this.getVMLog();
-    this.getVMName()
+    this.getVMName();
   },
   methods: {
     getVMName() {
       this.$axios
-          .get(this.baseurl+"/log/getVMName")
-          .then((res) => {
-            console.log(res.data.content)
-            this.options = res.data.content;
-          })
-          .catch((err) => {
-          });
+        .get(this.baseurl + "/log/getVMName")
+        .then((res) => {
+          console.log(res.data.content);
+          this.options = res.data.content;
+        })
+        .catch((err) => {});
     },
-    lookLog(index, row){
+    lookLog(index, row) {
       this.logvisible = true;
       this.logcontent = row.vmContent;
     },
     getVMLog() {
-      this.starttime = moment(this.starttime).format('YYYY-MM-DD HH:mm:ss')
-      this.endtime = moment(this.endtime).format('YYYY-MM-DD HH:mm:ss')
+      this.starttime = moment(this.starttime).format("YYYY-MM-DD HH:mm:ss");
+      this.endtime = moment(this.endtime).format("YYYY-MM-DD HH:mm:ss");
       this.$axios
-          .get(this.baseurl+"/log/getVMLog", {
-                params: {
-                  VMName: this.searchvm,
-                  starttime: this.starttime,
-                  endtime: this.endtime
-                }
-              }
-          )
-          .then((res) => {
-            console.log(res.data);
-            if(res.data.success) {
-              this.vmlogdata = res.data.content
-              this.totalvmlog = res.data.content.length
-            }else{
-              alert(res.data.msg);
-            }
-          })
-          .catch((err) => {
-            alert(err);
-            console.log("err::::"+err)
-          });
-    },
-    handleDelete(index, row) {
-      this.$confirm(`您确定删除吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios
-            .delete(this.baseurl+"/log/deleteVMLog/" + row.id).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("删除成功！");
-            this.getVMLog();
+        .get(this.baseurl + "/log/getVMLog", {
+          params: {
+            VMName: this.searchvm,
+            starttime: this.starttime,
+            endtime: this.endtime,
+          },
+        })
+        .then((res) => {
+          console.log(res.data);
+          if (res.data.success) {
+            this.vmlogdata = res.data.content;
+            this.totalvmlog = res.data.content.length;
           } else {
-            this.$message.success("删除失败！");
+            alert(res.data.msg);
           }
         })
-      }).catch(() => {
-        // 取消操作
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      });
+        .catch((err) => {
+          alert(err);
+          console.log("err::::" + err);
+        });
     },
-  }
-}
+    handleDelete(index, row) {
+      this.$confirm(`您确定删除吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$axios
+            .delete(this.baseurl + "/log/deleteVMLog/" + row.id)
+            .then((response) => {
+              const data = response.data;
+              if (data.success) {
+                this.$message.success("删除成功！");
+                this.getVMLog();
+              } else {
+                this.$message.success("删除失败！");
+              }
+            });
+        })
+        .catch(() => {
+          // 取消操作
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
+    },
+  },
+};
 </script>
 
 <style>
@@ -187,7 +194,7 @@ export default {
   padding: 20px;
   margin-top: 15px;
 }
-.v_html{
+.v_html {
   font-size: 20px;
 }
 /*带背景的分页按钮背景色begin*/

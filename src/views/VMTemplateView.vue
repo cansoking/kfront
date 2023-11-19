@@ -1,57 +1,54 @@
 <template>
   <div class="vmarea">
-
     <el-col :span="10" :offset="0"
-    ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-      模版列表
-    </p></el-col
+      ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+        模版列表
+      </p></el-col
     >
     <el-col :span="2" :offset="12">
       <el-button
-          @click="openCreateVMtem"
-          icon="el-icon-circle-plus-outline"
-          size="medium"
-          round
-          plain
-      >新增模版
-      </el-button
-      >
+        @click="openCreateVMtem"
+        icon="el-icon-circle-plus-outline"
+        size="medium"
+        round
+        plain
+        >新增模版
+      </el-button>
     </el-col>
 
-<el-col>
+    <el-col>
       <el-table
-          :data="vmtemdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
-          style="width: 100%"
-          empty-text="暂无日志"
-          :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+        :data="vmtemdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
+        style="width: 100%"
+        empty-text="暂无日志"
+        :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
       >
+        <el-table-column width="100" type="index" label="序号"> </el-table-column>
         <!--      <el-table-column  sortable label="ID" prop="id">-->
         <!--      </el-table-column>-->
-        <el-table-column  sortable label="模版名称" prop="name">
+        <el-table-column sortable label="模版名称" prop="name">
         </el-table-column>
-        <el-table-column sortable label="内存大小(G)" prop="memory" >
+        <el-table-column sortable label="内存大小(G)" prop="memory">
         </el-table-column>
-        <el-table-column sortable label="处理器个数" prop="cpuNum" >
+        <el-table-column sortable label="处理器个数" prop="cpuNum">
         </el-table-column>
-        <el-table-column sortable label="操作系统类型" prop="OStype" >
+        <el-table-column sortable label="操作系统类型" prop="OStype">
         </el-table-column>
-        <el-table-column
-            fixed="right"
-            label="操作">
+        <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
             <el-button
-                size="mini"
-                type="danger"
-                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-            <el-button
-                size="mini"
-                type="warning"
-                @click="edit(scope.row)">修改</el-button>
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button
+            >
+            <el-button size="mini" type="warning" @click="edit(scope.row)"
+              >修改</el-button
+            >
             <el-tooltip content="以该模版创建虚拟机" placement="top">
-              <el-button
-                  size="mini"
-                  type="success"
-                  @click="build(scope.row)">创建</el-button>
+              <el-button size="mini" type="success" @click="build(scope.row)"
+                >创建</el-button
+              >
             </el-tooltip>
           </template>
         </el-table-column>
@@ -61,244 +58,255 @@
     <el-col>
       <div v-if="vmtemdata.length != 0" style="margin-top: 30px">
         <el-pagination
-            :current-page.sync="curpage"
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size.sync="pagesize"
-            layout="sizes, total, prev, pager, next, jumper"
-            :total="totalvmtem"
-            background
+          :current-page.sync="curpage"
+          :page-sizes="[10, 20, 30, 40, 50]"
+          :page-size.sync="pagesize"
+          layout="sizes, total, prev, pager, next, jumper"
+          :total="totalvmtem"
+          background
         ></el-pagination>
       </div>
-    </el-col
-    >
-    <el-dialog title="添加模版"
-               :visible.sync="createvmtemvisible">
+    </el-col>
+    <el-dialog title="添加模版" :visible.sync="createvmtemvisible">
       <el-form
-          label-position="top"
-          label-width="80px"
-          :model="vmtem_form"
-          :status-icon="true"
-          :rules="vmtem_rules"
-          ref="vmtem_form"
-          >
+        label-position="top"
+        label-width="80px"
+        :model="vmtem_form"
+        :status-icon="true"
+        :rules="vmtem_rules"
+        ref="vmtem_form"
+      >
         <el-form-item label="模版名称" prop="name">
           <el-input
-              v-model="vmtem_form.name"
-              placeholder="请输入模版名称"
+            v-model="vmtem_form.name"
+            placeholder="请输入模版名称"
           ></el-input>
         </el-form-item>
         <el-form-item label="内存大小" prop="memory">
           <el-input
-              v-model="vmtem_form.memory"
-              placeholder="请输入内存大小(单位G)"
-              clearables @blur="validMemory('vmtem_form')"></el-input>
+            v-model="vmtem_form.memory"
+            placeholder="请输入内存大小(单位G)"
+            clearables
+            @blur="validMemory('vmtem_form')"
+          ></el-input>
         </el-form-item>
         <el-form-item label="处理器个数" prop="cpuNum">
           <el-select
-              style="width: 100%"
-              v-model="vmtem_form.cpuNum"
-              clearable
-              placeholder="请选择处理器个数"
+            style="width: 100%"
+            v-model="vmtem_form.cpuNum"
+            clearable
+            placeholder="请选择处理器个数"
           >
             <el-option
-                v-for="item in cpuNum_options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+              v-for="item in cpuNum_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="操作系统类型" prop="OStype">
           <el-select
-              style="width: 100%"
-              v-model="vmtem_form.OStype"
-              clearable
-              placeholder="请选择操作系统类型"
+            style="width: 100%"
+            v-model="vmtem_form.OStype"
+            clearable
+            placeholder="请选择操作系统类型"
           >
             <el-option
-                v-for="item in OStype_options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+              v-for="item in OStype_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
             </el-option>
           </el-select>
         </el-form-item>
-        <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
+        <div class="cp-sbm-area" style="margin-left: 450px; margin-top: 20px">
           <el-button round @click="resetForm('vmtem_form')">重置</el-button>
           <el-button round type="primary" @click="vmtem_sumbit('vmtem_form')"
-          >确认
+            >确认
           </el-button>
         </div>
       </el-form>
     </el-dialog>
 
-    <el-dialog title="修改模版"
-               :visible.sync="editvmtemvisible">
+    <el-dialog title="修改模版" :visible.sync="editvmtemvisible">
       <el-form
-          label-position="top"
-          label-width="80px"
-          :model="editvmtem_form"
-          :status-icon="true"
-          :rules="vmtem_rules"
-          ref="editvmtem_form"
+        label-position="top"
+        label-width="80px"
+        :model="editvmtem_form"
+        :status-icon="true"
+        :rules="vmtem_rules"
+        ref="editvmtem_form"
       >
         <el-form-item label="模版名称" prop="name">
           <el-input
-              v-model="editvmtem_form.name"
-              placeholder="请输入模版名称"
-              @blur="validName('editvmtem_form')"></el-input>
+            v-model="editvmtem_form.name"
+            placeholder="请输入模版名称"
+            @blur="validName('editvmtem_form')"
+          ></el-input>
         </el-form-item>
         <el-form-item label="内存大小" prop="memory">
           <el-input
-              v-model="editvmtem_form.memory"
-              placeholder="请输入内存大小(单位G)"
-              clearables @blur="validMemory('editvmtem_form')"></el-input>
+            v-model="editvmtem_form.memory"
+            placeholder="请输入内存大小(单位G)"
+            clearables
+            @blur="validMemory('editvmtem_form')"
+          ></el-input>
         </el-form-item>
         <el-form-item label="处理器个数" prop="cpuNum">
           <el-select
-              style="width: 100%"
-              v-model="editvmtem_form.cpuNum"
-              clearable
-              placeholder="请选择处理器个数"
+            style="width: 100%"
+            v-model="editvmtem_form.cpuNum"
+            clearable
+            placeholder="请选择处理器个数"
           >
             <el-option
-                v-for="item in cpuNum_options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+              v-for="item in cpuNum_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="操作系统类型" prop="OStype">
           <el-select
-              style="width: 100%"
-              v-model="editvmtem_form.OStype"
-              clearable
-              placeholder="请选择操作系统类型"
+            style="width: 100%"
+            v-model="editvmtem_form.OStype"
+            clearable
+            placeholder="请选择操作系统类型"
           >
             <el-option
-                v-for="item in OStype_options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+              v-for="item in OStype_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
             </el-option>
           </el-select>
         </el-form-item>
-        <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
+        <div class="cp-sbm-area" style="margin-left: 450px; margin-top: 20px">
           <el-button round @click="resetForm('editvmtem_form')">重置</el-button>
-          <el-button round type="primary" @click="editvmtem_sumbit('editvmtem_form')"
-          >确认
+          <el-button
+            round
+            type="primary"
+            @click="editvmtem_sumbit('editvmtem_form')"
+            >确认
           </el-button>
         </div>
       </el-form>
     </el-dialog>
 
-
-    <el-dialog title="创建虚拟机"
-               :visible.sync="buildvmtemvisible">
+    <el-dialog title="创建虚拟机" :visible.sync="buildvmtemvisible">
       <el-form
-          label-position="top"
-          label-width="80px"
-          :model="buildvmtem_form"
-          :status-icon="true"
-          ref="buildvmtem_form"
+        label-position="top"
+        label-width="80px"
+        :model="buildvmtem_form"
+        :status-icon="true"
+        ref="buildvmtem_form"
       >
         <el-form-item label="请输入虚拟机名称" prop="vmname">
           <el-input
-              v-model="buildvmtem_form.vmname"
-              placeholder="请输入虚拟机名称"
-              @blur="validName('buildvmtem_form')"></el-input>
+            v-model="buildvmtem_form.vmname"
+            placeholder="请输入虚拟机名称"
+            @blur="validName('buildvmtem_form')"
+          ></el-input>
         </el-form-item>
-
 
         <el-form-item label="模版名称" prop="name">
           <el-input
-              v-model="buildvmtem_form.name"
-              placeholder="请输入模版名称"
-              disabled ></el-input>
+            v-model="buildvmtem_form.name"
+            placeholder="请输入模版名称"
+            disabled
+          ></el-input>
         </el-form-item>
         <el-form-item label="内存大小" prop="memory">
           <el-input
-              v-model="buildvmtem_form.memory"
-              placeholder="请输入内存大小(单位G)"
-              clearables @blur="validMemory('editvmtem_form')" disabled></el-input>
+            v-model="buildvmtem_form.memory"
+            placeholder="请输入内存大小(单位G)"
+            clearables
+            @blur="validMemory('editvmtem_form')"
+            disabled
+          ></el-input>
         </el-form-item>
         <el-form-item label="处理器个数" prop="cpuNum">
           <el-select
-              style="width: 100%"
-              v-model="buildvmtem_form.cpuNum"
-              clearable
-              placeholder="请选择处理器个数"
-              disabled>
+            style="width: 100%"
+            v-model="buildvmtem_form.cpuNum"
+            clearable
+            placeholder="请选择处理器个数"
+            disabled
+          >
             <el-option
-                v-for="item in cpuNum_options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+              v-for="item in cpuNum_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             >
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="操作系统类型" prop="OStype">
           <el-select
-              style="width: 100%"
-              v-model="buildvmtem_form.OStype"
-              clearable
-              placeholder="请选择操作系统类型" disabled
+            style="width: 100%"
+            v-model="buildvmtem_form.OStype"
+            clearable
+            placeholder="请选择操作系统类型"
+            disabled
           >
             <el-option
-                v-for="item in OStype_options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-                disabled>
+              v-for="item in OStype_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+              disabled
+            >
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="虚拟机映像文件" prop="vm_iso">
           <el-upload
-              class="upload-demo"
-              drag
-              ref="upload"
-              :action="baseurl + '/Template/addVirtual'"
-              :multiple="false"
-              :data="buildvmtem_form"
-              accept=".iso"
-              :auto-upload="false"
-              :limit="1"
-              :before-upload="handleBeforeUpload"
-              :on-success="sucupload"
-              :on-error="errupload"
-              style="width: 30%"
+            class="upload-demo"
+            drag
+            ref="upload"
+            :action="baseurl + '/Template/addVirtual'"
+            :multiple="false"
+            :data="buildvmtem_form"
+            accept=".iso"
+            :auto-upload="false"
+            :limit="1"
+            :before-upload="handleBeforeUpload"
+            :on-success="sucupload"
+            :on-error="errupload"
+            style="width: 30%"
           >
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">
               将文件拖到此处，或<em>点击上传</em>
             </div>
-            <div class="el-upload__tip" slot="tip">*只能上传.iso/ .qemu2/ .img文件</div>
+            <div class="el-upload__tip" slot="tip">
+              *只能上传.iso/ .qemu2/ .img文件
+            </div>
           </el-upload>
         </el-form-item>
 
-
-        <div class="cp-sbm-area" style="margin-left:450px;margin-top: 20px">
-          <el-button round type="primary" @click="buildvmtem_sumbit('buildvmtem_form')"
-          >立即创建
+        <div class="cp-sbm-area" style="margin-left: 450px; margin-top: 20px">
+          <el-button
+            round
+            type="primary"
+            @click="buildvmtem_sumbit('buildvmtem_form')"
+            >立即创建
           </el-button>
         </div>
       </el-form>
     </el-dialog>
-
-
-
   </div>
 </template>
 
 <script>
-import moment from 'moment'
+import moment from "moment";
 export default {
   name: "VMLogList",
   data() {
@@ -308,11 +316,10 @@ export default {
       totalvmtem: 0,
       pagesize: 10,
       createvmtemvisible: false,
-      editvmtemvisible:false,
+      editvmtemvisible: false,
       buildvmtemvisible: false,
-      vmtemdata:[
-      ],
-      cpuNum_options:[
+      vmtemdata: [],
+      cpuNum_options: [
         {
           value: "2",
           label: "2",
@@ -338,7 +345,7 @@ export default {
           label: "12",
         },
       ],
-      OStype_options:[
+      OStype_options: [
         {
           value: "X86",
           label: "X86",
@@ -346,42 +353,42 @@ export default {
         {
           value: "ARM",
           label: "ARM",
-        }
+        },
       ],
       vmtem_form: {
         name: "",
-        memory: '',
+        memory: "",
         cpuNum: "",
-        OStype:'',
+        OStype: "",
       },
       editvmtem_form: {
-        id:'',
+        id: "",
         name: "",
-        memory: '',
+        memory: "",
         cpuNum: "",
-        OStype:'',
+        OStype: "",
       },
       buildvmtem_form: {
-        vmname:"",
+        vmname: "",
         name: "",
-        memory: '',
+        memory: "",
         cpuNum: "",
-        OStype:'',
+        OStype: "",
       },
       // 添加容器校验规则
       vmtem_rules: {
         vmname: [
-          {required: true, message: "请输入虚拟机名称", trigger: "blur"},
+          { required: true, message: "请输入虚拟机名称", trigger: "blur" },
         ],
         OStype: [
-          {required: true, message: "请选择操作系统类型", trigger: "change"},
+          { required: true, message: "请选择操作系统类型", trigger: "change" },
         ],
         cpuNum: [
-          {required: true, message: "请选择处理器个数", trigger: "change"},
+          { required: true, message: "请选择处理器个数", trigger: "change" },
         ],
         memory: [
-          {required: true, message: "请输入内存大小", trigger: "blur"},
-        ]
+          { required: true, message: "请输入内存大小", trigger: "blur" },
+        ],
       },
     };
   },
@@ -389,30 +396,32 @@ export default {
     this.getVMTem();
   },
   methods: {
-    getVMTem(){
+    getVMTem() {
       this.$axios
-          .get(this.baseurl+"/Template/selectAll")
-          .then((res) => {
-            if(res.data.success) {
-              this.vmtemdata = res.data.content
-              this.totalvmtem = res.data.content.length
-            }else{
-              alert(res.data.msg);
-            }
-          })
-          .catch((err) => {
-            alert(err);
-            console.log("err::::"+err)
-          });
-   },
+        .get(this.baseurl + "/Template/selectAll")
+        .then((res) => {
+          if (res.data.success) {
+            this.vmtemdata = res.data.content;
+            this.totalvmtem = res.data.content.length;
+          } else {
+            alert(res.data.msg);
+          }
+        })
+        .catch((err) => {
+          alert(err);
+          console.log("err::::" + err);
+        });
+    },
     validName(formname) {
-      if (formname === 'buildvmtem_form' && this.buildvmtem_form.name.includes('.')) {
+      if (
+        formname === "buildvmtem_form" &&
+        this.buildvmtem_form.name.includes(".")
+      ) {
         // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
         this.$notify.error({
-          message: '虚拟机名字不能包括特殊字符',
+          message: "虚拟机名字不能包括特殊字符",
         });
       }
-
     },
     buildvmtem_sumbit(formName) {
       // 校验表单
@@ -428,16 +437,19 @@ export default {
     },
     validMemory(formname) {
       const regex = /^[1-9]\d*(\.\d+)?$/;
-      if (formname === 'vmtem_form' && !regex.test(this.vmtem_form.memory)) {
+      if (formname === "vmtem_form" && !regex.test(this.vmtem_form.memory)) {
         // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
         this.$notify.error({
-          message: '请输入正数',
+          message: "请输入正数",
         });
       }
-      if (formname === 'editvmtem_form' && !regex.test(this.editvmtem_form.memory)) {
+      if (
+        formname === "editvmtem_form" &&
+        !regex.test(this.editvmtem_form.memory)
+      ) {
         // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
         this.$notify.error({
-          message: '请输入正数',
+          message: "请输入正数",
         });
       }
     },
@@ -448,36 +460,37 @@ export default {
           // 提交表单，创建容器
           this.$axios({
             method: "post",
-            url: this.baseurl+"/Template/insert",  //换成实际地址
+            url: this.baseurl + "/Template/insert", //换成实际地址
             data: this.vmtem_form,
             headers: {
               "Content-Type": "application/json",
             },
           }).then(
-              (res) => {
-                if (res.data.success === false) {  //增加失败
-                  this.$notify.error({
-                    title: "创建失败",
-                    message: res.data.msg,
-                    position: "bottom-right",
-                  });
-                } else {
-                  this.$notify.success({
-                    title: "完成通知",
-                    message: "模版" + this.vmtem_form.name + " 创建成功",
-                    position: "bottom-right",
-                  });
-                  this.getVMTem();
-                }
-              },
-              (err) => {
-                console.log(err);
+            (res) => {
+              if (res.data.success === false) {
+                //增加失败
                 this.$notify.error({
                   title: "创建失败",
-                  message: "请检查网络连接设置",
+                  message: res.data.msg,
                   position: "bottom-right",
                 });
+              } else {
+                this.$notify.success({
+                  title: "完成通知",
+                  message: "模版" + this.vmtem_form.name + " 创建成功",
+                  position: "bottom-right",
+                });
+                this.getVMTem();
               }
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "创建失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
           );
           this.createvmtemvisible = false;
         } else {
@@ -493,36 +506,37 @@ export default {
           // 提交表单，创建容器
           this.$axios({
             method: "post",
-            url: this.baseurl+"/Template/update",  //换成实际地址
+            url: this.baseurl + "/Template/update", //换成实际地址
             data: this.editvmtem_form,
             headers: {
               "Content-Type": "application/json",
             },
           }).then(
-              (res) => {
-                if (res.data.success === false) {  //增加失败
-                  this.$notify.error({
-                    title: "修改失败",
-                    message: res.data.msg,
-                    position: "bottom-right",
-                  });
-                } else {
-                  this.$notify.success({
-                    title: "修改通知",
-                    message: "模版" + this.editvmtem_form.name + " 修改成功",
-                    position: "bottom-right",
-                  });
-                   this.getVMTem();
-                }
-              },
-              (err) => {
-                console.log(err);
+            (res) => {
+              if (res.data.success === false) {
+                //增加失败
                 this.$notify.error({
                   title: "修改失败",
-                  message: "请检查网络连接设置",
+                  message: res.data.msg,
                   position: "bottom-right",
                 });
+              } else {
+                this.$notify.success({
+                  title: "修改通知",
+                  message: "模版" + this.editvmtem_form.name + " 修改成功",
+                  position: "bottom-right",
+                });
+                this.getVMTem();
               }
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "修改失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
           );
           this.editvmtemvisible = false;
         } else {
@@ -531,33 +545,36 @@ export default {
         }
       });
     },
-    openCreateVMtem(){
+    openCreateVMtem() {
       this.createvmtemvisible = true;
     },
 
     handleDelete(index, row) {
-      this.$confirm(`您确定删除吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios
-            .delete(this.baseurl+"/Template/delete/" + row.id).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("删除成功！");
-            this.getVMTem();
-          } else {
-            this.$message.success("删除失败！");
-          }
+      this.$confirm(`您确定删除吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$axios
+            .delete(this.baseurl + "/Template/delete/" + row.id)
+            .then((response) => {
+              const data = response.data;
+              if (data.success) {
+                this.$message.success("删除成功！");
+                this.getVMTem();
+              } else {
+                this.$message.success("删除失败！");
+              }
+            });
         })
-      }).catch(() => {
-        // 取消操作
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      });
+        .catch(() => {
+          // 取消操作
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
     edit(row) {
       this.editvmtem_form.id = row.id;
@@ -575,28 +592,31 @@ export default {
       this.buildvmtemvisible = true;
     },
     create(index, row) {
-      this.$confirm(`您确定删除吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios
-            .delete(this.baseurl+"/workload/deleteVMLog/" + row.id).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("删除成功！");
-            this.getVMLog();
-          } else {
-            this.$message.success("删除失败！");
-          }
+      this.$confirm(`您确定删除吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$axios
+            .delete(this.baseurl + "/workload/deleteVMLog/" + row.id)
+            .then((response) => {
+              const data = response.data;
+              if (data.success) {
+                this.$message.success("删除成功！");
+                this.getVMLog();
+              } else {
+                this.$message.success("删除失败！");
+              }
+            });
         })
-      }).catch(() => {
-        // 取消操作
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      });
+        .catch(() => {
+          // 取消操作
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
@@ -619,7 +639,7 @@ export default {
           position: "bottom-right",
           duration: 6000,
         });
-        this.$router.push('/vmlist');
+        this.$router.push("/vmlist");
       } else {
         this.$notify.error({
           title: "创建失败",
@@ -637,8 +657,8 @@ export default {
         duration: 6000,
       });
     },
-  }
-}
+  },
+};
 </script>
 
 <style>
@@ -648,7 +668,7 @@ export default {
   padding: 20px;
   margin-top: 15px;
 }
-.v_html{
+.v_html {
   font-size: 20px;
 }
 /*带背景的分页按钮背景色begin*/

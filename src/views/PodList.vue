@@ -34,6 +34,11 @@
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
       <el-table-column
+        type="index"
+        label="序号"
+      >
+      </el-table-column>
+      <el-table-column
         width="280"
         sortable
         label="容器名称"
@@ -93,7 +98,7 @@
         <template slot-scope="scope">
           <!-- 迁移界面 -->
           <el-popover
-            :ref="'popover'+scope.$index"
+            :ref="'popover' + scope.$index"
             placement="left"
             width="300"
             trigger="click"
@@ -137,7 +142,11 @@
             </el-form>
           </el-popover>
           <el-button-group>
-            <el-button v-popover="'popover' + scope.$index" plain type="info" size="mini"
+            <el-button
+              v-popover="'popover' + scope.$index"
+              plain
+              type="info"
+              size="mini"
               >迁移</el-button
             >
             <el-button
@@ -741,7 +750,8 @@ export default {
               } else {
                 this.$notify.success({
                   title: "操作通知",
-                  message: "容器 " + this.poddata[idx].metadata.name + "迁移成功",
+                  message:
+                    "容器 " + this.poddata[idx].metadata.name + "迁移成功",
                   position: "bottom-right",
                 });
               }

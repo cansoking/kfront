@@ -68,20 +68,6 @@
           <span slot="title">持久卷</span>
         </el-menu-item>
       </el-submenu>
-      <el-submenu index="template">
-        <template slot="title">
-          <i class="el-icon-menu"></i>
-          <span>模板管理</span>
-        </template>
-        <el-menu-item index="/template1" route="template1">
-          <i class="el-icon-c-scale-to-original"></i>
-          <span slot="title">模板管理1</span>
-        </el-menu-item>
-        <el-menu-item index="/template2" route="template2">
-          <i class="el-icon-folder-add"></i>
-          <span slot="title">模板管理2</span>
-        </el-menu-item>
-      </el-submenu>
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>

@@ -30,11 +30,6 @@ const routes = [
     component: () => import('../views/VMCreate.vue')
   },
   {
-    path: '/template1',
-    name: 'template1',
-    component: () => import('../views/TemplateView.vue')
-  },
-  {
     path: '/podlog',
     name: 'podlog',
     component: () => import('../views/PodLogList.vue')

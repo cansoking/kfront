@@ -33,6 +33,11 @@
       empty-text="暂无持久卷"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
+    <el-table-column
+        label="序号"
+        type="index"
+      >
+      </el-table-column>
       <el-table-column
         width="200"
         sortable

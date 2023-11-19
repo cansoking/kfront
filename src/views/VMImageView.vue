@@ -25,6 +25,12 @@
           empty-text="暂无镜像"
           :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
       >
+      <el-table-column
+        type="index"
+        label="序号"
+        width="200"
+      >
+      </el-table-column>
 
         <el-table-column  sortable label="镜像名称" prop="name">
         </el-table-column>

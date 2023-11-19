@@ -17,15 +17,15 @@
           >上传部署</el-button
         >
       </el-col>
-      <el-col :span="2" >
-      <el-button
+      <el-col :span="2">
+        <el-button
           @click="openCreateDeployment"
           icon="el-icon-circle-plus-outline"
           size="medium"
           round
           plain
-      >添加部署</el-button
-      >
+          >添加部署</el-button
+        >
       </el-col>
     </el-row>
     <!-- 表格区域 -->
@@ -43,6 +43,7 @@
       empty-text="暂无部署"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
+      <el-table-column type="index" label="序号"> </el-table-column>
       <el-table-column width="250" sortable label="名称" prop="metadata.name">
       </el-table-column>
       <el-table-column
@@ -52,7 +53,7 @@
         prop="metadata.namespace"
       >
       </el-table-column>
-      <el-table-column width="600" sortable label="标签" prop="metadata.labels">
+      <el-table-column width="500" sortable label="标签" prop="metadata.labels">
         <template slot-scope="scope">
           {{
             JSON.stringify(scope.row.metadata.labels)
@@ -142,8 +143,14 @@
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">*只能上传.yaml文件</div>
         </el-upload>
-        <div style="padding-top: 50px;">
-          <el-button class="ml-3" round plain type="primary" @click="submitUpload">
+        <div style="padding-top: 50px">
+          <el-button
+            class="ml-3"
+            round
+            plain
+            type="primary"
+            @click="submitUpload"
+          >
             上传到服务器
           </el-button>
         </div>
@@ -152,48 +159,53 @@
     <!-- 添加应用对话框 -->
     <el-dialog title="添加应用" :visible.sync="createDeploymentvisible">
       <el-form
-          label-position="top"
-          label-width="80px"
-          :model="deployment_form"
-          :status-icon="true"
-          :rules="deployment_rules"
-          ref="deployment_form"
+        label-position="top"
+        label-width="80px"
+        :model="deployment_form"
+        :status-icon="true"
+        :rules="deployment_rules"
+        ref="deployment_form"
       >
         <el-form-item label="应用名称" prop="deploymentName">
           <el-input
-              v-model="deployment_form.deploymentName"
-              placeholder="请输入应用名称"
+            v-model="deployment_form.deploymentName"
+            placeholder="请输入应用名称"
           ></el-input>
         </el-form-item>
         <el-form-item label="镜像名称" prop="image">
           <el-input
-              v-model="deployment_form.image"
-              placeholder="请输入镜像名称"
+            v-model="deployment_form.image"
+            placeholder="请输入镜像名称"
           ></el-input>
         </el-form-item>
         <el-form-item label="容器端口号" prop="containerPort">
           <el-input
-              v-model="deployment_form.containerPort"
-              placeholder="请输入容器端口号"
+            v-model="deployment_form.containerPort"
+            placeholder="请输入容器端口号"
           ></el-input>
         </el-form-item>
         <el-form-item label="服务端口号" prop="servicePort">
           <el-input
-              v-model="deployment_form.servicePort"
-              placeholder="请输入服务端口号"
+            v-model="deployment_form.servicePort"
+            placeholder="请输入服务端口号"
           ></el-input>
         </el-form-item>
         <el-form-item label="节点端口号" prop="nodePort">
           <el-input
-              v-model="deployment_form.nodePort"
-              placeholder="请输入节点端口号"
+            v-model="deployment_form.nodePort"
+            placeholder="请输入节点端口号"
           ></el-input>
         </el-form-item>
         <el-form-item size="large">
           <div class="cp-sbm-area">
-            <el-button round @click="resetForm('deployment_form')">清空输入</el-button>
-            <el-button round type="primary" @click="deployment_sumbit('deployment_form')"
-            >立即创建</el-button
+            <el-button round @click="resetForm('deployment_form')"
+              >清空输入</el-button
+            >
+            <el-button
+              round
+              type="primary"
+              @click="deployment_sumbit('deployment_form')"
+              >立即创建</el-button
             >
           </div>
         </el-form-item>
@@ -233,9 +245,7 @@ export default {
         deploymentName: [
           { required: true, message: "请输入应用名称", trigger: "blur" },
         ],
-        image: [
-          { required: true, message: "请输入镜像名称", trigger: "blur" },
-        ],
+        image: [{ required: true, message: "请输入镜像名称", trigger: "blur" }],
         containerPort: [
           { required: true, message: "请输入容器端口", trigger: "blur" },
         ],
@@ -245,7 +255,6 @@ export default {
         nodePort: [
           { required: true, message: "请输入节点端口", trigger: "blur" },
         ],
-
       },
     };
   },
@@ -282,34 +291,35 @@ export default {
               "Content-Type": "application/json",
             },
           }).then(
-              (res) => {
-                console.log(res);
-                if (res.data[0] === "E") {
-                  this.$notify.error({
-                    title: "创建失败",
-                    message: res.data,
-                    position: "bottom-right",
-                  });
-                } else {
-                  this.$notify.success({
-                    title: "完成通知",
-                    message: "应用 " + this.deployment_form.deploymentName + " 创建成功",
-                    position: "bottom-right",
-                  });
-                  this.createDeploymentvisible = false
-                  setTimeout(() => {
-                    this.getDeploymentList();
-                  }, 1000);
-                }
-              },
-              (err) => {
-                console.log(err);
+            (res) => {
+              console.log(res);
+              if (res.data[0] === "E") {
                 this.$notify.error({
                   title: "创建失败",
-                  message: "请检查网络连接设置",
+                  message: res.data,
                   position: "bottom-right",
                 });
+              } else {
+                this.$notify.success({
+                  title: "完成通知",
+                  message:
+                    "应用 " + this.deployment_form.deploymentName + " 创建成功",
+                  position: "bottom-right",
+                });
+                this.createDeploymentvisible = false;
+                setTimeout(() => {
+                  this.getDeploymentList();
+                }, 1000);
               }
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "创建失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
           );
           this.createpodvisible = false;
         } else {
