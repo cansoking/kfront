@@ -16,57 +16,52 @@
       </el-button>
     </el-col>
 
-    <el-col>
-      <el-table
-        :data="vmtemdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
-        style="width: 100%"
-        empty-text="暂无日志"
-        :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-      >
-        <el-table-column width="100" type="index" label="序号"> </el-table-column>
-        <!--      <el-table-column  sortable label="ID" prop="id">-->
-        <!--      </el-table-column>-->
-        <el-table-column sortable label="模版名称" prop="name">
-        </el-table-column>
-        <el-table-column sortable label="内存大小(G)" prop="memory">
-        </el-table-column>
-        <el-table-column sortable label="处理器个数" prop="cpuNum">
-        </el-table-column>
-        <el-table-column sortable label="操作系统类型" prop="OStype">
-        </el-table-column>
-        <el-table-column fixed="right" label="操作">
-          <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
+    <el-table
+      :data="vmtemdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
+      style="width: 100%"
+      empty-text="暂无日志"
+      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+    >
+      <el-table-column width="100" type="index" label="序号"> </el-table-column>
+      <!--      <el-table-column  sortable label="ID" prop="id">-->
+      <!--      </el-table-column>-->
+      <el-table-column sortable label="模版名称" prop="name"> </el-table-column>
+      <el-table-column sortable label="内存大小(G)" prop="memory">
+      </el-table-column>
+      <el-table-column sortable label="处理器个数" prop="cpuNum">
+      </el-table-column>
+      <el-table-column sortable label="操作系统类型" prop="OStype">
+      </el-table-column>
+      <el-table-column fixed="right" label="操作">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="danger"
+            @click="handleDelete(scope.$index, scope.row)"
+            >删除</el-button
+          >
+          <el-button size="mini" type="warning" @click="edit(scope.row)"
+            >修改</el-button
+          >
+          <el-tooltip content="以该模版创建虚拟机" placement="top">
+            <el-button size="mini" type="success" @click="build(scope.row)"
+              >创建</el-button
             >
-            <el-button size="mini" type="warning" @click="edit(scope.row)"
-              >修改</el-button
-            >
-            <el-tooltip content="以该模版创建虚拟机" placement="top">
-              <el-button size="mini" type="success" @click="build(scope.row)"
-                >创建</el-button
-              >
-            </el-tooltip>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-col>
+          </el-tooltip>
+        </template>
+      </el-table-column>
+    </el-table>
     <!-- 分页栏 -->
-    <el-col>
-      <div v-if="vmtemdata.length != 0" style="margin-top: 30px">
-        <el-pagination
-          :current-page.sync="curpage"
-          :page-sizes="[10, 20, 30, 40, 50]"
-          :page-size.sync="pagesize"
-          layout="sizes, total, prev, pager, next, jumper"
-          :total="totalvmtem"
-          background
-        ></el-pagination>
-      </div>
-    </el-col>
+    <div v-if="vmtemdata.length != 0" style="margin-top: 30px">
+      <el-pagination
+        :current-page.sync="curpage"
+        :page-sizes="[10, 20, 30, 40, 50]"
+        :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper"
+        :total="totalvmtem"
+        background
+      ></el-pagination>
+    </div>
     <el-dialog title="添加模版" :visible.sync="createvmtemvisible">
       <el-form
         label-position="top"
