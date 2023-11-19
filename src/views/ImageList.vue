@@ -33,8 +33,7 @@
       empty-text="暂无容器镜像"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-      <el-table-column width="80" type="index" label="序号">
-      </el-table-column>
+      <el-table-column width="80" type="index" label="序号"> </el-table-column>
       <el-table-column width="500" sortable label="镜像名称" prop="image">
       </el-table-column>
       <el-table-column width="300" sortable label="标签" prop="tag">
@@ -49,7 +48,12 @@
         </template>
         <template slot-scope="scope">
           <div style="text-align: center">
-            <el-button plain type="danger" @click="deleteimage(scope.$index, scope.row)">删除</el-button>
+            <el-button
+              plain
+              type="danger"
+              @click="deleteimage(scope.$index, scope.row)"
+              >删除</el-button
+            >
           </div>
         </template>
       </el-table-column>

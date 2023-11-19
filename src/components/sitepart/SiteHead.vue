@@ -3,15 +3,16 @@
     <div class="headarea">
       <el-row>
         <el-col :offset="0" :span="5">
-          <el-input
+          <!-- <el-input
             suffix-icon="el-icon-search"
             v-model="search"
             placeholder="请输入搜索内容..."
-          ></el-input>
+          ></el-input> -->
+          <span style="font-size: 30px; font-weight: 600; color: #393e46;">云网融合</span>
         </el-col>
-        <el-col :offset="18" :span="1">
+        <!-- <el-col :offset="18" :span="1">
           <i style="font-size: 40px; color: #303641" class="el-icon-info"></i>
-        </el-col>
+        </el-col> -->
       </el-row>
     </div>
   </div>
