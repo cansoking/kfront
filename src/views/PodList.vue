@@ -4,7 +4,7 @@
     <el-row :gutter="0">
       <el-col :span="10" :offset="0"
         ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-          容器列表
+          Pod列表
         </p></el-col
       >
       <el-col :span="2" :offset="12">
@@ -30,18 +30,79 @@
           )
       "
       style="width: 100%"
-      empty-text="暂无容器"
+      empty-text="暂无Pod"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-      <el-table-column
-        type="index"
-        label="序号"
-      >
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="Pod名称">
+              <span>{{ props.row.metadata.name }}</span>
+            </el-form-item>
+            <el-form-item label="命名空间">
+              <span>{{ props.row.metadata.namespace }}</span>
+            </el-form-item>
+            <el-form-item label="节点">
+              <span>{{ props.row.spec.nodeName }}</span>
+            </el-form-item>
+            <el-form-item label="状态">
+              <span
+                ><el-tag
+                  v-if="props.row.status.phase === 'Pending'"
+                  type="warning"
+                  >挂起</el-tag
+                >
+                <el-tag v-else-if="props.row.status.phase === 'Running'"
+                  >运行</el-tag
+                >
+                <el-tag v-else type="success">成功</el-tag></span
+              >
+            </el-form-item>
+            <el-form-item label="是否可用">
+              <span
+                ><el-tag
+                  v-if="props.row.metadata.annotations.status === 'Yes'"
+                  type="success"
+                  >可用</el-tag
+                >
+                <el-tag v-else type="danger">不可用</el-tag></span
+              >
+            </el-form-item>
+            <el-form-item label="创建时间">
+              <span>{{ props.row.metadata.creationTimestamp }}</span>
+            </el-form-item>
+            <el-form-item label="容器列表"> </el-form-item>
+            <el-table
+              size="small"
+              :data="props.row.spec.containers"
+              style="width: 90%"
+            >
+              <el-table-column type="index"> </el-table-column>
+              <el-table-column prop="name" label="容器名称" width="200">
+              </el-table-column>
+              <el-table-column prop="image" label="容器镜像" width="400">
+              </el-table-column>
+              <el-table-column prop="ports" label="端口号">
+                <template slot-scope="scope">
+                  <el-tag
+                    :key="port"
+                    v-for="port in scope.row.ports"
+                    type="info"
+                    >{{
+                      port.name + "/" + port.protocol + "/" + port.containerPort
+                    }}</el-tag
+                  >
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-form>
+        </template>
       </el-table-column>
+      <el-table-column type="index" label="序号"> </el-table-column>
       <el-table-column
         width="280"
         sortable
-        label="容器名称"
+        label="Pod名称"
         prop="metadata.name"
       >
       </el-table-column>
@@ -563,6 +624,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/workload/getPodList")
         .then((res) => {
+          console.log(JSON.parse(res.data.result));
           this.poddata = JSON.parse(res.data.result).items;
           this.totalpod = JSON.parse(res.data.result).items.length;
         })
@@ -781,6 +843,20 @@ export default {
 </script>
 
 <style>
+.demo-table-expand {
+  font-size: 0;
+  padding-left: 3%;
+}
+.demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+}
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  width: 50%;
+}
+
 .con-card {
   width: 40%;
 }
