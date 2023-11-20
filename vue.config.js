@@ -5,5 +5,6 @@ module.exports = defineConfig({
     open: true,
     port: 7000,
   },
-  lintOnSave: false
+  lintOnSave: false,
+  publicPath: '/static/pages/', // 这个指向的地址就是打包后,html文件引用js文件的路径地址.
 })
