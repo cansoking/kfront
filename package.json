@@ -14,6 +14,7 @@
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2",
+    "echarts": "^5.3.3",
     "xterm": "^5.1.0",
     "xterm-addon-attach": "0.9.0",
     "xterm-addon-fit": "0.8.0"
