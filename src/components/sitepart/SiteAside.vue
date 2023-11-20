@@ -68,6 +68,20 @@
           <span slot="title">持久卷</span>
         </el-menu-item>
       </el-submenu>
+      <el-submenu index="application">
+        <template slot="title">
+          <i class="el-icon-copy-document"></i>
+          <span>应用管理</span>
+        </template>
+        <el-menu-item index="/appimage" route="appimage">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">应用镜像</span>
+        </el-menu-item>
+        <el-menu-item index="/applist" route="applist">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">应用列表</span>
+        </el-menu-item>
+      </el-submenu>
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>

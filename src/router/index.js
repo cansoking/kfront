@@ -40,6 +40,16 @@ const routes = [
     component: () => import('../views/LogList.vue')
   },
   {
+    path: '/appimage',
+    name: 'appimage',
+    component: () => import('../views/AppImage.vue')
+  },
+  {
+    path: '/applist',
+    name: 'applist',
+    component: () => import('../views/AppList.vue')
+  },
+  {
     path: '/vmimalist',
     name: 'vmimalist',
     component: () => import('../views/VMImageView.vue')
