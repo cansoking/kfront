@@ -16,20 +16,6 @@
       router
       active-text-color="#ffffff"
     >
-      <el-submenu index="machine">
-        <template slot="title">
-          <i class="el-icon-coin"></i>
-          <span>物理机管理</span>
-        </template>
-        <el-menu-item index="/machineinfo" route="machineinfo">
-          <i class="el-icon-pie-chart"></i>
-          <span slot="title">物理机信息</span>
-        </el-menu-item>
-        <el-menu-item index="/webssh" route="webssh">
-          <i class="el-icon-pie-chart"></i>
-          <span slot="title">远程ssh</span>
-        </el-menu-item>
-      </el-submenu>
       <el-submenu index="pod">
         <template slot="title">
           <i class="el-icon-coin"></i>

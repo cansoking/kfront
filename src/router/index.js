@@ -78,16 +78,6 @@ const routes = [
     name: 'vmlog',
     component: () => import('../views/VMLogList.vue')
   },
-  {
-    path: '/webssh',
-    name: 'webssh',
-    component: () => import('../views/WebSSH.vue')
-  },
-  {
-    path: '/machineinfo',
-    name: 'machineinfo',
-    component: () => import('../views/MachineInfo.vue')
-  },
 ]
 
 const router = new VueRouter({
