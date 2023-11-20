@@ -269,6 +269,7 @@
             style="width: 100%"
             v-model="cp_form.namespace"
             clearable
+            @visible-change="nsremote"
             placeholder="请选择命名空间"
           >
             <el-option
@@ -286,6 +287,7 @@
             style="width: 100%"
             v-model="cp_form.nodename"
             clearable
+            @visible-change="noderemote"
             placeholder="请选择节点"
           >
             <el-option
@@ -498,12 +500,7 @@ export default {
         port: [{ required: true, message: "请输入端口号", trigger: "blur" }],
       },
       // 命名空间选项
-      namespace_options: [
-        {
-          value: "default",
-          label: "默认",
-        },
-      ],
+      namespace_options: [],
       // 容器镜像选项
       containerImage_options: [
         {
@@ -532,16 +529,7 @@ export default {
         },
       ],
       // 节点名称选项
-      nodename_options: [
-        {
-          value: "server1",
-          label: "server1",
-        },
-        {
-          value: "localhost.localdomain",
-          label: "localhost.localdomain",
-        },
-      ],
+      nodename_options: [],
       baseurl: "http://192.168.91.129:8080",
       poddata: [],
       psearch: "",
@@ -837,6 +825,48 @@ export default {
     // 重置表单
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    // 远程搜索命名空间
+    nsremote() {
+      this.$axios
+        .get(this.baseurl + "/workload/namespace/list")
+        .then((res) => {
+          // console.log(res);
+          console.log(JSON.parse(res.data.result));
+          let rdata = JSON.parse(res.data.result).items;
+          let resop = [];
+          for (let i = 0; i < rdata.length; i++) {
+            let tmp = {};
+            tmp["label"] = rdata[i].metadata.name;
+            tmp["value"] = rdata[i].metadata.name;
+            resop.push(tmp);
+          }
+          this.namespace_options = resop;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    // 远程搜索节点名
+    noderemote() {
+      this.$axios
+        .get(this.baseurl + "/workload/node/list")
+        .then((res) => {
+          // console.log(res);
+          console.log(JSON.parse(res.data.result));
+          let rdata = JSON.parse(res.data.result).items;
+          let resop = [];
+          for (let i = 0; i < rdata.length; i++) {
+            let tmp = {};
+            tmp["label"] = rdata[i].metadata.name;
+            tmp["value"] = rdata[i].metadata.name;
+            resop.push(tmp);
+          }
+          this.nodename_options = resop;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
     },
   },
 };
