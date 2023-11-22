@@ -1,85 +1,101 @@
 <template>
   <div class="ssharea">
-    <label for="node-select">请选择要远程连接的节点：</label>
-    <el-select  id="node-select" v-model="options.host" placeholder="Select an Node">
-      <el-option v-for="node in nodes" :label="node.name" :key="node.ip" :value="node.ip">{{ node.name }} - {{ node.ip }}</el-option>
-    </el-select>
-    <el-container style="height: 100vh; margin-top: 20px">
-            <div id="terminal" style="width: 100%; height: 100%"></div>
-    </el-container>
+    <el-card class="info-card">
+      <label for="node-select">请选择要远程连接的节点：</label>
+      <el-select id="node-select" v-model="selectedNode" placeholder="选择一个节点">
+        <el-option
+            v-for="node in nodes"
+            :label="`${node.name} - ${node.ip}`"
+            :key="node.ip"
+            :value="node.ip"
+        ></el-option>
+      </el-select>
+      <el-container :style="{ height: '80vh', marginTop: '20px' }">
+        <div id="terminal" style="width: 100%; height: 100%"></div>
+      </el-container>
+    </el-card>
   </div>
 </template>
 
-
 <script>
-
 import { Terminal } from 'xterm';
 import "xterm/css/xterm.css";
 import { FitAddon } from "xterm-addon-fit";
 
 
-function WSSHClient() {
-  this._connection = null;
-}
+const WS_PATH = '/webssh';
+const WS_PORT = 8080;
+class WSSHClient {
 
-WSSHClient.prototype._generateEndpoint = function (options) {
-  const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-  return protocol +  options.host+ ':8080/webssh';
-};
 
-WSSHClient.prototype.connect = function (options) {
-  const endpoint = this._generateEndpoint(options);
-
-  if (this._connection) {
-    this._connection.close();
+  constructor() {
     this._connection = null;
   }
 
-  if (window.WebSocket) {
-    this._connection = new WebSocket(endpoint);
-  } else {
-    options.onError('WebSocket Not Supported');
-    return;
+  _generateEndpoint(options) {
+    const protocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+    return `${protocol}${options.host}:${WS_PORT}${WS_PATH}`;
   }
 
-  this._connection.onopen = function () {
-    // The connection is opened, now we can send data.
-    options.onConnect();
-  };
+  connect(options) {
+    const endpoint = this._generateEndpoint(options);
 
-  this._connection.onmessage = function (evt) {
-    const data = evt.data.toString();
-    options.onData(data);
-  };
+    if (this._connection) {
+      this._connection.close();
+      this._connection = null;
+    }
 
-  this._connection.onclose = function (evt) {
-    options.onClose();
-  };
-};
+    if (window.WebSocket) {
+      this._connection = new WebSocket(endpoint);
+    } else {
+      options.onError('WebSocket Not Supported');
+      return;
+    }
 
-WSSHClient.prototype.close =function (){
-  if(this._connection){
-    this._connection.close();
-    this._connection = null;
+    this._connection.onerror = () => {
+      options.onError('\rWebSocket Connection Error');
+    };
+
+    this._connection.onopen = () => {
+      options.onConnect();
+    };
+
+    this._connection.onmessage = (evt) => {
+      const data = evt.data.toString();
+      options.onData(data);
+    };
+
+    this._connection.onclose = () => {
+      options.onClose();
+    };
+  }
+
+  close() {
+    if (this.terminal) {
+      this.terminal.dispose();
+      this.terminal = null;
+    }
+
+    if (this._connection) {
+      this._connection.close();
+      this._connection = null;
+    }
+  }
+
+  send(data) {
+    this._connection?.send(JSON.stringify(data));
+  }
+
+  sendInitData(options) {
+    this._connection?.send(JSON.stringify(options));
+  }
+
+  sendClientData(data) {
+    this._connection?.readyState === WebSocket.OPEN
+        ? this._connection.send(JSON.stringify({ "operate": 'command', "command": data }))
+        : console.error('WebSocket connection is not open. Data cannot be sent.');
   }
 }
-
-WSSHClient.prototype.send = function (data) {
-  this._connection.send(JSON.stringify(data));
-};
-
-WSSHClient.prototype.sendInitData = function (options) {
-  this._connection.send(JSON.stringify(options));
-};
-
-WSSHClient.prototype.sendClientData = function (data) {
-  if (this._connection && this._connection.readyState === WebSocket.OPEN) {
-    this._connection.send(JSON.stringify({ "operate": 'command', "command": data }));
-  } else {
-    console.error('WebSocket connection is not open. Data cannot be sent.');
-  }
-};
-
 
 export default {
   name: "WebSSH",
@@ -97,30 +113,48 @@ export default {
       ],
       terminal: null,
       wsshClient: new WSSHClient(),
-      options:{
-        operate:'connect',
-        host: '192.168.91.129',//IP
-        port: '22',//ssh default  port
-        username: 'abc',//
-        password: 'ko687168'//
-      }
+      options: {
+        operate: 'connect',
+        host: '192.168.91.129', // IP
+        port: '22', // ssh default port
+        username: 'abc',
+        password: 'abc',
+      },
+      selectedNode: '',
+      isFirstSet: true,
+      terminalReady: false,
     };
   },
   watch: {
-    'options.host':function (newHost,oldHost){
-      this.options.host=newHost;
-      if (this.terminal) {
-        this.terminal.dispose(); // dispose the old terminal instance
-        this.terminal = null;
+    'selectedNode'(newHost) {
+      if (this.isFirstSet) {
+        this.isFirstSet = false;
+      } else {
+        this.$confirm('确定要切换到'+newHost+'并中断当前操作吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+        }).then(() => {
+          this.options.host = newHost;
+          this.wsshClient.close();
+          this.terminalReady = false;
+          if (this.terminal) {
+            this.terminal.dispose();
+          }
+          setTimeout(() => {
+            this.openTerminal(this.options);
+          }, 1000);
+        }).catch(() => {
+          // do nothing
+        });
       }
-      this.wsshClient.close();
-      setTimeout(() => {
-        this.openTerminal(this.options); // open a new terminal with the new options
-      }, 1000);
-    }
+    },
   },
   mounted() {
-    this.openTerminal(this.options);
+    this.$nextTick(() => {
+      this.selectedNode = this.options.host;
+      this.openTerminal(this.options);
+    });
   },
   methods: {
     openTerminal(options) {
@@ -129,7 +163,6 @@ export default {
         convertEol: true,
         fontSize: 20,
         disableStdin: false,
-        //cols: 97,
         rows: 37,
         cursorBlink: true,
         cursorStyle: 'block',
@@ -141,15 +174,16 @@ export default {
           background: "#060101",
           cursor: "help"
         }
-
       });
 
-      var fitAddon = new FitAddon();
+      const fitAddon = new FitAddon();
       this.terminal.loadAddon(fitAddon);
       fitAddon.fit();
 
       this.terminal.onData((data) => {
-        this.wsshClient.sendClientData(data);
+        if (this.terminalReady) {
+          this.wsshClient.sendClientData(data);
+        }
       });
 
       this.terminal.open(document.getElementById('terminal'));
@@ -157,15 +191,13 @@ export default {
 
       this.wsshClient.connect({
         onConnect: () => {
+          this.terminalReady = true;
           this.wsshClient.sendInitData(options);
-          // Do something on connection
         },
         onData: (data) => {
-          // Handle data received from the server
           this.terminal.write(data);
         },
         onClose: () => {
-          // Handle connection close
           if (this.terminal) {
             this.terminal.write("\rconnection closed");
           } else {
@@ -173,7 +205,7 @@ export default {
           }
         },
         onError: (error) => {
-          this.terminal.write("Error:"+error+'\r\n');
+          this.terminal.write("Error:" + error + '\r\n');
         },
         host: options.host,
       });
@@ -189,10 +221,13 @@ export default {
   padding: 20px;
   margin-top: 15px;
 }
-::v-deep .xterm-screen{
-  height: 100vh!important;
+
+::v-deep .xterm-screen {
+  height: 80vh !important;
 }
+
 ::v-deep .node-select {
   margin-bottom: 100px;
 }
+
 </style>
