@@ -34,13 +34,13 @@
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
       <el-table-column width="80" type="index" label="序号"> </el-table-column>
-      <el-table-column width="500" sortable label="镜像名称" prop="image">
+      <el-table-column width="500" sortable label="镜像名称" prop="imageName">
       </el-table-column>
-      <el-table-column width="300" sortable label="标签" prop="tag">
+      <el-table-column width="300" sortable label="标签" prop="imageTag">
       </el-table-column>
-      <el-table-column width="200" sortable label="镜像ID" prop="imageid">
+      <el-table-column width="200" sortable label="镜像ID" prop="imageId">
       </el-table-column>
-      <el-table-column width="200" sortable label="体积" prop="size">
+      <el-table-column width="200" sortable label="体积" prop="imageSize">
       </el-table-column>
       <el-table-column align="right">
         <template slot="header">
@@ -108,29 +108,41 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://127.0.0.1:8080",
       cidata: [],
       psearch: "",
       curpage: 1,
       totalci: 0,
       pagesize: 10,
       uploadimagevisible: false,
+      reqData:{
+        virtualMachineIp: "",
+        userName: "",
+        userPassword: "",
+        imageId:""
+      },
       formData: {
-        virtualMachineIp: "192.168.91.129",
+        virtualMachineIp: "192.168.174.133",
         userName: "root",
-        userPassword: "Noi3674.",
+        userPassword: "@wsad1234",
       },
     };
   },
   methods: {
     // 删除镜像
     deleteimage(idx, row) {
+      this.reqData.virtualMachineIp = this.formData.virtualMachineIp;
+      this.reqData.userName = this.formData.userName;
+      this.reqData.userPassword = this.formData.userPassword;
+      this.reqData.imageId = row.imageid;
+      console.log("row:"+row)
       this.$axios
         .post(this.baseurl + "/containerd/deleteImage", {
+          imageInfo: row,
           vmInfo: this.formData,
-          imageInfo: row
         })
         .then((res) => {
+          console.log(res);
           if (res.data[0] === "I") {
         this.$notify.success({
           title: "删除成功",
@@ -209,10 +221,10 @@ export default {
           return item !== "";
         });
         res.push({
-          image: cols[0],
-          tag: cols[1],
-          imageid: cols[2],
-          size: cols[3],
+          imageName: cols[0],
+          imageTag: cols[1],
+          imageId: cols[2],
+          imageSize: cols[3],
         });
       }
       return res;
@@ -221,9 +233,9 @@ export default {
     getVMList() {
       this.$axios
         .post(this.baseurl + "/containerd/images/list", {
-          virtualMachineIp: "192.168.91.129",
+          virtualMachineIp: "192.168.174.133",
           userName: "root",
-          userPassword: "Noi3674.",
+          userPassword: "@wsad1234",
         })
         .then((res) => {
           let s_data = this.data_resolver(res.data.result);
