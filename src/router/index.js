@@ -50,6 +50,21 @@ const routes = [
     component: () => import('../views/AppList.vue')
   },
   {
+    path: '/infointer',
+    name: 'infointer',
+    component: () => import('../views/InfoInter.vue')
+  },
+  {
+    path: '/infodec',
+    name: 'infodec',
+    component: () => import('../views/InfoDec.vue')
+  },
+  {
+    path: '/inforecv',
+    name: 'inforecv',
+    component: () => import('../views/InfoRecv.vue')
+  },
+  {
     path: '/vmimalist',
     name: 'vmimalist',
     component: () => import('../views/VMImageView.vue')
