@@ -7,14 +7,15 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "animate.css": "^4.1.1",
     "axios": "^1.6.0",
     "core-js": "^3.8.3",
+    "echarts": "^5.3.3",
     "element-ui": "^2.15.14",
     "moment": "^2.29.4",
     "vue": "^2.6.14",
     "vue-router": "^3.5.1",
     "vuex": "^3.6.2",
-    "echarts": "^5.3.3",
     "xterm": "^5.1.0",
     "xterm-addon-attach": "0.9.0",
     "xterm-addon-fit": "0.8.0"
@@ -24,7 +25,6 @@
     "@vue/cli-plugin-router": "~5.0.0",
     "@vue/cli-plugin-vuex": "~5.0.0",
     "@vue/cli-service": "~5.0.0",
-    "vue-template-compiler": "^2.6.14",
     "node-sass": "^9.0.0",
     "sass-loader": "^13.3.2",
     "vue-template-compiler": "^2.6.14",
