@@ -53,14 +53,28 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">虚拟机列表</span>
         </el-menu-item>
-              <el-menu-item index="vmtemp" route="vmtemlist">
-        <i class="el-icon-copy-document"></i>
-        <span slot="title">虚拟机模版管理</span>
-      </el-menu-item>
-      <el-menu-item index="vmima" route="vmimalist">
-        <i class="el-icon-copy-document"></i>
-        <span slot="title">虚拟机镜像管理</span>
-      </el-menu-item>
+        <el-menu-item index="vmtemp" route="vmtemlist">
+          <i class="el-icon-copy-document"></i>
+          <span slot="title">虚拟机模版管理</span>
+        </el-menu-item>
+      </el-submenu>
+      <el-submenu index="infor">
+        <template slot="title">
+          <i class="el-icon-copy-document"></i>
+          <span>情报管理</span>
+        </template>
+        <el-menu-item index="/infointer" route="infointer">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">情报截取</span>
+        </el-menu-item>
+        <el-menu-item index="/infodec" route="infodec">
+          <i class="el-icon-copy-document"></i>
+          <span slot="title">情报破译</span>
+        </el-menu-item>
+        <el-menu-item index="/inforecv" route="inforecv">
+          <i class="el-icon-copy-document"></i>
+          <span slot="title">情报接收</span>
+        </el-menu-item>
       </el-submenu>
       <el-submenu index="image">
         <template slot="title">

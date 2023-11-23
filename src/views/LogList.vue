@@ -147,6 +147,22 @@ export default {
           value: "日志管理",
           label: "日志管理",
         },
+        {
+          value: "镜像管理",
+          label: "镜像管理",
+        },
+        {
+          value: "存储管理",
+          label: "存储管理",
+        },
+        {
+          value: "指标管理",
+          label: "指标管理",
+        },
+        {
+          value: "物理机管理",
+          label: "物理机管理",
+        },
       ],
       stateoptions: [
         {

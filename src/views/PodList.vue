@@ -177,6 +177,7 @@
                   style="width: 100%"
                   v-model="migrate_form.nodename"
                   clearable
+                  @visible-change="noderemote"
                   placeholder="请选择要迁移的节点"
                 >
                   <el-option
