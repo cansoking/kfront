@@ -169,7 +169,7 @@
         <el-form-item label="应用名称" prop="deploymentName">
           <el-input
             v-model="deployment_form.deploymentName"
-            placeholder="请输入应用名称"
+            placeholder="请输入应用名称（首字母需为小写字母）"
           ></el-input>
         </el-form-item>
         <el-form-item label="镜像名称" prop="image">
@@ -193,7 +193,7 @@
         <el-form-item label="节点端口号" prop="nodePort">
           <el-input
             v-model="deployment_form.nodePort"
-            placeholder="请输入节点端口号"
+            placeholder="请输入节点端口号（端口号>30000）"
           ></el-input>
         </el-form-item>
         <el-form-item size="large">
