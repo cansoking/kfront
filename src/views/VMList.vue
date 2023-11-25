@@ -41,13 +41,13 @@
       >
       </el-table-column>
       <el-table-column
-        width="400"
+        width="200"
         sortable
         label="名称"
         prop="name"
       >
       </el-table-column>
-      <el-table-column width="300" sortable label="状态" prop="state">
+      <el-table-column width="200" sortable label="状态" prop="state">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
             >挂起</el-tag
@@ -56,6 +56,35 @@
           <el-tag v-else type="danger">关机</el-tag>
         </template>
       </el-table-column>
+      <el-table-column
+        width="120"
+        sortable
+        label="cpu个数"
+        prop="cpuNum"
+      >
+      </el-table-column>
+      <!-- <el-table-column
+        width="120"
+        sortable
+        label="cpu利用率"
+        prop="usecpu"
+      >
+      </el-table-column> -->
+      <el-table-column
+        width="120"
+        sortable
+        label="分配内存"
+        prop="maxMem"
+      >
+      </el-table-column>
+      <!-- <el-table-column
+        width="120"
+        sortable
+        label="内存利用率"
+        prop="useMem"
+      >
+      </el-table-column> -->
+      
       <el-table-column align="right">
         <template slot="header">
           <el-input style="width: 30%;" v-model="psearch" size="mini" placeholder="输入名称搜索" />
@@ -211,7 +240,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://192.168.243.143:8080",
       vmdata: [],
       psearch: "",
       curpage: 1,
