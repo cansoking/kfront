@@ -369,7 +369,7 @@ export default {
     },
     // 成功上传文件
     sucupload(response, file, fileList) {
-      if (response === "ok") {
+      if (response.success===true) {
         this.$notify.success({
           title: "创建成功",
           message: "虚拟机 " + this.formData.name + " 创建成功！",
