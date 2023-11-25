@@ -16,7 +16,7 @@
           placeholder="请选择容器"
         ></el-cascader>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="4" >
         <el-date-picker
           v-model="starttime"
           type="datetime"
@@ -24,7 +24,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="4" >
         <el-date-picker
           v-model="endtime"
           type="datetime"
@@ -123,7 +123,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/log/getCas")
         .then((res) => {
-          console.log(res.data.content);
+          console.log("res.cas:"+res.data.content);
           this.casoption = this.transformData(res.data.content);
         })
         .catch((err) => {});
@@ -147,6 +147,10 @@ export default {
     getPodLog() {
       this.starttime = moment(this.starttime).format("YYYY-MM-DD HH:mm:ss");
       this.endtime = moment(this.endtime).format("YYYY-MM-DD HH:mm:ss");
+      if(this.starttime === "Invalid date")
+        this.starttime = "";
+      if(this.endtime === "Invalid date")
+        this.endtime = "";
       let podn = "";
       if (this.searchpod.length == 2)
         podn = this.searchpod[0] + "/" + this.searchpod[1];

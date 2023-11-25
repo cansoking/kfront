@@ -183,6 +183,10 @@ export default {
     getLogList() {
       this.starttime = moment(this.starttime).format("YYYY-MM-DD HH:mm:ss");
       this.endtime = moment(this.endtime).format("YYYY-MM-DD HH:mm:ss");
+      if(this.starttime === "Invalid date")
+        this.starttime = "";
+      if(this.endtime === "Invalid date")
+        this.endtime = "";
       console.log(this.starttime);
       this.$axios
         .get(this.baseurl + "/log/getLogList", {
