@@ -18,7 +18,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="4" >
         <el-date-picker
           v-model="starttime"
           type="datetime"
@@ -26,7 +26,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="4" >
         <el-date-picker
           v-model="endtime"
           type="datetime"
@@ -34,7 +34,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="1" offset="">
+      <el-col span="1">
         <el-button round plain type="primary" @click="getVMLog">查询</el-button>
       </el-col>
     </el-row>
@@ -134,6 +134,10 @@ export default {
     getVMLog() {
       this.starttime = moment(this.starttime).format("YYYY-MM-DD HH:mm:ss");
       this.endtime = moment(this.endtime).format("YYYY-MM-DD HH:mm:ss");
+      if(this.starttime === "Invalid date")
+        this.starttime = "";
+      if(this.endtime === "Invalid date")
+        this.endtime = "";
       this.$axios
         .get(this.baseurl + "/log/getVMLog", {
           params: {

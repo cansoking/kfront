@@ -34,16 +34,15 @@
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
       <el-table-column width="80" type="index" label="序号"> </el-table-column>
-      <el-table-column width="300" sortable label="镜像名称" prop="image">
+      <el-table-column width="300" sortable label="镜像名称" prop="imageName">
       </el-table-column>
-      <el-table-column width="300" sortable label="文件大小" prop="tag">
+      <el-table-column width="300" sortable label="标签" prop="imageTag">
       </el-table-column>
-      <el-table-column width="200" sortable label="存放位置" prop="imageid">
+      <el-table-column width="200" sortable label="镜像ID" prop="imageId">
       </el-table-column>
-      <el-table-column width="200" sortable label="镜像描述" prop="size">
+      <el-table-column width="200" sortable label="镜像大小" prop="imageSize">
       </el-table-column>
-      <el-table-column width="200" sortable label="生成时间" prop="size">
-      </el-table-column>
+
       <el-table-column align="right">
         <template slot="header">
           <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
@@ -121,9 +120,9 @@ export default {
       pagesize: 10,
       uploadimagevisible: false,
       formData: {
-        virtualMachineIp: "192.168.91.129",
+        virtualMachineIp: "192.168.174.133",
         userName: "root",
-        userPassword: "Noi3674.",
+        userPassword: "@wsad1234",
       },
     };
   },
@@ -214,10 +213,10 @@ export default {
           return item !== "";
         });
         res.push({
-          image: cols[0],
-          tag: cols[1],
-          imageid: cols[2],
-          size: cols[3],
+          imageName: cols[0],
+          imageTag: cols[1],
+          imageId: cols[2],
+          imageSize: cols[3],
         });
       }
       return res;
@@ -226,9 +225,9 @@ export default {
     getVMList() {
       this.$axios
         .post(this.baseurl + "/containerd/images/list", {
-          virtualMachineIp: "192.168.91.129",
+          virtualMachineIp: "192.168.174.133",
           userName: "root",
-          userPassword: "Noi3674.",
+          userPassword: "@wsad1234",
         })
         .then((res) => {
           let s_data = this.data_resolver(res.data.result);
