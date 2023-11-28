@@ -15,6 +15,16 @@ const routes = [
     component: () => import('../views/PodList.vue')
   },
   {
+    path: '/podindex',
+    name: 'podindex',
+    component: () => import('../views/PodIndexView.vue')
+  },
+  {
+    path: '/minfo',
+    name: 'minfo',
+    component: () => import('../views/MachineInfo.vue')
+  },
+  {
     path: '/deploy',
     name: 'deploy',
     component: () => import('../views/DeployView.vue')
