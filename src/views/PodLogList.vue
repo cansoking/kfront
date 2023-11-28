@@ -7,7 +7,7 @@
           容器日志列表
         </p></el-col
       >
-      <el-col span="4" offset="6">
+      <el-col span="4" >
         <el-cascader
           v-model="searchpod"
           :options="casoption"
@@ -37,6 +37,11 @@
           >查询</el-button
         >
       </el-col>
+      <el-col span="4" :offset="3"
+      ><p style="font-size: 20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
+        日志保存时间:{{savedays}}天
+      </p></el-col
+      >
     </el-row>
     <el-table
       :data="podlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
@@ -98,6 +103,7 @@ export default {
       baseurl: "http://localhost:8080",
       curpage: 1,
       totalpodlog: 0,
+      savedays:"",
       pagesize: 10,
       podlogdata: [],
       starttime: "",
@@ -117,6 +123,7 @@ export default {
   mounted() {
     this.getPodLog();
     this.getCas();
+    this.getSaveDays();
   },
   methods: {
     getCas() {
@@ -127,6 +134,14 @@ export default {
           this.casoption = this.transformData(res.data.content);
         })
         .catch((err) => {});
+    },
+    getSaveDays() {
+      this.$axios
+          .get(this.baseurl + "/log/getSaveDays")
+          .then((res) => {
+            this.savedays = res.data.content
+          })
+          .catch((err) => {});
     },
     lookLog(index, row) {
       this.logvisible = true;
