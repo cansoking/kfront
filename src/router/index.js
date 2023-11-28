@@ -113,6 +113,11 @@ const routes = [
     name: 'machineinfo',
     component: () => import('../views/MachineInfo.vue')
   },
+  {
+    path: '/vminfo',
+    name: 'vminfo',
+    component: () => import('../views/VMIndexView.vue')
+  },
 ]
 
 const router = new VueRouter({
