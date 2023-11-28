@@ -73,7 +73,7 @@
       <el-table-column
         width="120"
         sortable
-        label="分配内存"
+        label="分配内存(GiB)"
         prop="maxMem"
       >
       </el-table-column>
