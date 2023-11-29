@@ -44,6 +44,36 @@
           <i class="el-icon-copy-document"></i>
           <span slot="title">虚拟机模版管理</span>
         </el-menu-item>
+
+      </el-submenu>
+      <el-submenu index="vm">
+        <template slot="title">
+          <i class="el-icon-copy-document"></i>
+          <span>计算节点虚拟机1</span>
+        </template>
+        <el-menu-item index="/vmlist1" route="vmlist1">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">计算节点虚拟机1列表</span>
+        </el-menu-item>
+        <!-- <el-menu-item index="/vmimalist2" route="vmimalist2">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">计算节点虚拟机1镜像</span>
+        </el-menu-item> -->
+      </el-submenu>
+
+      <el-submenu index="vm">
+        <template slot="title">
+          <i class="el-icon-copy-document"></i>
+          <span>计算节点虚拟机2</span>
+        </template>
+        <el-menu-item index="/vmlist2" route="vmlist2">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">计算节点虚拟机2列表</span>
+        </el-menu-item>
+        <!-- <el-menu-item index="/vmimalist2" route="vmimalist2">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">计算节点虚拟机2镜像</span>
+        </el-menu-item> -->
       </el-submenu>
 
       <el-submenu index="pod">
