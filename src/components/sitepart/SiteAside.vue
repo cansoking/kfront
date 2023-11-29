@@ -46,7 +46,8 @@
         </el-menu-item>
 
       </el-submenu>
-      <el-submenu index="vm">
+
+      <el-submenu index="vm1">
         <template slot="title">
           <i class="el-icon-copy-document"></i>
           <span>计算节点虚拟机1</span>
@@ -61,7 +62,7 @@
         </el-menu-item> -->
       </el-submenu>
 
-      <el-submenu index="vm">
+      <el-submenu index="vm2">
         <template slot="title">
           <i class="el-icon-copy-document"></i>
           <span>计算节点虚拟机2</span>
