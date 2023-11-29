@@ -240,7 +240,8 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.243.143:8080",
+      baseurl: "http://192.168.243.143:8080/remoteVM",
+      ipaddr:"192.168.243.145",
       vmdata: [],
       psearch: "",
       curpage: 1,
@@ -331,6 +332,10 @@ export default {
         ],
       },
     };
+  },
+  created(){
+    this.$axios
+        .put(this.baseurl + "/getIP"+ipaddr)
   },
   methods: {
     // 获取虚拟机列表数据

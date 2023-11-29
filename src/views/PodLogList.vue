@@ -7,7 +7,7 @@
           容器日志列表
         </p></el-col
       >
-      <el-col span="4" offset="6">
+      <el-col span="4" >
         <el-cascader
           v-model="searchpod"
           :options="casoption"
@@ -16,7 +16,7 @@
           placeholder="请选择容器"
         ></el-cascader>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="4" >
         <el-date-picker
           v-model="starttime"
           type="datetime"
@@ -24,7 +24,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="4" >
         <el-date-picker
           v-model="endtime"
           type="datetime"
@@ -37,6 +37,11 @@
           >查询</el-button
         >
       </el-col>
+      <el-col span="4" :offset="3"
+      ><p style="font-size: 20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
+        日志保存时间:{{savedays}}天
+      </p></el-col
+      >
     </el-row>
     <el-table
       :data="podlogdata.slice((curpage - 1) * pagesize, curpage * pagesize)"
@@ -98,6 +103,7 @@ export default {
       baseurl: "http://localhost:8080",
       curpage: 1,
       totalpodlog: 0,
+      savedays:"",
       pagesize: 10,
       podlogdata: [],
       starttime: "",
@@ -117,16 +123,25 @@ export default {
   mounted() {
     this.getPodLog();
     this.getCas();
+    this.getSaveDays();
   },
   methods: {
     getCas() {
       this.$axios
         .get(this.baseurl + "/log/getCas")
         .then((res) => {
-          console.log(res.data.content);
+          console.log("res.cas:"+res.data.content);
           this.casoption = this.transformData(res.data.content);
         })
         .catch((err) => {});
+    },
+    getSaveDays() {
+      this.$axios
+          .get(this.baseurl + "/log/getSaveDays")
+          .then((res) => {
+            this.savedays = res.data.content
+          })
+          .catch((err) => {});
     },
     lookLog(index, row) {
       this.logvisible = true;
@@ -147,6 +162,10 @@ export default {
     getPodLog() {
       this.starttime = moment(this.starttime).format("YYYY-MM-DD HH:mm:ss");
       this.endtime = moment(this.endtime).format("YYYY-MM-DD HH:mm:ss");
+      if(this.starttime === "Invalid date")
+        this.starttime = "";
+      if(this.endtime === "Invalid date")
+        this.endtime = "";
       let podn = "";
       if (this.searchpod.length == 2)
         podn = this.searchpod[0] + "/" + this.searchpod[1];

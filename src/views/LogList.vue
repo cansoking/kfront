@@ -2,12 +2,12 @@
   <div class="podarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-      <el-col span="4" :offset="0"
+      <el-col span="3" :offset="0"
         ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
           操作日志列表
         </p></el-col
       >
-      <el-col span="4" offset="2">
+      <el-col span="3" >
         <el-select
           v-model="searchmodule"
           placeholder="请选择操作模块"
@@ -23,7 +23,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="3" offset="">
         <el-select
           v-model="searchstate"
           placeholder="请求状态"
@@ -47,7 +47,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="4" offset="">
+      <el-col span="3" offset="">
         <el-date-picker
           v-model="endtime"
           type="datetime"
@@ -55,11 +55,15 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="1" offset="">
+      <el-col span="2" offset="1">
         <el-button round plain type="primary" @click="getLogList"
           >查询</el-button
         >
       </el-col>
+      <el-col span="3.5"><p style="font-size:20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
+        日志保存时间:{{savedays}}天
+      </p></el-col
+      >
     </el-row>
     <!-- 表格区域 -->
     <el-table
@@ -129,6 +133,7 @@ export default {
       pageNum: 1, //当前页
       curpage: 1,
       totallog: 0,
+      savedays:'',
       pagesize: 10,
       starttime: "",
       endtime: "",
@@ -178,11 +183,24 @@ export default {
   },
   mounted() {
     this.getLogList();
+    this.getSaveDays();
   },
   methods: {
+    getSaveDays() {
+      this.$axios
+          .get(this.baseurl + "/log/getSaveDays")
+          .then((res) => {
+            this.savedays = res.data.content
+          })
+          .catch((err) => {});
+    },
     getLogList() {
       this.starttime = moment(this.starttime).format("YYYY-MM-DD HH:mm:ss");
       this.endtime = moment(this.endtime).format("YYYY-MM-DD HH:mm:ss");
+      if(this.starttime === "Invalid date")
+        this.starttime = "";
+      if(this.endtime === "Invalid date")
+        this.endtime = "";
       console.log(this.starttime);
       this.$axios
         .get(this.baseurl + "/log/getLogList", {

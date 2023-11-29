@@ -15,6 +15,21 @@ const routes = [
     component: () => import('../views/PodList.vue')
   },
   {
+    path: '/podindex',
+    name: 'podindex',
+    component: () => import('../views/PodIndexView.vue')
+  },
+  {
+    path: '/minfo',
+    name: 'minfo',
+    component: () => import('../views/MachineInfo.vue')
+  },
+  {
+    path: '/deploy',
+    name: 'deploy',
+    component: () => import('../views/DeployView.vue')
+  },
+  {
     path: '/deploy',
     name: 'deploy',
     component: () => import('../views/DeployView.vue')
@@ -23,6 +38,16 @@ const routes = [
     path: '/vmlist',
     name: 'vmlist',
     component: () => import('../views/VMList.vue')
+  },
+  {
+    path: '/vmlist1',
+    name: 'vmlist1',
+    component: () => import('../views/VMListRemote1.vue')
+  },
+  {
+    path: '/vmlist2',
+    name: 'vmlist2',
+    component: () => import('../views/VMListRemote2.vue')
   },
   {
     path: '/vmcreate',
@@ -102,6 +127,11 @@ const routes = [
     path: '/machineinfo',
     name: 'machineinfo',
     component: () => import('../views/MachineInfo.vue')
+  },
+  {
+    path: '/vminfo',
+    name: 'vminfo',
+    component: () => import('../views/VMIndexView.vue')
   },
 ]
 
