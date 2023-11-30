@@ -100,7 +100,7 @@ export default {
   name: "PodLogList",
   data() {
     return {
-      baseurl: "http://172.26.82.161:8080",
+      baseurl: "http://39.98.124.97:8080",
       curpage: 1,
       totalpodlog: 0,
       savedays:"",

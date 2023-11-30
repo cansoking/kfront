@@ -102,10 +102,10 @@ export default {
   data() {
     return {
       nodes: [
-        { name: 'Master 1', ip: '172.26.82.161' },
-        { name: 'Worker 1', ip: '172.26.82.162' },
-        { name: 'Worker 2', ip: '172.26.82.163' },
-        { name: 'Worker 3', ip: '172.26.82.164' },
+        { name: 'Master 1', ip: '39.98.124.97' },
+        { name: 'Worker 1', ip: '39.101.136.242' },
+        { name: 'Worker 2', ip: '39.98.109.31' },
+        { name: 'Worker 3', ip: '39.99.252.93' },
         { name: 'Worker 4', ip: '192.168.157.214' },
         { name: 'Worker 5', ip: '192.168.157.215' },
         { name: 'Worker 6', ip: '192.168.157.216' },
@@ -117,7 +117,7 @@ export default {
       wsshClient: new WSSHClient(),
       options: {
         operate: 'connect',
-        host: '172.26.82.161', // IP
+        host: '39.98.124.97', // IP
         port: '22', // ssh default port
         username: 'root',
         password: 'Upc123456@',

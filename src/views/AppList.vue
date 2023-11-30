@@ -94,13 +94,13 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://172.26.82.161:8080",
+      baseurl: "http://39.98.124.97:8080",
       cidata: [],
       psearch: "",
       curpage: 1,
       totalci: 0,
       pagesize: 10,
-      dir_ip: "127.0.0.1",
+      dir_ip: "39.98.124.97",
     };
   },
   methods: {

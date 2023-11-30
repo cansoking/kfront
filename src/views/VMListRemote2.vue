@@ -241,7 +241,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://172.26.82.161:8080/remoteVM",
+      baseurl: "http://127.0.0.1:8080/remoteVM",
       ipaddr:"172.26.82.163",
       vmdata: [],
       psearch: "",

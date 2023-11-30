@@ -128,7 +128,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://172.26.82.161:8080",
+      baseurl: "http://39.98.124.97:8080",
       pidata: [],
       psearch: "",
       curpage: 1,
@@ -164,7 +164,7 @@ export default {
     getPodIndexList() {
       this.$axios
         .post(this.baseurl + "/index/podIndex/list", {
-          virtualMachineIp: "172.26.82.161",
+          virtualMachineIp: "39.98.124.97",
           userName: "root",
           userPassword: "Upc123456@",
       })

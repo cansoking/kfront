@@ -71,7 +71,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://172.26.82.161:9003",
+      baseurl: "http://127.0.0.1:9003",
       infodata: [],
       psearch: "",
       curpage: 1,

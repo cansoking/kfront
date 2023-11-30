@@ -247,7 +247,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://172.26.82.161:8080",
+      baseurl: "http://39.98.124.97:8080",
       vmdata: [],
       psearch: "",
       curpage: 1,

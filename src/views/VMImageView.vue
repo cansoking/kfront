@@ -99,7 +99,7 @@ export default {
   name: "VMImaList",
   data() {
     return {
-      baseurl: "http://172.26.82.161:8080",
+      baseurl: "http://39.98.124.97:8080",
       curpage: 1,
       totalvmima: 0,
       pagesize: 10,
@@ -173,10 +173,6 @@ export default {
 
     handleBeforeUpload(file) {
       var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
-      if (suffix !== iso && suffix !== qcow2 && suffix !== img) {
-        this.$message.error("只能上传ISO、qcow2、img文件！");
-        return false;
-      }
       return suffix;
     },
     sucupload(response, file, fileList) {

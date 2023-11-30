@@ -536,7 +536,7 @@ export default {
       ],
       // 节点名称选项
       nodename_options: [],
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://39.98.124.97:8080",
       poddata: [],
       psearch: "",
       isstart: false,

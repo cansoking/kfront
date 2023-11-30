@@ -50,7 +50,7 @@ export default {
   mounted() {},
   data() {
     return {
-      baseurl: "http://172.26.82.161:9001",
+      baseurl: "http://127.0.0.1:9001",
       info_form: {},
       info_rules: {
         message: [

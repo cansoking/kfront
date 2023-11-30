@@ -128,7 +128,7 @@ export default {
   name: "LogList",
   data() {
     return {
-      baseurl: "http://172.26.82.161:8080",
+      baseurl: "http://39.98.124.97:8080",
       logdata: [],
       pageNum: 1, //当前页
       curpage: 1,
