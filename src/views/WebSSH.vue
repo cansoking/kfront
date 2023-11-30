@@ -110,6 +110,8 @@ export default {
         { name: 'Worker 5', ip: '192.168.157.215' },
         { name: 'Worker 6', ip: '192.168.157.216' },
         { name: 'Worker 7', ip: '192.168.157.217' },
+        { name: 'vm', ip: '192.168.243.143' },
+        { name: 'vmRemote', ip: '192.168.243.145' },
       ],
       terminal: null,
       wsshClient: new WSSHClient(),
