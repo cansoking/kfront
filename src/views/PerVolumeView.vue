@@ -260,9 +260,9 @@ export default {
           pvAccessMode: "ReadWriteOnce",
         },
         pvcInfo: {
-          pvcName: "example-pv7-claim",
+          pvcName: "example-pv1-claim",
           pvcNamespace: "default",
-          pvcQuantity: "1Gi",
+          pvcQuantity: "8Gi",
         },
       },
       edit_rules: {
@@ -426,6 +426,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/virtuleStorage/vs/list")
         .then((res) => {
+          console.log(JSON.parse(res.data.result).items);
           this.vsdata = JSON.parse(res.data.result).items;
           this.totalvs = JSON.parse(res.data.result).items.length;
         })
