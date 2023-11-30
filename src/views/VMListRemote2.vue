@@ -236,6 +236,7 @@
 export default {
   name: "VMList",
   mounted() {
+    this.getIP();
     this.getVMList()
   },
   data() {
@@ -333,11 +334,16 @@ export default {
       },
     };
   },
-  created(){
-    this.$axios
-        .put(this.baseurl + "/getIP"+ipaddr)
-  },
+
   methods: {
+    getIP(){
+    this.$axios
+        .get(this.baseurl + "/getIP",{
+          params: {
+            ipaddr: this.ipaddr
+          }
+        })
+  },
     // 获取虚拟机列表数据
     getVMList() {
       this.$axios

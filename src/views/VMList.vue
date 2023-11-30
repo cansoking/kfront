@@ -41,7 +41,7 @@
       >
       </el-table-column>
       <el-table-column
-        width="200"
+        width="240"
         sortable
         label="名称"
         prop="name"
@@ -77,6 +77,13 @@
         prop="maxMem"
       >
       </el-table-column>
+      <el-table-column
+        width="180"
+        sortable
+        label="IP地址"
+        prop="ipaddr"
+      >
+      </el-table-column>
       <!-- <el-table-column
         width="120"
         sortable
@@ -84,7 +91,7 @@
         prop="useMem"
       >
       </el-table-column> -->
-
+      
       <el-table-column align="right">
         <template slot="header">
           <el-input style="width: 30%;" v-model="psearch" size="mini" placeholder="输入名称搜索" />
