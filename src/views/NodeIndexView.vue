@@ -4,7 +4,7 @@
     <el-row :gutter="0">
       <el-col :span="10" :offset="0"
         ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-          Pod指标列表
+          Node指标列表
         </p></el-col
       >
 
@@ -21,28 +21,10 @@
           )
       "
       style="width: 100%"
-      empty-text="暂无Pod指标"
+      empty-text="暂无Node指标"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-    <el-table-column type="expand">
-      <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
 
-
-          <el-form-item label="容器列表"> </el-form-item>
-          <el-table
-              size="small"
-              :data="props.row.containers"
-              style="width: 90%"
-          >
-            <el-table-column type="index"> </el-table-column>
-            <el-table-column prop="name" label="容器名称" width="200"></el-table-column>
-            <el-table-column prop="usage.cpu" label="cpu" width="400"></el-table-column>
-            <el-table-column prop="usage.memory" label="memory"></el-table-column>
-          </el-table>
-        </el-form>
-      </template>
-    </el-table-column>
     <el-table-column
       label="序号"
       type="index"
@@ -51,15 +33,8 @@
     <el-table-column
       width="250"
       sortable
-      label="Pod名"
+      label="Node名"
       prop="metadata.name"
-    >
-    </el-table-column>
-    <el-table-column
-        width="250"
-        sortable
-        label="命名空间"
-        prop="metadata.namespace"
     >
     </el-table-column>
       <el-table-column
@@ -97,6 +72,20 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column
+          width="250"
+          sortable
+          label="CPU"
+          prop="usage.cpu"
+      >
+      </el-table-column>
+      <el-table-column
+          width="250"
+          sortable
+          label="内存"
+          prop="usage.memory"
+      >
+      </el-table-column>
       <el-table-column align="right">
         <template slot="header">
           <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
@@ -124,7 +113,7 @@
 export default {
   name: "IndexList",
   mounted() {
-    this.getPodIndexList();
+    this.getNodeIndexList();
   },
   data() {
     return {
@@ -160,10 +149,10 @@ export default {
       }
     },
 
-    // 获取Pod指标列表数据
-    getPodIndexList() {
+    // 获取Node指标列表数据
+    getNodeIndexList() {
       this.$axios
-        .post(this.baseurl + "/index/podIndex/list", {
+        .post(this.baseurl + "/index/nodeIndex/list", {
           virtualMachineIp: "172.26.82.161",
           userName: "root",
           userPassword: "Upc123456@",

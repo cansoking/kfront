@@ -41,7 +41,7 @@
       >
       </el-table-column>
       <el-table-column
-        width="200"
+        width="240"
         sortable
         label="名称"
         prop="name"
@@ -75,6 +75,13 @@
         sortable
         label="分配内存(GiB)"
         prop="maxMem"
+      >
+      </el-table-column>
+      <el-table-column
+        width="180"
+        sortable
+        label="IP地址"
+        prop="ipaddr"
       >
       </el-table-column>
       <!-- <el-table-column
@@ -240,7 +247,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.243.143:8080",
+      baseurl: "http://172.26.82.161:8080",
       vmdata: [],
       psearch: "",
       curpage: 1,

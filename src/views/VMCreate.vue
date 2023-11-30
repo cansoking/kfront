@@ -122,7 +122,7 @@ export default {
   name: "VMCreate",
   data() {
     return {
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://172.26.82.161:8080",
       // 系统类型选项
       ostype_options: [
         {

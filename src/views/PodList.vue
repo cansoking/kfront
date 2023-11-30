@@ -536,9 +536,7 @@ export default {
       ],
       // 节点名称选项
       nodename_options: [],
-      // pvc名称选项
-      pvcName_options: [],
-      baseurl: "http://127.0.0.1:8080",
+      baseurl: "http://192.168.91.129:8080",
       poddata: [],
       psearch: "",
       isstart: false,
@@ -914,77 +912,7 @@ console.log(formName)
         .catch((err) => {
           console.log("errors", err);
         });
-        this.nodename_options = [{label: "server1", value: "server1"}];
     },
-    // 远程搜索pvc名
-    pvcremote() {
-      this.$axios
-          .get(this.baseurl + "/virtuleStorage/vs/pvclist")
-          .then((res) => {
-            // console.log(res);
-            console.log(JSON.parse(res.data.result));
-            let rdata = JSON.parse(res.data.result).items;
-            let resop = [];
-            for (let i = 0; i < rdata.length; i++) {
-              let tmp = {};
-              tmp["label"] = rdata[i].metadata.name;
-              tmp["value"] = rdata[i].metadata.name;
-              resop.push(tmp);
-            }
-            this.pvcName_options = resop;
-          })
-          .catch((err) => {
-            console.log("errors", err);
-          });
-    },
-    // 远程搜索image名
-    imageremote() {
-      this.$axios
-          .post(this.baseurl + "/containerd/images/list", {
-            virtualMachineIp: "192.168.174.133",
-            userName: "root",
-            userPassword: "@wsad1234",
-          })
-          .then((res) => {
-            let rdata = this.data_resolver(res.data.result);
-            // this.cidata = rdata;
-            // this.totalci = rdata.length;
-            console.log(rdata);
-            // let rdata = JSON.parse(res.data.result).items;
-            let resop = [];
-            for (let i = 0; i < rdata.length; i++) {
-              let tmp = {};
-              tmp["label"] = rdata[i].imageName+":"+rdata[i].imageTag;
-              tmp["value"] = rdata[i].imageName+":"+rdata[i].imageTag;
-              resop.push(tmp);
-            }
-            this.containerImage_options = resop;
-          })
-          .catch((err) => {
-            console.log("errors", err);
-          });
-    },
-    // 解析数据
-    data_resolver(sdata) {
-      let res = [];
-      let rows = sdata.split("\n");
-      let i = 1;
-      for (; i < rows.length - 1; i++) {
-        let cols = rows[i].split(" ");
-        let j = 0;
-        cols = cols.filter(function (item) {
-          return item !== "";
-        });
-        res.push({
-          imageName: cols[0],
-          imageTag: cols[1],
-          imageId: cols[2],
-          imageSize: cols[3],
-        });
-      }
-      return res;
-    },
-
   },
 };
 </script>
