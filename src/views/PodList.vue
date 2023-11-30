@@ -918,9 +918,9 @@ export default {
     // 远程搜索pvc名
     pvcremote() {
       this.$axios
-          .get(this.baseurl + "/virtuleStorage/vs/pvclist")
+            .get(this.baseurl + "/virtuleStorage/vs/pvclist")
           .then((res) => {
-            // console.log(res);
+            console.log(res);
             console.log(JSON.parse(res.data.result));
             let rdata = JSON.parse(res.data.result).items;
             let resop = [];

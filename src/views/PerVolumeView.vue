@@ -260,7 +260,7 @@ export default {
           pvAccessMode: "ReadWriteOnce",
         },
         pvcInfo: {
-          pvcName: "example-pv1-claim",
+          pvcName: "example-pvc1",
           pvcNamespace: "default",
           pvcQuantity: "8Gi",
         },

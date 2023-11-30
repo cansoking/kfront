@@ -106,16 +106,7 @@ export default {
       createvmimavisible: false,
       editvmimavisible: false,
       buildvmimavisible: false,
-      vmimadata: [
-        {
-          name: "texlive2022.iso",
-          size: 2048,
-        },
-        {
-          name: "Tiny.iso",
-          size: 20,
-        },
-      ],
+      vmimadata: [],
       vmima_form: [],
     };
   },
