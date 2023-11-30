@@ -306,7 +306,7 @@ export default {
   name: "VMLogList",
   data() {
     return {
-      baseurl: "http://192.168.243.143:8080",
+      baseurl: "http://172.26.82.161:8080",
       curpage: 1,
       totalvmtem: 0,
       pagesize: 10,

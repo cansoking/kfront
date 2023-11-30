@@ -69,7 +69,11 @@
               >
             </el-form-item>
             <el-form-item label="创建时间">
-              <span>{{ props.row.metadata.creationTimestamp }}</span>
+<!--              <span>{{ props.row.metadata.creationTimestamp }}</span>-->
+              <div>
+                <span>{{ formatDate(props.row.metadata.creationTimestamp, 'YYYY-MM-DD') }}</span><br>
+                <span>{{ formatDate(props.row.metadata.creationTimestamp, 'HH:mm:ss') }}</span>
+              </div>
             </el-form-item>
             <el-form-item label="容器列表"> </el-form-item>
             <el-table
@@ -146,11 +150,13 @@
           <el-tag v-else type="danger">不可用</el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        sortable
-        label="创建时间"
-        prop="metadata.creationTimestamp"
-      >
+      <el-table-column sortable label="创建时间" prop="metadata.creationTimestamp">
+        <template slot-scope="scope">
+          <div>
+            <span>{{ formatDate(scope.row.metadata.creationTimestamp, 'YYYY-MM-DD') }}</span><br>
+            <span>{{ formatDate(scope.row.metadata.creationTimestamp, 'HH:mm:ss') }}</span>
+          </div>
+        </template>
       </el-table-column>
       <el-table-column width="210" align="right">
         <template slot="header">
@@ -170,7 +176,7 @@
               :model="migrate_form"
               :status-icon="true"
               :rules="migrate_rules"
-              ref="migrate_form"
+              :ref="'migrate_form' + scope.$index"
             >
               <el-form-item label="请选择要迁移的节点" prop="nodename">
                 <el-select
@@ -195,7 +201,7 @@
                     size="mini"
                     type="primary"
                     @click="
-                      migrate_sumbit(scope.$index, scope.row, 'migrate_form')
+                      migrate_sumbit(scope.$index, scope.row, 'migrate_form' + scope.$index)
                     "
                     >确定迁移</el-button
                   >
@@ -300,6 +306,24 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="选择持久卷声明" prop="pvcName">
+          <!-- <el-input v-model="cp_form.containerImage"></el-input> -->
+          <el-select
+              style="width: 100%"
+              v-model="cp_form.pvcName"
+              clearable
+              @visible-change="pvcremote"
+              placeholder="请选择pvc"
+          >
+            <el-option
+                v-for="item in pvcName_options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="所属容器" prop="containerInfoList">
           <el-popover
             style="margin-right: 10px"
@@ -388,6 +412,7 @@
                   style="width: 100%"
                   v-model="tmp_con_info.containerImage"
                   clearable
+                  @visible-change="imageremote"
                   placeholder="请选择容器镜像"
                 >
                   <el-option
@@ -505,33 +530,15 @@ export default {
       // 容器镜像选项
       containerImage_options: [
         {
-          value: "rancher/klipper-helm:v0.8.2-build20230815",
-          label: "rancher/klipper-helm:v0.8.2-build20230815",
-        },
-        {
-          value: "rancher/klipper-lb:v0.4.4",
-          label: "rancher/klipper-lb:v0.4.4",
-        },
-        {
-          value: "rancher/local-path-provisioner:v0.0.24",
-          label: "rancher/local-path-provisioner:v0.0.24",
-        },
-        {
-          value: "rancher/mirrored-coredns-coredns:1.10.1",
-          label: "rancher/mirrored-coredns-coredns:1.10.1",
-        },
-        {
-          value: "rancher/mirrored-metrics-server:v0.6.3",
-          label: "rancher/mirrored-metrics-server:v0.6.3",
-        },
-        {
-          value: "rancher/mirrored-library-traefik:2.10.5",
-          label: "rancher/mirrored-library-traefik:2.10.5",
+          value: "",
+          label: "",
         },
       ],
       // 节点名称选项
       nodename_options: [],
-      baseurl: "http://192.168.91.129:8080",
+      // pvc名称选项
+      pvcName_options: [],
+      baseurl: "http://172.26.82.161:8080",
       poddata: [],
       psearch: "",
       isstart: false,
@@ -543,6 +550,7 @@ export default {
         podName: "",
         namespace: "",
         nodename: "",
+        pvcName: "",
         containerInfoList: [],
       },
       migrate_form: {
@@ -558,6 +566,9 @@ export default {
         ],
         nodename: [
           { required: true, message: "请选择节点", trigger: "change" },
+        ],
+        pvcName: [
+          { required: true, message: "请输入Pvc名称", trigger: "change" },
         ],
         containerInfoList: [{ validator: checkcmpimage, trigger: "change" }],
       },
@@ -576,6 +587,23 @@ export default {
     this.getPodList();
   },
   methods: {
+    formatDate(timestamp, format) {
+      const date = new Date(timestamp);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      if (format === 'YYYY-MM-DD') {
+        return `${year}-${month}-${day}`;
+      } else if (format === 'HH:mm:ss') {
+        return `${hours}:${minutes}:${seconds}`;
+      } else {
+        return ''; // 可以根据需要添加其他格式
+      }
+    },
     // 动态添加容器相关
     showInputCon() {
       this.addvisible = true;
@@ -613,7 +641,8 @@ export default {
       this.$axios
         .get(this.baseurl + "/workload/getPodList")
         .then((res) => {
-          console.log(JSON.parse(res.data.result));
+          // console.log(JSON.parse(res.data.result));
+          console.log(res.data);
           this.poddata = JSON.parse(res.data.result).items;
           this.totalpod = JSON.parse(res.data.result).items.length;
         })
@@ -627,9 +656,9 @@ export default {
         method: "post",
         url: this.baseurl + "/workload/startPod",
         data: {
-          podName: this.poddata[idx].metadata.name,
-          podNamespace: this.poddata[idx].metadata.namespace,
-          podNodeName: this.poddata[idx].spec.nodename,
+          podName: row.metadata.name,
+          podNamespace: row.metadata.namespace,
+          podNodeName: row.spec.nodename,
           containerInfoList: [],
         },
         headers: {
@@ -640,10 +669,10 @@ export default {
           console.log(res);
           this.$notify.success({
             title: "操作通知",
-            message: "容器 " + this.poddata[idx].metadata.name + " 启动成功",
+            message: "容器 " + row.metadata.name + " 启动成功",
             position: "bottom-right",
           });
-          this.poddata[idx].metadata.annotations.status = "Yes";
+          row.metadata.annotations.status = "Yes";
         },
         (err) => {
           console.log(err);
@@ -661,9 +690,9 @@ export default {
         method: "post",
         url: this.baseurl + "/workload/stopPod",
         data: {
-          podName: this.poddata[idx].metadata.name,
-          podNamespace: this.poddata[idx].metadata.namespace,
-          podNodeName: this.poddata[idx].spec.nodename,
+          podName: row.metadata.name,
+          podNamespace: row.metadata.namespace,
+          podNodeName: row.spec.nodename,
           containerInfoList: [],
         },
         headers: {
@@ -674,10 +703,10 @@ export default {
           console.log(res);
           this.$notify.success({
             title: "操作通知",
-            message: "容器 " + this.poddata[idx].metadata.name + " 停止成功",
+            message: "容器 " + row.metadata.name + " 停止成功",
             position: "bottom-right",
           });
-          this.poddata[idx].metadata.annotations.status = "No";
+          row.metadata.annotations.status = "No";
         },
         (err) => {
           console.log(err);
@@ -694,15 +723,29 @@ export default {
       // 校验表单
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          // 将data数据分成两个对象
+          const podInfo = {
+            podName: this.cp_form.podName,
+            podNamespace: this.cp_form.namespace,
+            podNodeName: this.cp_form.nodename,
+            containerInfoList: this.cp_form.containerInfoList,
+          };
+
+          const pvcInfo = {
+            pvcName: this.cp_form.pvcName
+          };
           // 提交表单，创建容器
           this.$axios({
             method: "post",
             url: this.baseurl + "/workload/createPod",
             data: {
-              podName: this.cp_form.podName,
-              podNamespace: this.cp_form.namespace,
-              podNodeName: this.cp_form.nodename,
-              containerInfoList: this.cp_form.containerInfoList,
+              // podName: this.cp_form.podName,
+              // podNamespace: this.cp_form.namespace,
+              // podNodeName: this.cp_form.nodename,
+              // containerInfoList: this.cp_form.containerInfoList,
+              // pvcName: this.cp_form.pvcName,
+              podInfo:podInfo,
+              pvcInfo:pvcInfo
             },
             headers: {
               "Content-Type": "application/json",
@@ -747,9 +790,9 @@ export default {
         method: "post",
         url: this.baseurl + "/workload/deletePod",
         data: {
-          podName: this.poddata[idx].metadata.name,
-          podNamespace: this.poddata[idx].metadata.namespace,
-          podNodeName: this.poddata[idx].spec.nodename,
+          podName: row.metadata.name,
+          podNamespace: row.metadata.namespace,
+          podNodeName: row.spec.nodename,
           containerInfoList: [],
         },
         headers: {
@@ -759,7 +802,7 @@ export default {
         (res) => {
           this.$notify.success({
             title: "操作通知",
-            message: "容器 " + this.poddata[idx].metadata.name + "删除成功",
+            message: "容器 " + row.metadata.name + "删除成功",
             position: "bottom-right",
           });
           this.getPodList();
@@ -775,17 +818,19 @@ export default {
       );
     },
     migrate_sumbit(idx, row, formName) {
+console.log(formName)
       // 校验表单
       this.$refs[formName].validate((valid) => {
+        console.log(row.metadata.name)
+        console.log(this.migrate_form.nodename)
         if (valid) {
           this.$axios({
             method: "post",
             url: this.baseurl + "/workload/editPod",
             data: {
-              podName: this.poddata[idx].metadata.name,
-              podNamespace: this.poddata[idx].metadata.namespace,
+              podName: row.metadata.name,
+              podNamespace: row.metadata.namespace,
               podNodeName: this.migrate_form.nodename,
-              containerInfoList: [],
             },
             headers: {
               "Content-Type": "application/json",
@@ -802,7 +847,7 @@ export default {
                 this.$notify.success({
                   title: "操作通知",
                   message:
-                    "容器 " + this.poddata[idx].metadata.name + "迁移成功",
+                    "容器 " + row.metadata.name + "迁移成功",
                   position: "bottom-right",
                 });
               }
@@ -822,6 +867,7 @@ export default {
           return false;
         }
       });
+
     },
     // 重置表单
     resetForm(formName) {
@@ -869,6 +915,75 @@ export default {
           console.log("errors", err);
         });
     },
+    // 远程搜索pvc名
+    pvcremote() {
+      this.$axios
+          .get(this.baseurl + "/virtuleStorage/vs/pvclist")
+          .then((res) => {
+            // console.log(res);
+            console.log(JSON.parse(res.data.result));
+            let rdata = JSON.parse(res.data.result).items;
+            let resop = [];
+            for (let i = 0; i < rdata.length; i++) {
+              let tmp = {};
+              tmp["label"] = rdata[i].metadata.name;
+              tmp["value"] = rdata[i].metadata.name;
+              resop.push(tmp);
+            }
+            this.pvcName_options = resop;
+          })
+          .catch((err) => {
+            console.log("errors", err);
+          });
+    },
+    // 远程搜索image名
+    imageremote() {
+      this.$axios
+          .post(this.baseurl + "/containerd/images/list", {
+            virtualMachineIp: "172.26.82.161",
+            userName: "root",
+            userPassword: "Upc123456@",
+          })
+          .then((res) => {
+            let rdata = this.data_resolver(res.data.result);
+            // this.cidata = rdata;
+            // this.totalci = rdata.length;
+            console.log(rdata);
+            // let rdata = JSON.parse(res.data.result).items;
+            let resop = [];
+            for (let i = 0; i < rdata.length; i++) {
+              let tmp = {};
+              tmp["label"] = rdata[i].imageName+":"+rdata[i].imageTag;
+              tmp["value"] = rdata[i].imageName+":"+rdata[i].imageTag;
+              resop.push(tmp);
+            }
+            this.containerImage_options = resop;
+          })
+          .catch((err) => {
+            console.log("errors", err);
+          });
+    },
+    // 解析数据
+    data_resolver(sdata) {
+      let res = [];
+      let rows = sdata.split("\n");
+      let i = 1;
+      for (; i < rows.length - 1; i++) {
+        let cols = rows[i].split(" ");
+        let j = 0;
+        cols = cols.filter(function (item) {
+          return item !== "";
+        });
+        res.push({
+          imageName: cols[0],
+          imageTag: cols[1],
+          imageId: cols[2],
+          imageSize: cols[3],
+        });
+      }
+      return res;
+    },
+
   },
 };
 </script>

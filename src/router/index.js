@@ -20,6 +20,11 @@ const routes = [
     component: () => import('../views/PodIndexView.vue')
   },
   {
+    path: '/nodeindex',
+    name: 'nodeindex',
+    component: () => import('../views/NodeIndexView.vue')
+  },
+  {
     path: '/minfo',
     name: 'minfo',
     component: () => import('../views/MachineInfo.vue')
@@ -133,6 +138,7 @@ const routes = [
     name: 'vminfo',
     component: () => import('../views/VMIndexView.vue')
   },
+
 ]
 
 const router = new VueRouter({

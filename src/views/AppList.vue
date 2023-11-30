@@ -94,7 +94,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://172.26.82.161:8080",
       cidata: [],
       psearch: "",
       curpage: 1,

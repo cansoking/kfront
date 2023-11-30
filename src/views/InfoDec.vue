@@ -110,7 +110,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://127.0.0.1:9002",
+      baseurl: "http://172.26.82.161:9002",
       infodata: [],
       psearch: "",
       curpage: 1,

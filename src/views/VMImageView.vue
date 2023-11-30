@@ -99,7 +99,7 @@ export default {
   name: "VMImaList",
   data() {
     return {
-      baseurl: "http://localhost:8080",
+      baseurl: "http://172.26.82.161:8080",
       curpage: 1,
       totalvmima: 0,
       pagesize: 10,

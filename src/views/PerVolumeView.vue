@@ -237,7 +237,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://172.26.82.161:8080",
       vsdata: [],
       psearch: "",
       curpage: 1,
@@ -249,9 +249,9 @@ export default {
       },
       vs_form: {
         vmInfo: {
-          virtualMachineIp: "192.168.91.129",
+          virtualMachineIp: "172.26.82.161",
           userName: "root",
-          userPassword: "Noi3674.",
+          userPassword: "Upc123456@",
         },
         pvInfo: {
           pvName: "example-pv1",

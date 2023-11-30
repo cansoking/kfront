@@ -84,7 +84,7 @@
         prop="useMem"
       >
       </el-table-column> -->
-      
+
       <el-table-column align="right">
         <template slot="header">
           <el-input style="width: 30%;" v-model="psearch" size="mini" placeholder="输入名称搜索" />
@@ -240,7 +240,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.243.143:8080",
+      baseurl: "http://172.26.82.161:8080",
       vmdata: [],
       psearch: "",
       curpage: 1,

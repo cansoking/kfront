@@ -108,7 +108,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://172.26.82.161:8080",
       cidata: [],
       psearch: "",
       curpage: 1,
@@ -122,9 +122,9 @@ export default {
         imageId:""
       },
       formData: {
-        virtualMachineIp: "192.168.91.129",
+        virtualMachineIp: "172.26.82.161",
         userName: "root",
-        userPassword: "Noi3674.",
+        userPassword: "Upc123456@",
       },
     };
   },
@@ -233,9 +233,9 @@ export default {
     getVMList() {
       this.$axios
         .post(this.baseurl + "/containerd/images/list", {
-          virtualMachineIp: "192.168.91.129",
+          virtualMachineIp: "172.26.82.161",
           userName: "root",
-          userPassword: "Noi3674.",
+          userPassword: "Upc123456@",
         })
         .then((res) => {
           let s_data = this.data_resolver(res.data.result);

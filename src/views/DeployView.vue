@@ -76,6 +76,12 @@
         label="创建时间"
         prop="metadata.creationTimestamp"
       >
+        <template slot-scope="scope">
+          <div>
+            <span>{{ formatDate(scope.row.metadata.creationTimestamp, 'YYYY-MM-DD') }}</span><br>
+            <span>{{ formatDate(scope.row.metadata.creationTimestamp, 'HH:mm:ss') }}</span>
+          </div>
+        </template>
       </el-table-column>
       <el-table-column align="right">
         <template slot="header">
@@ -224,7 +230,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://192.168.91.129:8080",
+      baseurl: "http://172.26.82.161:8080",
       dpdata: [],
       psearch: "",
       curpage: 1,
@@ -259,6 +265,23 @@ export default {
     };
   },
   methods: {
+    formatDate(timestamp, format) {
+      const date = new Date(timestamp);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      if (format === 'YYYY-MM-DD') {
+        return `${year}-${month}-${day}`;
+      } else if (format === 'HH:mm:ss') {
+        return `${hours}:${minutes}:${seconds}`;
+      } else {
+        return ''; // 可以根据需要添加其他格式
+      }
+    },
     del,
     // 打开部署上传
     openUploadDeployment() {
@@ -293,7 +316,7 @@ export default {
           }).then(
             (res) => {
               console.log(res);
-              if (res.data[0] === "E") {
+              if (res.data.success !== true) {
                 this.$notify.error({
                   title: "创建失败",
                   message: res.data,
@@ -333,6 +356,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/deployment/list")
         .then((res) => {
+          console.log(JSON.parse(res.data.result))
           this.dpdata = JSON.parse(res.data.result).items;
           this.totaldp = JSON.parse(res.data.result).items.length;
         })
@@ -470,7 +494,7 @@ export default {
         (res) => {
           this.$notify.success({
             title: "操作通知",
-            message: "应用 " + name + "创建成功",
+            message: "应用 xxx" + name + "创建成功",
             position: "bottom-right",
           });
           setTimeout(() => {

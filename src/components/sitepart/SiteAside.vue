@@ -3,8 +3,8 @@
     <div class="side-head">
       <a href="/">
         <el-image
-          style="width: 250px"
-          :src="require('../../images/logo.png')"
+          style="width: 200px"
+          :src="require('../../images/xw.png')"
           fit="fill"
         ></el-image>
       </a>
@@ -86,7 +86,6 @@
           <span slot="title">容器列表</span>
         </el-menu-item>
       </el-submenu>
-
       <el-submenu index="image">
         <template slot="title">
           <i class="el-icon-copy-document"></i>
@@ -101,7 +100,6 @@
           <span slot="title">虚拟机镜像</span>
         </el-menu-item>
       </el-submenu>
-
       <el-submenu index="virstorage">
         <template slot="title">
           <i class="el-icon-copy-document"></i>
@@ -131,6 +129,10 @@
         <el-menu-item index="/podindex" route="podindex">
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">容器指标</span>
+        </el-menu-item>
+        <el-menu-item index="/nodeindex" route="nodeindex">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">Node指标</span>
         </el-menu-item>
         <el-menu-item index="/minfo" route="minfo">
           <i class="el-icon-c-scale-to-original"></i>
