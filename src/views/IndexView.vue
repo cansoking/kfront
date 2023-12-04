@@ -24,7 +24,7 @@
                       ></i
                       >中心云
                     </div>
-                    <div style="font-size: 30px">{{ 4 }}个</div>
+                    <div style="font-size: 30px">{{ c_nodeinfo.length }}个</div>
                   </el-col>
                   <el-col :span="6" :offset="0">
                     <div style="padding-top: 35px">
@@ -51,7 +51,7 @@
                       <i style="font-size: 60px" class="el-icon-attract"></i
                       >边缘云
                     </div>
-                    <div style="font-size: 30px">{{ 4 }}个</div>
+                    <div style="font-size: 30px">{{ e_nodeinfo.length }}个</div>
                   </el-col>
                   <el-col :span="6" :offset="0">
                     <div style="padding-top: 35px">
@@ -77,7 +77,7 @@
                     <div style="font-size: 40px">
                       <i style="font-size: 60px" class="el-icon-monitor"></i>端
                     </div>
-                    <div style="font-size: 30px">{{ 4 }}个</div>
+                    <div style="font-size: 30px">{{ d_nodeinfo.length }}个</div>
                   </el-col>
                   <el-col :span="6" :offset="0">
                     <div style="padding-top: 35px">
@@ -109,42 +109,65 @@
             </el-page-header>
           </div>
           <div class="detaillist">
-            <div v-for="i in 4" :key="i" style="margin-top: 40px">
-              <el-row :gutter="0">
-                <el-col :span="12" :offset="1">
-                  <div class="nodename">worker节点-{{ i }}</div>
-                </el-col>
-                <el-col :span="2" :offset="1">
-                  <el-button
-                    style="
-                      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-                      width: 60px;
-                      height: 60px;
-                      font-size: 20px;
-                    "
-                    type="enterbtn"
-                    icon="el-icon-d-arrow-right"
-                    circle
-                  ></el-button>
-                </el-col>
-                <el-col :span="2" :offset="0">
-                  <el-button
-                    style="
-                      box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-                      width: 60px;
-                      height: 60px;
-                      font-size: 20px;
-                    "
-                    type="deletebtn"
-                    icon="el-icon-delete-solid"
-                    circle
-                  ></el-button>
-                </el-col>
-              </el-row>
-            </div>
-            <el-button type="text" size="default" @click="tempenter"
-              >临时入口</el-button
+            <div
+              v-if="sp_nodeinfo[page - 1].length == 0"
+              style="margin-right: 150px; margin-top: 320px"
             >
+              暂无{{ names[page - 1] }}节点
+            </div>
+            <div v-else>
+              <div
+                v-for="item in sp_nodeinfo[page - 1]"
+                :key="item.id"
+                style="margin-top: 40px"
+              >
+                <el-row :gutter="0">
+                  <el-col :span="12" :offset="1">
+                    <div class="nodename">{{ item.nodeName }}</div>
+                  </el-col>
+                  <el-col :span="2" :offset="1">
+                    <el-button
+                      style="
+                        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+                        width: 60px;
+                        height: 60px;
+                        font-size: 20px;
+                      "
+                      type="enterbtn"
+                      icon="el-icon-d-arrow-right"
+                      circle
+                      @click="topage(item)"
+                    ></el-button>
+                  </el-col>
+                  <el-col :span="2" :offset="0">
+                    <el-popconfirm
+                      confirm-button-text="确认删除"
+                      cancel-button-text="取消"
+                      confirm-button-type="danger"
+                      cancel-button-type="info"
+                      icon="el-icon-info"
+                      icon-color="gray"
+                      title="要删除这个节点吗？"
+                      @confirm="deletenode(item.id)"
+                    >
+                      <el-button
+                        slot="reference"
+                        style="
+                          box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+                          width: 60px;
+                          height: 60px;
+                          font-size: 20px;
+                        "
+                        type="deletebtn"
+                        icon="el-icon-delete-solid"
+                        circle
+                        
+                      ></el-button>
+                    </el-popconfirm>
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -656,19 +679,96 @@ export default {
   name: "IndexView",
   data() {
     return {
+      // baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://127.0.0.1:8080",
       names: ["中心云", "边缘云", "端"],
       page: 0,
+      nodeinfo: [],
+      sp_nodeinfo: [],
+      c_nodeinfo: [],
+      e_nodeinfo: [],
+      d_nodeinfo: [],
     };
   },
   methods: {
+    // 删除节点
+    deletenode(nid) {
+      this.$axios
+        .delete(this.baseurl + "/node/deleteNodeList1/" + nid)
+        .then((res) => {
+          if (res.data.success == true) {
+            this.$notify.success({
+              title: "操作通知",
+              message: "节点删除成功",
+              position: "bottom-right",
+            });
+          } else {
+            this.$notify.error({
+              title: "操作通知",
+              message: "节点删除失败",
+              position: "bottom-right",
+            });
+          }
+          this.getnodelist();
+        })
+        .catch((err) => {
+          console.log("errors", err);
+          this.$notify.error({
+            title: "操作通知",
+            message: "节点删除失败，请检查网络设置",
+            position: "bottom-right",
+          });
+        });
+    },
+    getnodelist() {
+      // 清空数组
+      this.nodeinfo = [];
+      this.sp_nodeinfo = [];
+      this.c_nodeinfo = [];
+      this.e_nodeinfo = [];
+      this.d_nodeinfo = [];
+      this.$axios
+        .get(this.baseurl + "/node/getNodeList1")
+        .then((res) => {
+          this.nodeinfo = res.data.content;
+          // 划分节点
+          let tmp_c_count = 0;
+          let tmp_e_count = 0;
+          let tmp_d_count = 0;
+          for (let i = 0; i < this.nodeinfo.length; i++) {
+            let item = this.nodeinfo[i];
+            if (item.nodeType === "云") {
+              this.c_nodeinfo.push(item);
+            } else if (item.nodeType === "边") {
+              this.e_nodeinfo.push(item);
+            } else if (item.nodeType === "端") {
+              this.d_nodeinfo.push(item);
+            }
+          }
+          this.sp_nodeinfo.push(this.c_nodeinfo);
+          this.sp_nodeinfo.push(this.e_nodeinfo);
+          this.sp_nodeinfo.push(this.d_nodeinfo);
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
     goBack() {
       this.page = 0;
     },
     tempenter() {
       this.$router.push("/podlist");
     },
+    topage(node) {
+      sessionStorage.setItem("nodename", node.nodeName);
+      sessionStorage.setItem("ip", node.nodeIp);
+      this.$router.push("/podlist");
+    },
   },
   mounted() {
+    // 执行
+    this.getnodelist();
+
     const pointSize = 4;
 
     const waves = new ShaderProgram(document.querySelector(".waves"), {

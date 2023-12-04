@@ -221,6 +221,24 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="12" :offset="0">
+            <el-form-item label="节点" prop="node">
+              <el-select
+                style="width: 60%"
+                v-model="formData.node"
+                clearable
+                placeholder="请选择创建虚拟机所在节点"
+              >
+                <el-option
+                  v-for="item in node_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
         </el-row>
                  
         <el-form-item size="large">
@@ -254,6 +272,16 @@ export default {
       totalvm: 0,
       pagesize: 10,
       buildvmvisible: false,
+      node_options: [
+        {
+          label: "127.0.0.1",
+          value: "127.0.0.1",
+        },
+        {
+          label: "255.255.255.255",
+          value: "255.255.255.255",
+        },
+      ],
       ostype_options: [
         {
           label: "x86",
@@ -323,6 +351,7 @@ export default {
         memory: "",
         cpuNum: "",
         OStype: "",
+        node: ""
       },
       // 校验规则
       vm_rules: {
@@ -331,6 +360,9 @@ export default {
         ],
         memory: [
           { required: true, message: "请选择内存大小", trigger: "change" },
+        ],
+        node: [
+          { required: true, message: "请选择创建虚拟机所在的节点", trigger: "change" },
         ],
         cpuNum: [{ required: true, message: "请选择CPU个数", trigger: "change" }],
         OStype: [

@@ -24,7 +24,9 @@
         cidata
           .slice((curpage - 1) * pagesize, curpage * pagesize)
           .filter(
-            (data) => data.spec.ports[0].nodePort  && ( !psearch || data.metadata.name.toLowerCase().includes(psearch.toLowerCase()) )
+            (data) =>
+              !psearch ||
+              data.metadata.name.toLowerCase().includes(psearch.toLowerCase())
           )
       "
       style="width: 100%"
@@ -39,7 +41,12 @@
         prop="metadata.name"
       >
       </el-table-column>
-      <el-table-column width="450" sortable label="节点端口" prop="spec.ports[0].nodePort">
+      <el-table-column
+        width="450"
+        sortable
+        label="节点端口"
+        prop="spec.ports[0].nodePort"
+      >
       </el-table-column>
       <el-table-column width="400" sortable label="标签" prop="metadata.labels">
         <template slot-scope="scope">
@@ -113,9 +120,9 @@ export default {
       this.$axios
         .get(this.baseurl + "/service/list")
         .then((res) => {
-          console.log(res);
           let s_data = res.data.result;
           this.cidata = JSON.parse(s_data).items;
+          this.cidata = this.cidata.filter((data) => data.spec.ports[0].nodePort);
           this.totalci = this.cidata.length;
         })
         .catch((err) => {

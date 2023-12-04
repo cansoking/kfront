@@ -8,11 +8,13 @@
             v-model="search"
             placeholder="请输入搜索内容..."
           ></el-input> -->
-          <span style="font-size: 30px; font-weight: 600; color: #ffffff;">基于虚拟化的资源管理演示验证原型系统</span>
+          <span style="font-size: 30px; font-weight: 600; color: #ffffff"
+            >基于虚拟化的资源管理演示验证原型系统</span
+          >
         </el-col>
-        <!-- <el-col :offset="18" :span="1">
-          <i style="font-size: 40px; color: #303641" class="el-icon-info"></i>
-        </el-col> -->
+        <el-col :offset="10" :span="4">
+          <div style="color: #ffffff;font-size: 20px;line-height: 40px;">{{nodename}}—{{nodeip}}</div>
+        </el-col>
       </el-row>
     </div>
   </div>
@@ -24,12 +26,18 @@ export default {
   data() {
     return {
       search: "",
+      nodename: '',
+      nodeip: ''
     };
   },
-  created() {
-  },
-  methods: {
-  },
+  created() {},
+  methods: {},
+  mounted() {
+    this.nodename = window.sessionStorage.getItem('nodename');
+    this.nodeip = window.sessionStorage.getItem('ip');
+    this.$store.nodename = this.nodename;
+    this.$store.nodeip = this.nodeip;
+  }
 };
 </script>
 

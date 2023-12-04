@@ -40,14 +40,14 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">虚拟机列表</span>
         </el-menu-item>
-        <el-menu-item index="vmtemp" route="vmtemlist">
+        <el-menu-item index="/vmtemlist" route="vmtemlist">
           <i class="el-icon-copy-document"></i>
           <span slot="title">虚拟机模版管理</span>
         </el-menu-item>
 
       </el-submenu>
 
-      <el-submenu index="vm1">
+      <!-- <el-submenu index="vm1">
         <template slot="title">
           <i class="el-icon-copy-document"></i>
           <span>计算节点虚拟机1</span>
@@ -56,13 +56,13 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">计算节点虚拟机1列表</span>
         </el-menu-item>
-        <!-- <el-menu-item index="/vmimalist2" route="vmimalist2">
+        <el-menu-item index="/vmimalist2" route="vmimalist2">
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">计算节点虚拟机1镜像</span>
-        </el-menu-item> -->
-      </el-submenu>
+        </el-menu-item>
+      </el-submenu> -->
 
-      <el-submenu index="vm2">
+      <!-- <el-submenu index="vm2">
         <template slot="title">
           <i class="el-icon-copy-document"></i>
           <span>计算节点虚拟机2</span>
@@ -71,11 +71,11 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">计算节点虚拟机2列表</span>
         </el-menu-item>
-        <!-- <el-menu-item index="/vmimalist2" route="vmimalist2">
+        <el-menu-item index="/vmimalist2" route="vmimalist2">
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">计算节点虚拟机2镜像</span>
-        </el-menu-item> -->
-      </el-submenu>
+        </el-menu-item>
+      </el-submenu> -->
 
       <el-submenu index="pod">
         <template slot="title">

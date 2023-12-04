@@ -78,8 +78,13 @@
       >
         <template slot-scope="scope">
           <div>
-            <span>{{ formatDate(scope.row.metadata.creationTimestamp, 'YYYY-MM-DD') }}</span><br>
-            <span>{{ formatDate(scope.row.metadata.creationTimestamp, 'HH:mm:ss') }}</span>
+            <span>{{
+              formatDate(scope.row.metadata.creationTimestamp, "YYYY-MM-DD")
+            }}</span
+            ><br />
+            <span>{{
+              formatDate(scope.row.metadata.creationTimestamp, "HH:mm:ss")
+            }}</span>
           </div>
         </template>
       </el-table-column>
@@ -268,18 +273,18 @@ export default {
     formatDate(timestamp, format) {
       const date = new Date(timestamp);
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
 
-      if (format === 'YYYY-MM-DD') {
+      if (format === "YYYY-MM-DD") {
         return `${year}-${month}-${day}`;
-      } else if (format === 'HH:mm:ss') {
+      } else if (format === "HH:mm:ss") {
         return `${hours}:${minutes}:${seconds}`;
       } else {
-        return ''; // 可以根据需要添加其他格式
+        return ""; // 可以根据需要添加其他格式
       }
     },
     del,
@@ -356,9 +361,15 @@ export default {
       this.$axios
         .get(this.baseurl + "/deployment/list")
         .then((res) => {
-          console.log(JSON.parse(res.data.result))
           this.dpdata = JSON.parse(res.data.result).items;
-          this.totaldp = JSON.parse(res.data.result).items.length;
+          this.dpdata = this.dpdata.filter(
+            (data) =>
+              this.$store.nodename ===
+              (data.spec.template.spec.nodeName
+                ? data.spec.template.spec.nodeName
+                : "master1")
+          );
+          this.totaldp = this.dpdata.length;
         })
         .catch((err) => {
           console.log("errors", err);

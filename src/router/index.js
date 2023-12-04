@@ -12,6 +12,9 @@ const routes = [
   {
     path: '/manage',
     name: 'manage',
+    meta: {
+      requireAuth: true
+    },
     component: () => import('../views/ManagementView.vue'),
     children: [
       {

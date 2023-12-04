@@ -17,3 +17,17 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(res => res.meta.requireAuth)) { // 验证是否需要选择节点
+    var nodename = window.sessionStorage.getItem('nodename');
+    console.log(nodename)
+    if (nodename) { // 查询本地存储信息
+      next();
+    } else {
+      next('/index');
+    }
+  } else {
+    next();
+  }
+})
