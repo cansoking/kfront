@@ -111,7 +111,7 @@ export default {
     };
   },
   mounted() {
-    // this.getVMIma();
+    this.getVMIma();
   },
   methods: {
     getVMIma() {
