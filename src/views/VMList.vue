@@ -201,29 +201,28 @@
           </el-col>
         </el-row>
 
-        <el-form-item label="虚拟机映像文件" prop="vm_iso">
-          <el-upload
-            class="upload-demo"
-            drag
-            ref="upload"
-            :action="baseurl + '/addVirtual'"
-            :multiple="false"
-            :data="formData"
-            accept=".iso"
-            :auto-upload="false"
-            :limit="1"
-            :before-upload="handleBeforeUpload"
-            :on-success="sucupload"
-            :on-error="errupload"
-            style="width: 30%"
-          >
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将文件拖到此处，或<em>点击上传</em>
-            </div>
-            <div class="el-upload__tip" slot="tip">*只能上传.iso/ .qemu2/ .img文件</div> 
-          </el-upload>
-        </el-form-item>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
+            <el-form-item label="虚拟机镜像,#仅支持qcow2格式" prop="ImgName">
+              <el-select
+                style="width: 60%"
+                v-model="formData.ImgName"
+                clearable
+                @visible-change="nsremote"
+                placeholder="请选择虚拟机镜像"
+              >
+                <el-option
+                  v-for="item in images"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+                 
         <el-form-item size="large">
           <div class="vmc-sbm-area">
             <el-button round @click="resetForm('formData')">清空输入</el-button>
@@ -250,6 +249,7 @@ export default {
       baseurl: "http://39.98.124.97:8080",
       vmdata: [],
       psearch: "",
+      images: [],
       curpage: 1,
       totalvm: 0,
       pagesize: 10,
@@ -363,6 +363,25 @@ export default {
           message: '虚拟机名字不能包括特殊字符',
         });
       }
+    },
+
+    //获取/root/images/下的虚拟机镜像
+    nsremote() {
+      this.$axios
+        .get(this.baseurl + "/Images/imgList")
+        .then((res) => { 
+          let resop = [];
+          for (let i = 0; i < res.data.content.length; i++) {
+            let tmp = {};
+            tmp["label"] = res.data.content[i].name;
+            tmp["value"] = res.data.content[i].name;
+            resop.push(tmp);
+          }
+          this.images = resop;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
     },
 
     // 上传失败
