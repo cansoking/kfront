@@ -679,8 +679,8 @@ export default {
   name: "IndexView",
   data() {
     return {
-      // baseurl: "http://39.98.124.97:8080",
-      baseurl: "http://127.0.0.1:8080",
+      baseurl: "http://39.98.124.97:8080",
+      // baseurl: "http://127.0.0.1:8080",
       names: ["中心云", "边缘云", "端"],
       page: 0,
       nodeinfo: [],
