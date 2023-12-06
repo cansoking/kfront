@@ -81,6 +81,11 @@
               </div>
             </el-form-item>
             <el-form-item label="容器列表"> </el-form-item>
+            <el-form-item label="路径">
+              <div>
+                {{ props.row.info.ppname }}:{{ props.row.info.podpath }}
+              </div>
+            </el-form-item>
             <el-table
               size="small"
               :data="props.row.spec.containers"
@@ -116,7 +121,7 @@
       >
       </el-table-column>
       <el-table-column
-        width="350"
+        width="300"
         sortable
         label="镜像"
         prop="spec.containers[0].image"
@@ -557,6 +562,7 @@ export default {
       // pvc名称选项
       pvcName_options: [],
       baseurl: "http://39.98.124.97:8080",
+      // baseurl: "http://127.0.0.1:8080",
       poddata: [],
       psearch: "",
       isstart: false,
@@ -660,13 +666,39 @@ export default {
         .get(this.baseurl + "/workload/getPodList")
         .then((res) => {
           // console.log(JSON.parse(res.data.result));
-          console.log(res.data);
           this.poddata = JSON.parse(res.data.result).items;
           this.poddata = this.poddata.filter(
             (data) =>
               this.$store.nodename ===
               (data.spec.nodeName ? data.spec.nodeName : "master1")
           );
+          // 获取namepath
+          for (let i = 0; i < this.poddata.length; i++) {
+            this.poddata[i].info = {};
+            if (this.poddata[i].spec.volumes) {
+              this.poddata[i].info.ppname =
+                this.poddata[i].spec.volumes[0].name;
+              this.$axios
+                // .get(this.baseurl + "/virtuleStorage/pvPath?pvName=" + this.poddata[i].spec.volumes[0].name)
+                .get(
+                  "http://127.0.0.1:8080/virtuleStorage/pvPath?pvName=" +
+                    this.poddata[i].spec.volumes[0].name
+                )
+                .then((res) => {
+                  this.poddata[i].info.podpath = res.data.pvPath;
+                })
+                .catch((err) => {
+                  console.log(this.poddata[i].spec.volumes[0].name + "无path");
+                  // this.poddata[i].info.podpath = "---";
+                });
+              if (!this.poddata[i].info.podpath) {
+                this.poddata[i].info.podpath = "---";
+              }
+            } else {
+              this.poddata[i].info.ppname = "---";
+              this.poddata[i].info.podpath = "---";
+            }
+          }
           this.totalpod = this.poddata.length;
         })
         .catch((err) => {

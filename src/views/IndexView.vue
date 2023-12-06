@@ -122,8 +122,20 @@
                 style="margin-top: 40px"
               >
                 <el-row :gutter="0">
-                  <el-col :span="12" :offset="1">
-                    <div class="nodename">{{ item.nodeName }}</div>
+                  <el-col :span="15" :offset="0">
+                    <div class="nodename">
+                      <i
+                        v-if="item.reachable === true"
+                        class="el-icon-check"
+                      ></i>
+                      <i
+                        v-if="item.reachable === false"
+                        class="el-icon-close"
+                      ></i>
+                      {{ item.nodeName }}/{{ item.nodeLocation }}/{{
+                        item.nodeIp
+                      }}
+                    </div>
                   </el-col>
                   <el-col :span="2" :offset="1">
                     <el-button
@@ -136,6 +148,7 @@
                       type="enterbtn"
                       icon="el-icon-d-arrow-right"
                       circle
+                      :disabled="!item.reachable"
                       @click="topage(item)"
                     ></el-button>
                   </el-col>
@@ -161,9 +174,22 @@
                         type="deletebtn"
                         icon="el-icon-delete-solid"
                         circle
-                        
                       ></el-button>
                     </el-popconfirm>
+                  </el-col>
+                  <el-col :span="2" :offset="0">
+                    <el-button
+                      style="
+                        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+                        width: 60px;
+                        height: 60px;
+                        font-size: 20px;
+                      "
+                      type="enterbtn"
+                      icon="el-icon-stopwatch"
+                      circle
+                      @click="pingnode(item)"
+                    ></el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -691,6 +717,29 @@ export default {
     };
   },
   methods: {
+    // 测试节点联通
+    pingnode(item) {
+      this.$axios
+        .get(this.baseurl + "/node/ping?ip1=" + item.nodeIp)
+        .then((res) => {
+          if (res.data === " IP are reachable") {
+            this.$set(item, "reachable", true);
+            this.$message({
+              message: item.nodeName + "可达",
+              type: "success",
+            });
+          } else {
+            this.$set(item, "reachable", false);
+            this.$message({
+              message: item.nodeName + "不可达",
+              type: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
     // 删除节点
     deletenode(nid) {
       this.$axios
@@ -895,10 +944,13 @@ export default {
   /* background-color: red; */
   box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
   border-radius: 100px;
-  font-size: 40px;
+  font-size: 35px;
+  line-height: 55px;
   letter-spacing: 0.1em;
   height: 60px;
   margin-top: 5px;
+  text-align: left;
+  padding-left: 30px;
 }
 
 .detaillist {
