@@ -240,6 +240,27 @@
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
+            <el-form-item label="网络类型" prop="nettype">
+              <el-select
+                style="width: 60%"
+                v-model="formData.nettype"
+                clearable
+                placeholder="请选择创建虚拟机的网络类型"
+              >
+                <el-option
+                  v-for="item in nettype_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
                  
         <el-form-item size="large">
           <div class="vmc-sbm-area">
@@ -272,14 +293,20 @@ export default {
       totalvm: 0,
       pagesize: 10,
       buildvmvisible: false,
+      nettype_options: [
+        {
+          label: 'bridge',
+          value: 'bridge'
+        },
+        {
+          label: 'nat',
+          label: 'nat'
+        }
+      ],
       node_options: [
         {
           label: "127.0.0.1",
           value: "127.0.0.1",
-        },
-        {
-          label: "255.255.255.255",
-          value: "255.255.255.255",
         },
       ],
       ostype_options: [
@@ -351,7 +378,8 @@ export default {
         memory: "",
         cpuNum: "",
         OStype: "",
-        node: ""
+        node: "",
+        nettype: ""
       },
       // 校验规则
       vm_rules: {
@@ -363,6 +391,9 @@ export default {
         ],
         node: [
           { required: true, message: "请选择创建虚拟机所在的节点", trigger: "change" },
+        ],
+        nettype: [
+          { required: true, message: "请选择创建虚拟机的网络类型", trigger: "change" },
         ],
         cpuNum: [{ required: true, message: "请选择CPU个数", trigger: "change" }],
         OStype: [

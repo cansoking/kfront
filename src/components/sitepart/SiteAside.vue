@@ -44,7 +44,6 @@
           <i class="el-icon-copy-document"></i>
           <span slot="title">虚拟机模版管理</span>
         </el-menu-item>
-
       </el-submenu>
 
       <!-- <el-submenu index="vm1">
@@ -182,6 +181,16 @@
           <span slot="title">应用列表</span>
         </el-menu-item>
       </el-submenu>
+      <el-menu-item index="">
+        <i class="el-icon-copy-document"></i>
+        <a
+          style="text-decoration: none; color: #8d97ad;"
+          slot="title"
+          href="http://59.110.238.62:8080"
+          target="_self"
+          >异构卫星网络</a
+        >
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
