@@ -300,7 +300,7 @@ export default {
         },
         {
           label: 'nat',
-          label: 'nat'
+          value: 'nat'
         }
       ],
       node_options: [

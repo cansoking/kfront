@@ -1,6 +1,78 @@
 <template>
   <transition name="fade">
     <div class="machinearea">
+      <div style="font-size: 30px; font-weight: 600; margin-bottom: 20px">
+        节点信息
+      </div>
+      <el-table
+        :data="
+          nodeinfo.filter(
+            (data) =>
+              !psearch ||
+              data.nodeName.toLowerCase().includes(psearch.toLowerCase())
+          )
+        "
+        style="width: 100%"
+        empty-text="暂无节点信息"
+        :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+      >
+        <el-table-column type="index" label="序号"> </el-table-column>
+        <el-table-column sortable prop="nodeName" label="节点名称" width="180">
+        </el-table-column>
+        <el-table-column sortable prop="nodeIp" label="节点IP" width="180">
+        </el-table-column>
+        <el-table-column
+          sortable
+          prop="nodeStatus"
+          label="节点状态"
+          width="180"
+        >
+        </el-table-column>
+        <el-table-column
+          sortable
+          prop="nodeLocation"
+          label="节点位置"
+          width="180"
+        >
+        </el-table-column>
+        <el-table-column sortable prop="nodeType" label="节点类型" width="180">
+        </el-table-column>
+        <el-table-column sortable prop="nodeConnectivity" label="是否连接">
+        </el-table-column>
+        <!-- <el-table-column
+          width="100"
+          sortable
+          label="是否可用"
+          prop="metadata.annotations.status"
+        >
+          <template slot-scope="scope">
+            <el-tag
+              v-if="scope.row.metadata.annotations.status === 'Yes'"
+              type="success"
+              >可用</el-tag
+            >
+            <el-tag v-else type="danger">不可用</el-tag>
+          </template>
+        </el-table-column> -->
+        <el-table-column width="210" align="center">
+          <template slot="header">
+            <el-input
+              v-model="psearch"
+              size="mini"
+              placeholder="输入名称搜索"
+            />
+          </template>
+          <template slot-scope="scope">
+            <el-button
+              plain
+              type="info"
+              size="mini"
+              @click="checkinfo(scope.row)"
+              >查看详情</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
       <el-card class="info-card" v-show="showInfo">
         <h2>CPU信息：</h2>
         <el-table :data="[cpuInfo]">
@@ -99,9 +171,12 @@ export default {
   name: "machineinfo",
   mounted() {
     this.getMachineInfo();
+    this.getnodeinfo();
   },
   data() {
     return {
+      psearch: "",
+      nodeinfo: [],
       dialogTableVisible: false,
       baseurl: "http://39.98.124.97:8080",
 
@@ -161,6 +236,24 @@ export default {
   },
 
   methods: {
+    // 切换节点
+    checkinfo(row) {
+      sessionStorage.setItem("nodename", row.nodeName);
+      sessionStorage.setItem("ip", row.nodeIp);
+      this.$store.nodename = window.sessionStorage.getItem('nodename');
+      this.$store.nodeip = window.sessionStorage.getItem('ip');
+    },
+    // 获取节点信息
+    getnodeinfo() {
+      this.$axios
+        .get(this.baseurl + "/node/getNodeList1")
+        .then((res) => {
+          this.nodeinfo = res.data.content;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
     // 获取物理机数据
     getMachineInfo() {
       this.$axios

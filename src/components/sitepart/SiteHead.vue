@@ -13,7 +13,7 @@
           >
         </el-col>
         <el-col :offset="10" :span="4">
-          <div style="color: #ffffff;font-size: 20px;line-height: 40px;">{{nodename}}—{{nodeip}}</div>
+          <div style="color: #ffffff;font-size: 20px;line-height: 40px;">{{$store.nodename}}—{{$store.nodeip}}</div>
         </el-col>
       </el-row>
     </div>
@@ -33,10 +33,8 @@ export default {
   created() {},
   methods: {},
   mounted() {
-    this.nodename = window.sessionStorage.getItem('nodename');
-    this.nodeip = window.sessionStorage.getItem('ip');
-    this.$store.nodename = this.nodename;
-    this.$store.nodeip = this.nodeip;
+    this.$store.nodename = window.sessionStorage.getItem('nodename');
+    this.$store.nodeip = window.sessionStorage.getItem('ip');
   }
 };
 </script>

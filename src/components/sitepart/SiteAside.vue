@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="side-head">
-      <a href="/">
+      <a href="/static/pages/index.html#/index">
         <el-image
-          style="width: 200px"
+          style="width: 200px; margin-left: 30px;"
           :src="require('../../images/xw.png')"
           fit="fill"
         ></el-image>

@@ -33,11 +33,7 @@
       empty-text="暂无持久卷"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-    <el-table-column
-        label="序号"
-        type="index"
-      >
-      </el-table-column>
+      <el-table-column label="序号" type="index"> </el-table-column>
       <el-table-column
         width="200"
         sortable
@@ -125,7 +121,9 @@
           </el-popover>
           <div style="text-align: center">
             <el-button-group>
-              <el-button v-popover="'popover' + scope.$index" plain type="info">修改</el-button>
+              <el-button v-popover="'popover' + scope.$index" plain type="info"
+                >修改</el-button
+              >
               <el-button
                 plain
                 type="danger"
@@ -210,12 +208,36 @@
               ></el-input> </el-form-item
           ></el-col>
         </el-row>
-        <el-form-item label="持久卷访问模式" prop="pvInfo.pvAccessMode">
-          <el-input
-            v-model="vs_form.pvInfo.pvAccessMode"
-            placeholder="请输入持久卷访问模式"
-          ></el-input>
-        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="12" :offset="0">
+            <el-form-item label="持久卷访问模式" prop="pvInfo.pvAccessMode">
+              <el-input
+                v-model="vs_form.pvInfo.pvAccessMode"
+                placeholder="请输入持久卷访问模式"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" :offset="0">
+            <el-form-item label="所在节点" prop="pvInfo.pvNodeName">
+              <el-select
+                style="width: 100%"
+                v-model="vs_form.pvInfo.pvNodeName"
+                clearable
+                @visible-change="noderemote"
+                placeholder="请选择持久卷所在节点"
+              >
+                <el-option
+                  v-for="item in nodename_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
         <el-form-item size="large">
           <div style="text-align: right; padding-top: 30px">
             <el-button round @click="resetForm('vs_form')">清空输入</el-button>
@@ -238,12 +260,14 @@ export default {
   data() {
     return {
       baseurl: "http://39.98.124.97:8080",
+      // baseurl: "http://127.0.0.1:8080",
       vsdata: [],
       psearch: "",
       curpage: 1,
       totalvs: 0,
       pagesize: 10,
       createVirstoreVisible: false,
+      nodename_options: [],
       editform: {
         vol: "",
       },
@@ -294,6 +318,11 @@ export default {
             message: "请输入持久卷访问模式",
             trigger: "blur",
           },
+          pvNodeName: {
+            required: true,
+            message: "请选择持久卷所在节点",
+            trigger: "change",
+          },
         },
         pvcInfo: {
           pvcName: {
@@ -316,6 +345,25 @@ export default {
     };
   },
   methods: {
+    // 远程搜索节点名
+    noderemote() {
+      this.$axios
+        .get(this.baseurl + "/node/getNodeList1")
+        .then((res) => {
+          let rdata = res.data.content;
+          let resop = [];
+          for (let i = 0; i < rdata.length; i++) {
+            let tmp = {};
+            tmp["label"] = rdata[i].nodeName;
+            tmp["value"] = rdata[i].nodeName;
+            resop.push(tmp);
+          }
+          this.nodename_options = resop;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
     // 修改持久卷容量
     edit_submit(idx, row, formName) {
       console.log(formName);
@@ -355,7 +403,7 @@ export default {
                 });
                 this.editform.vol = "";
               }
-              this.getPerVList()
+              this.getPerVList();
             },
             (err) => {
               console.log(err);
@@ -364,7 +412,7 @@ export default {
                 message: "请检查网络连接设置",
                 position: "bottom-right",
               });
-              this.getPerVList()
+              this.getPerVList();
             }
           );
           this.createVirstoreVisible = false;
@@ -403,7 +451,7 @@ export default {
                   position: "bottom-right",
                 });
               }
-              this.getPerVList()
+              this.getPerVList();
             },
             (err) => {
               console.log(err);
@@ -426,9 +474,25 @@ export default {
       this.$axios
         .get(this.baseurl + "/virtuleStorage/vs/list")
         .then((res) => {
-          console.log(JSON.parse(res.data.result).items);
           this.vsdata = JSON.parse(res.data.result).items;
-          this.totalvs = JSON.parse(res.data.result).items.length;
+          let tmp = [];
+          for (let i = 0; i < this.vsdata.length; i++) {
+            let flag = 0;
+            for (let j = 0; j < res.data.pvList.length; j++) {
+              if (this.vsdata[i].metadata.name === res.data.pvList[j].pvName) {
+                flag = 1;
+                if (this.$store.nodename === res.data.pvList[j].pvNodeName) {
+                  tmp.push(this.vsdata[i]);
+                  j = res.data.pvList.length;
+                }
+              }
+            }
+            if (flag == 0 && this.$store.nodename === "master1") {
+              tmp.push(this.vsdata[i]);
+            }
+          }
+          this.vsdata = tmp;
+          this.totalvs = this.vsdata.length;
         })
         .catch((err) => {
           console.log("errors", err);
@@ -467,7 +531,7 @@ export default {
               position: "bottom-right",
             });
           }
-          this.getPerVList()
+          this.getPerVList();
         },
         (err) => {
           console.log(err);
@@ -476,7 +540,7 @@ export default {
             message: "请检查网络连接设置",
             position: "bottom-right",
           });
-          this.getPerVList()
+          this.getPerVList();
         }
       );
     },
