@@ -720,7 +720,7 @@ export default {
     // 测试节点联通
     pingnode(item) {
       this.$axios
-        .get(this.baseurl + "/node/ping?ip1=" + item.nodeIp)
+        .get(this.baseurl + "/node/ping?ip=" + item.nodeIp)
         .then((res) => {
           if (res.data === " IP are reachable") {
             this.$set(item, "reachable", true);
