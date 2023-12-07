@@ -679,11 +679,7 @@ export default {
               this.poddata[i].info.ppname =
                 this.poddata[i].spec.volumes[0].name;
               this.$axios
-                // .get(this.baseurl + "/virtuleStorage/pvPath?pvName=" + this.poddata[i].spec.volumes[0].name)
-                .get(
-                  "http://127.0.0.1:8080/virtuleStorage/pvPath?pvName=" +
-                    this.poddata[i].spec.volumes[0].name
-                )
+                .get(this.baseurl + "/virtuleStorage/pvPath?pvName=" + this.poddata[i].spec.volumes[0].name)
                 .then((res) => {
                   this.poddata[i].info.podpath = res.data.pvPath;
                 })
