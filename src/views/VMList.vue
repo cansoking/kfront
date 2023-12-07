@@ -8,16 +8,15 @@
         </p></el-col
       >
       <el-col :span="2" :offset="12">
-      <el-button
+        <el-button
           @click="openCreateVM"
           icon="el-icon-circle-plus-outline"
           size="medium"
           round
           plain
-      >新增虚拟机
-      </el-button
-      >
-    </el-col>
+          >新增虚拟机
+        </el-button>
+      </el-col>
     </el-row>
     <!-- 表格区域 -->
     <el-table
@@ -34,34 +33,21 @@
       empty-text="暂无虚拟机"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-    <el-table-column
-        type="index"
-        label="序号"
-        width="100"
-      >
-      </el-table-column>
-      <el-table-column
-        width="240"
-        sortable
-        label="名称"
-        prop="name"
-      >
+      <el-table-column type="index" label="序号" width="100"> </el-table-column>
+      <el-table-column width="240" sortable label="名称" prop="name">
       </el-table-column>
       <el-table-column width="200" sortable label="状态" prop="state">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
             >挂起</el-tag
           >
-          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'">运行</el-tag>
+          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'"
+            >运行</el-tag
+          >
           <el-tag v-else type="danger">关机</el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        width="120"
-        sortable
-        label="cpu个数"
-        prop="cpuNum"
-      >
+      <el-table-column width="120" sortable label="cpu个数" prop="cpuNum">
       </el-table-column>
       <!-- <el-table-column
         width="120"
@@ -70,19 +56,9 @@
         prop="usecpu"
       >
       </el-table-column> -->
-      <el-table-column
-        width="120"
-        sortable
-        label="分配内存(GiB)"
-        prop="maxMem"
-      >
+      <el-table-column width="120" sortable label="分配内存(GiB)" prop="maxMem">
       </el-table-column>
-      <el-table-column
-        width="180"
-        sortable
-        label="IP地址"
-        prop="ipaddr"
-      >
+      <el-table-column width="180" sortable label="IP地址" prop="ipaddr">
       </el-table-column>
       <!-- <el-table-column
         width="120"
@@ -91,20 +67,39 @@
         prop="useMem"
       >
       </el-table-column> -->
-      
+
       <el-table-column align="right">
         <template slot="header">
-          <el-input style="width: 30%;" v-model="psearch" size="mini" placeholder="输入名称搜索" />
+          <el-input
+            style="width: 30%"
+            v-model="psearch"
+            size="mini"
+            placeholder="输入名称搜索"
+          />
         </template>
         <template slot-scope="scope">
           <el-button-group>
-            <el-button plain type="success" @click="vmstart(scope.row)">启动</el-button>
-            <el-button plain type="warning" @click="vmsuspend(scope.row)">挂起</el-button>
-            <el-button plain type="success" @click="vmresume(scope.row)">还原</el-button>
-            <el-button plain type="primary" @click="vmreboot(scope.row)">重启</el-button>
-            <el-button plain type="info" @click="vmshutdown(scope.row)">关闭</el-button>
-            <el-button plain type="danger" @click="vmshutdownMust(scope.row)">强制关闭</el-button>
-            <el-button plain type="danger" @click="vmdelete(scope.row)">删除</el-button>
+            <el-button plain type="success" @click="vmstart(scope.row)"
+              >启动</el-button
+            >
+            <el-button plain type="warning" @click="vmsuspend(scope.row)"
+              >挂起</el-button
+            >
+            <el-button plain type="success" @click="vmresume(scope.row)"
+              >还原</el-button
+            >
+            <el-button plain type="primary" @click="vmreboot(scope.row)"
+              >重启</el-button
+            >
+            <el-button plain type="info" @click="vmshutdown(scope.row)"
+              >关闭</el-button
+            >
+            <el-button plain type="danger" @click="vmshutdownMust(scope.row)"
+              >强制关闭</el-button
+            >
+            <el-button plain type="danger" @click="vmdelete(scope.row)"
+              >删除</el-button
+            >
           </el-button-group>
         </template>
       </el-table-column>
@@ -122,9 +117,8 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="创建虚拟机"
-               :visible.sync="buildvmvisible">
-               <el-form
+    <el-dialog title="创建虚拟机" :visible.sync="buildvmvisible">
+      <el-form
         label-position="top"
         label-width="80px"
         :model="formData"
@@ -139,7 +133,8 @@
                 style="width: 60%"
                 v-model="formData.name"
                 placeholder="请输入虚拟机名称"
-                @blur="validName()"></el-input>
+                @blur="validName()"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
@@ -261,7 +256,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-                 
+
         <el-form-item size="large">
           <div class="vmc-sbm-area">
             <el-button round @click="resetForm('formData')">清空输入</el-button>
@@ -272,8 +267,6 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
-
   </div>
 </template>
 
@@ -281,7 +274,7 @@
 export default {
   name: "VMList",
   mounted() {
-    this.getVMList()
+    this.getVMList();
   },
   data() {
     return {
@@ -295,13 +288,13 @@ export default {
       buildvmvisible: false,
       nettype_options: [
         {
-          label: 'bridge',
-          value: 'bridge'
+          label: "bridge",
+          value: "bridge",
         },
         {
-          label: 'nat',
-          value: 'nat'
-        }
+          label: "nat",
+          value: "nat",
+        },
       ],
       node_options: [
         {
@@ -321,56 +314,63 @@ export default {
       ],
       cpunum_options: [
         {
-          label: '1 个',
-          value: '1',
+          label: "1 个",
+          value: "1",
         },
         {
-          label: '2 个',
-          value: '2',
+          label: "2 个",
+          value: "2",
         },
         {
-          label: '4 个',
-          value: '4',
+          label: "4 个",
+          value: "4",
         },
         {
-          label: '6 个',
-          value: '6',
+          label: "6 个",
+          value: "6",
         },
         {
-          label: '8 个',
-          value: '8',
+          label: "8 个",
+          value: "8",
         },
         {
-          label: '10 个',
-          value: '10',
-        }
+          label: "10 个",
+          value: "10",
+        },
       ],
       memory_options: [
-      {
-          label: '1 GiB',
-          value: '1'
-        },{
-          label: '2 GiB',
-          value: '2'
-        },{
-          label: '4 GiB',
-          value: '4'
-        },{
-          label: '6 GiB',
-          value: '6'
-        },{
-          label: '8 GiB',
-          value: '8'
-        },{
-          label: '16 GiB',
-          value: '16'
-        },{
-          label: '24 GiB',
-          value: '24'
-        },{
-          label: '32 GiB',
-          value: '32'
-        }
+        {
+          label: "1 GiB",
+          value: "1",
+        },
+        {
+          label: "2 GiB",
+          value: "2",
+        },
+        {
+          label: "4 GiB",
+          value: "4",
+        },
+        {
+          label: "6 GiB",
+          value: "6",
+        },
+        {
+          label: "8 GiB",
+          value: "8",
+        },
+        {
+          label: "16 GiB",
+          value: "16",
+        },
+        {
+          label: "24 GiB",
+          value: "24",
+        },
+        {
+          label: "32 GiB",
+          value: "32",
+        },
       ],
       // 虚拟机信息
       formData: {
@@ -379,7 +379,7 @@ export default {
         cpuNum: "",
         OStype: "",
         node: "",
-        nettype: ""
+        nettype: "",
       },
       // 校验规则
       vm_rules: {
@@ -390,12 +390,22 @@ export default {
           { required: true, message: "请选择内存大小", trigger: "change" },
         ],
         node: [
-          { required: true, message: "请选择创建虚拟机所在的节点", trigger: "change" },
+          {
+            required: true,
+            message: "请选择创建虚拟机所在的节点",
+            trigger: "change",
+          },
         ],
         nettype: [
-          { required: true, message: "请选择创建虚拟机的网络类型", trigger: "change" },
+          {
+            required: true,
+            message: "请选择创建虚拟机的网络类型",
+            trigger: "change",
+          },
         ],
-        cpuNum: [{ required: true, message: "请选择CPU个数", trigger: "change" }],
+        cpuNum: [
+          { required: true, message: "请选择CPU个数", trigger: "change" },
+        ],
         OStype: [
           { required: true, message: "请选择系统类型", trigger: "change" },
         ],
@@ -415,15 +425,15 @@ export default {
           console.log("errors", err);
         });
     },
-    openCreateVM(){
+    openCreateVM() {
       this.buildvmvisible = true;
     },
 
     validName() {
-      if (this.formData.name.includes('.')) {
+      if (this.formData.name.includes(".")) {
         // 输入值不是正数，可以进行相应的处理，例如清空输入框、显示错误提示等。
         this.$notify.error({
-          message: '虚拟机名字不能包括特殊字符',
+          message: "虚拟机名字不能包括特殊字符",
         });
       }
     },
@@ -432,7 +442,7 @@ export default {
     nsremote() {
       this.$axios
         .get(this.baseurl + "/Images/imgList")
-        .then((res) => { 
+        .then((res) => {
           let resop = [];
           for (let i = 0; i < res.data.content.length; i++) {
             let tmp = {};
@@ -458,14 +468,14 @@ export default {
     },
     // 成功上传文件
     sucupload(response, file, fileList) {
-      if (response.success===true) {
+      if (response.success === true) {
         this.$notify.success({
           title: "创建成功",
           message: "虚拟机 " + this.formData.name + " 创建成功！",
           position: "bottom-right",
           duration: 6000,
         });
-        this.buildvmvisible=false;
+        this.buildvmvisible = false;
       } else {
         this.$notify.error({
           title: "创建失败",
@@ -479,7 +489,7 @@ export default {
     handleBeforeUpload(file) {
       console.log(file);
       var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
-      if (suffix!="iso"&&suffix!="img"&&suffix!="qcow2") {
+      if (suffix != "iso" && suffix != "img" && suffix != "qcow2") {
         this.$message.error("只能上传iso、img或qcow2格式的文件！");
         return false;
       }
@@ -491,7 +501,41 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 提交表单，创建虚拟机
-          this.$refs.upload.submit();
+          // this.$refs.upload.submit();
+          this.buildvmvisible = false
+          this.$axios
+            .get(
+              this.baseurl +
+                "/addVirtual?ImgName=" +
+                this.formData.ImgName +
+                "&name=" +
+                this.formData.name +
+                "&memory=" +
+                this.formData.memory +
+                "&cpuNum=" +
+                this.formData.cpuNum +
+                "&OStype=" +
+                this.formData.OStype +
+                "&nettype=" +
+                this.formData.nettype
+            )
+            .then((response) => {
+              this.$notify.success({
+                title: "创建成功",
+                message: "虚拟机 " + this.formData.name + " 创建成功！",
+                position: "bottom-right",
+                duration: 6000,
+              });
+              this.getVMList();
+            })
+            .catch((err) => {
+              this.$notify.error({
+                title: "创建失败",
+                message: err,
+                position: "bottom-right",
+                duration: 6000,
+              });
+            });
         } else {
           console.log("表单验证不通过");
           return false;
@@ -503,10 +547,10 @@ export default {
       this.$refs[formName].resetFields();
     },
 
-
     vmstart(row) {
-        this.$axios
-            .get(this.baseurl+"/initiate/" + row.name).then((response) => {
+      this.$axios
+        .get(this.baseurl + "/initiate/" + row.name)
+        .then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("启动成功！");
@@ -514,12 +558,12 @@ export default {
           } else {
             this.$message.success("启动失败！");
           }
-        })
+        });
     },
     vmsuspend(row) {
-
-        this.$axios
-            .get(this.baseurl+"/suspended/" + row.name).then((response) => {
+      this.$axios
+        .get(this.baseurl + "/suspended/" + row.name)
+        .then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("挂起成功！");
@@ -527,38 +571,34 @@ export default {
           } else {
             this.$message.success("挂起失败！");
           }
-        })
-      
+        });
     },
-        vmresume(row) {
-        this.$axios
-            .get(this.baseurl+"/resume/" + row.name).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("还原成功！");
-            this.getVMList();
-          } else {
-            this.$message.success("还原失败！");
-          }
-        })
-      
+    vmresume(row) {
+      this.$axios.get(this.baseurl + "/resume/" + row.name).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          this.$message.success("还原成功！");
+          this.getVMList();
+        } else {
+          this.$message.success("还原失败！");
+        }
+      });
     },
-        vmreboot(row) {
-        this.$axios
-            .get(this.baseurl+"/reboot/" + row.name).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("重启中...");
-            this.getVMList();
-          } else {
-            this.$message.success("重启失败！");
-          }
-        })
-      
+    vmreboot(row) {
+      this.$axios.get(this.baseurl + "/reboot/" + row.name).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          this.$message.success("重启中...");
+          this.getVMList();
+        } else {
+          this.$message.success("重启失败！");
+        }
+      });
     },
-        vmshutdown(row) {
-        this.$axios
-            .get(this.baseurl+"/shutdown/" + row.name).then((response) => {
+    vmshutdown(row) {
+      this.$axios
+        .get(this.baseurl + "/shutdown/" + row.name)
+        .then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("关机成功！");
@@ -566,56 +606,62 @@ export default {
           } else {
             this.$message.success("关机失败！");
           }
-        })
+        });
     },
-    
+
     vmshutdownMust(row) {
-      this.$confirm(`您确定强行关机吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios
-            .get(this.baseurl+"/shutdownMust/" + row.name).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("强行关机成功！");
-            this.getVMList();
-          } else {
-            this.$message.success("强行关机失败！");
-          }
+      this.$confirm(`您确定强行关机吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$axios
+            .get(this.baseurl + "/shutdownMust/" + row.name)
+            .then((response) => {
+              const data = response.data;
+              if (data.success) {
+                this.$message.success("强行关机成功！");
+                this.getVMList();
+              } else {
+                this.$message.success("强行关机失败！");
+              }
+            });
         })
-      }).catch(() => {
-        // 取消操作
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      });
+        .catch(() => {
+          // 取消操作
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
     vmdelete(row) {
-      this.$confirm(`您确定删除该虚拟机吗?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios
-            .delete(this.baseurl+"/delete/" + row.name).then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("删除成功！");
-            this.getVMList();
-          } else {
-            this.$message.success("删除失败！");
-          }
+      this.$confirm(`您确定删除该虚拟机吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$axios
+            .delete(this.baseurl + "/delete/" + row.name)
+            .then((response) => {
+              const data = response.data;
+              if (data.success) {
+                this.$message.success("删除成功！");
+                this.getVMList();
+              } else {
+                this.$message.success("删除失败！");
+              }
+            });
         })
-      }).catch(() => {
-        // 取消操作
-        this.$message({
-          type: 'info',
-          message: '已取消'
-        })
-      });
+        .catch(() => {
+          // 取消操作
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
   },
 };

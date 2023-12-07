@@ -13,7 +13,9 @@
           >
         </el-col>
         <el-col :offset="10" :span="4">
-          <div style="color: #ffffff;font-size: 20px;line-height: 40px;">{{$store.nodename}}—{{$store.nodeip}}</div>
+          <div style="color: #ffffff; font-size: 20px; line-height: 40px">
+            {{ nodename }}—{{ nodeip }}
+          </div>
         </el-col>
       </el-row>
     </div>
@@ -26,16 +28,22 @@ export default {
   data() {
     return {
       search: "",
-      nodename: '',
-      nodeip: ''
     };
+  },
+  computed: {
+    nodename() {
+      return this.$store.nodename;
+    },
+    nodeip() {
+      return this.$store.nodeip;
+    },
   },
   created() {},
   methods: {},
   mounted() {
-    this.$store.nodename = window.sessionStorage.getItem('nodename');
-    this.$store.nodeip = window.sessionStorage.getItem('ip');
-  }
+    this.$store.nodename = window.sessionStorage.getItem("nodename");
+    this.$store.nodeip = window.sessionStorage.getItem("ip");
+  },
 };
 </script>
 

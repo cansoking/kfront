@@ -240,8 +240,13 @@ export default {
     checkinfo(row) {
       sessionStorage.setItem("nodename", row.nodeName);
       sessionStorage.setItem("ip", row.nodeIp);
-      this.$store.nodename = window.sessionStorage.getItem('nodename');
-      this.$store.nodeip = window.sessionStorage.getItem('ip');
+      this.$store.nodename = row.nodeName;
+      this.$store.nodeip = row.nodeIp;
+      this.getMachineInfoByIp(row.nodeIp);
+      this.$message({
+        message: "已切换" + row.nodeName + "详情信息",
+        type: "success",
+      });
     },
     // 获取节点信息
     getnodeinfo() {
@@ -249,6 +254,30 @@ export default {
         .get(this.baseurl + "/node/getNodeList1")
         .then((res) => {
           this.nodeinfo = res.data.content;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    // 获取指定物理机数据
+    getMachineInfoByIp(ip) {
+      this.$axios
+        .get(this.baseurl + "/Machine/getMachineInfoByIP?ip=" + ip)
+        .then((res) => {
+          if (res.data.success) {
+            this.cpuInfo = res.data.content.cpuInfo;
+            this.jvmInfo = res.data.content.jvmInfo;
+            this.memoryInfo = res.data.content.memoryInfo;
+            this.systeminfo = res.data.content.systeminfo;
+
+            this.drawMemoryChart();
+            this.drawCpuChart();
+
+            res.data.content.sysFiles.forEach((item) => {
+              this.sysFiles.push(item);
+            });
+            this.showInfo = true;
+          }
         })
         .catch((err) => {
           console.log("errors", err);

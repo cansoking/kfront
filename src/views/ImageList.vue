@@ -232,7 +232,7 @@ export default {
     // 获取容器镜像列表数据
     getVMList() {
       this.$axios
-        .post(this.baseurl + "/containerd/images/list", {
+        .post(this.baseurl + "/containerd/images/list?nodeName=" + this.$store.nodename, {
           virtualMachineIp: "39.98.124.97",
           userName: "root",
           userPassword: "Upc123456@",
