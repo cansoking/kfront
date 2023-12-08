@@ -1,13 +1,14 @@
 <template>
   <div>
     <div class="side-head">
-      <a href="/static/pages/index.html#/world">
+      <div style="font-size: 35px; text-align: center; line-height: 80px;">云网融合</div>
+      <!-- <a href="/static/pages/index.html#/world">
         <el-image
           style="width: 200px; margin-left: 30px;"
           :src="require('../../images/xw.png')"
           fit="fill"
         ></el-image>
-      </a>
+      </a> -->
     </div>
     <el-menu
       :default-active="$route.path"
@@ -184,7 +185,7 @@
       <el-menu-item index="">
         <i class="el-icon-copy-document"></i>
         <a
-          style="text-decoration: none; color: #8d97ad;"
+          style="text-decoration: none; color: #8d97ad"
           slot="title"
           href="http://59.110.238.62:8080"
           target="_self"

@@ -66,6 +66,11 @@ export default {
   methods: {
     nodechange(item) {
       this.$store.nodename = item;
+      if(this.$store.nodename === 'master1') {
+        this.$store.nodetype = '云';
+      }else {
+        this.$store.nodetype = '边';
+      }
       for (let i = 0; i < this.nodeinfo.length; i++) {
         if (this.nodeinfo[i].nodeName === item) {
           this.$store.nodeip = this.nodeinfo[i].nodeIp;
@@ -101,6 +106,7 @@ export default {
     this.noderemote();
     this.$store.nodename = window.sessionStorage.getItem("nodename");
     this.$store.nodeip = window.sessionStorage.getItem("ip");
+    this.$store.nodetype = window.sessionStorage.getItem("nodetype");
     this.value = this.$store.nodename;
   },
 };

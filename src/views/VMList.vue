@@ -16,9 +16,10 @@
           style="width: 80%"
           v-model="formInline.region"
           placeholder="请选择宿主机"
+          @change="suzhuchange"
         >
-          <el-option label="127.0.0.1" value="aliyun"></el-option>
-          <el-option label="172.26.82.161" value="aliyun2"></el-option>
+          <el-option label="aliyun" value="39.98.124.97/"></el-option>
+          <el-option label="aliyun2" value="172.26.82.161"></el-option>
         </el-select>
       </el-col>
       <el-col :span="3" :offset="0">
@@ -296,19 +297,32 @@
 
     <el-dialog title="执行命令" :visible.sync="commandvisible">
       <el-descriptions title="虚拟机信息">
-        <el-descriptions-item label="名称">{{ this.command_tmp_data.name }}</el-descriptions-item>
+        <el-descriptions-item label="名称">{{
+          this.command_tmp_data.name
+        }}</el-descriptions-item>
         <el-descriptions-item label="状态">
-          <el-tag v-if="this.command_tmp_data.name.state === 'VIR_DOMAIN_PAUSED'" type="warning"
+          <el-tag
+            v-if="this.command_tmp_data.name.state === 'VIR_DOMAIN_PAUSED'"
+            type="warning"
             >挂起</el-tag
           >
-          <el-tag v-else-if="this.command_tmp_data.name.state === 'VIR_DOMAIN_RUNNING'"
+          <el-tag
+            v-else-if="
+              this.command_tmp_data.name.state === 'VIR_DOMAIN_RUNNING'
+            "
             >运行</el-tag
           >
-          <el-tag v-else type="danger">关机</el-tag>  
+          <el-tag v-else type="danger">关机</el-tag>
         </el-descriptions-item>
-        <el-descriptions-item label="cpu个数">{{ this.command_tmp_data.cpuNum }}</el-descriptions-item>
-        <el-descriptions-item label="分配内存(GiB)">{{ this.command_tmp_data.maxMem }}</el-descriptions-item>
-        <el-descriptions-item label="IP地址">{{ this.command_tmp_data.ipaddr }}</el-descriptions-item>
+        <el-descriptions-item label="cpu个数">{{
+          this.command_tmp_data.cpuNum
+        }}</el-descriptions-item>
+        <el-descriptions-item label="分配内存(GiB)">{{
+          this.command_tmp_data.maxMem
+        }}</el-descriptions-item>
+        <el-descriptions-item label="IP地址">{{
+          this.command_tmp_data.ipaddr
+        }}</el-descriptions-item>
       </el-descriptions>
       <el-form
         label-position="top"
@@ -404,7 +418,7 @@ export default {
         state: "无",
         cpuNum: "无",
         ipaddr: "无",
-        maxMem: "无"
+        maxMem: "无",
       },
       nettype_options: [
         {
@@ -559,10 +573,21 @@ export default {
     };
   },
   methods: {
+    suzhuchange(item) {
+      this.$axios
+        .get("http://" + item + ":8080/getVMList")
+        .then((res) => {
+          this.vmdata = res.data;
+          this.totalvm = res.data.length;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
     // 打开执行命令
     opencommand(row) {
-      this.commandvisible = true
-      this.command_tmp_data = row
+      this.commandvisible = true;
+      this.command_tmp_data = row;
     },
     // 获取虚拟机列表数据
     getVMList() {
@@ -575,6 +600,14 @@ export default {
         .catch((err) => {
           console.log("errors", err);
         });
+      // this.vmdata = [{
+      //   name: 'vm1',
+      //   state: 'VIR_DOMAIN_RUNNING',
+      //   cpuNum: 1,
+      //   maxMem: 1,
+      //   ipaddr: "39.98.124.97:8080"
+      // }];
+      // this.totalvm = this.vmdata.length;
     },
     openCreateVM() {
       this.buildvmvisible = true;
@@ -680,7 +713,9 @@ export default {
                 "&OStype=" +
                 this.formData.OStype +
                 "&nettype=" +
-                this.formData.nettype
+                this.formData.nettype +
+                "&serverip=" +
+                this.formInline.region
             )
             .then((response) => {
               this.$notify.success({

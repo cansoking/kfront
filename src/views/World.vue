@@ -222,20 +222,24 @@ export default {
           if(city === "北京(云节点 1)"){
             sessionStorage.setItem("nodename", "master1");
             sessionStorage.setItem("ip", "39.98.124.97");
+            sessionStorage.setItem("nodetype", "云");
           }
           if(city === "青岛(边节点 1)"){
             sessionStorage.setItem("nodename", "worker1");
             sessionStorage.setItem("ip", "39.101.136.242");
+            sessionStorage.setItem("nodetype", "边");
           }
           if(city === "海南(边节点 2)"){
             sessionStorage.setItem("nodename", "worker2");
             sessionStorage.setItem("ip", "39.98.109.31");
+            sessionStorage.setItem("nodetype", "边");
           }
           if(city === "上海(边节点 3)"){
             sessionStorage.setItem("nodename", "worker3");
             sessionStorage.setItem("ip", "39.99.252.93");
+            sessionStorage.setItem("nodetype", "边");
           }
-          this.$router.push("/podlist")
+          this.$router.push("/machineinfo")
           // router.push("/podlist")
         }
       });

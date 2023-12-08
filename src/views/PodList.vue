@@ -135,6 +135,13 @@
       >
       </el-table-column>
       <el-table-column sortable label="节点" prop="spec.nodeName">
+        <template slot-scope="scope">
+          {{
+            $store.nodetype +
+            "节点" +
+            $store.nodename[$store.nodename.length - 1]
+          }}
+        </template>
       </el-table-column>
       <el-table-column width="100" sortable label="状态" prop="status.phase">
         <template slot-scope="scope">
@@ -679,7 +686,11 @@ export default {
               this.poddata[i].info.ppname =
                 this.poddata[i].spec.volumes[0].name;
               this.$axios
-                .get(this.baseurl + "/virtuleStorage/pvPath?pvName=" + this.poddata[i].spec.volumes[0].name)
+                .get(
+                  this.baseurl +
+                    "/virtuleStorage/pvPath?pvName=" +
+                    this.poddata[i].spec.volumes[0].name
+                )
                 .then((res) => {
                   this.poddata[i].info.podpath = res.data.pvPath;
                 })
