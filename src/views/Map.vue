@@ -1,5 +1,4 @@
 
-
 <template>
   <div class="container">
     <!-- 侧边栏 -->
@@ -25,13 +24,13 @@
 </template>
 
 
-
-
 <script lang="ts" setup>
 import * as echarts from 'echarts'
 import chinaJSON from '../assets/china.json'
 import { onMounted, ref } from 'vue'
+import {useRouter} from "vue-router/composables";
 const chinaMap = ref()
+const router = useRouter()
 onMounted(() => {
   drawChina()
 })
@@ -67,48 +66,48 @@ let regions = [
   },
 ]
 let scatter = [
-  { name: '北京(master 1)', value: [116.46122, 39.97886, 9] },
-  { name: '海口(worker 3)', value: [109.12, 19.12, 9] },
-  { name: '青岛(worker 1)', value: [119.30, 37.09, 9] },
-  { name: '上海(worker 2)', value: [121.47, 31.23, 9] },
+  { name: '北京(云节点 1)', value: [116.46122, 39.97886, 9] },
+  { name: '海南(边节点 1)', value: [109.12, 19.12, 9] },
+  { name: '青岛(边节点 1)', value: [120.30, 36.40, 9] },
+  { name: '上海(边节点 2)', value: [121.47, 31.23, 9] },
 ]
 let menuGroups = [
   {
     groupTitle: 'master',
     items: [
-      { label: '北京(master 1)', value: '北京(master 1)' },
+      { label: '北京(云节点 1)', value: '北京(master 1)' },
       // 可以根据需求添加更多菜单项
     ]
   },
   {
     groupTitle: 'worker',
     items: [
-      { label: '青岛(worker 1)', value: '青岛(worker 1)' },
-      { label: '上海(worker 2)', value: '上海(worker 2)' },
-      { label: '海口(worker 3)', value: '海口(worker 3)' },
+      { label: '青岛(边节点 1)', value: '青岛(worker 1)' },
+      { label: '上海(边节点 2)', value: '上海(worker 2)' },
+      { label: '海南(边节点 3)', value: '海南(worker 3)' },
       // 可以根据需求添加更多菜单项
     ]
   },
   // 可以添加更多菜单组
 ]
 function handleMenuItemClick(index){
-  if(index === "北京(master 1)"){
+  if(index === "北京(云节点 1)"){
     sessionStorage.setItem("nodename", "master1");
     sessionStorage.setItem("ip", "39.98.124.97");
   }
-  if(index === "青岛(worker 1)"){
+  if(index === "青岛(边节点 1)"){
     sessionStorage.setItem("nodename", "worker1");
     sessionStorage.setItem("ip", "39.101.136.242");
   }
-  if(index === "海南(worker 2)"){
+  if(index === "海南(边节点 2)"){
     sessionStorage.setItem("nodename", "worker2");
     sessionStorage.setItem("ip", "39.98.109.31");
   }
-  if(index === "上海(worker 3)"){
+  if(index === "上海(边节点 3)"){
     sessionStorage.setItem("nodename", "worker3");
     sessionStorage.setItem("ip", "39.99.252.93");
   }
-  this.$router.push("/podlist");
+  router.push("/podlist")
 }
 function drawChina() {
   var myChart = echarts.init(chinaMap.value)
@@ -176,23 +175,23 @@ function drawChina() {
   myChart.on('click', (params) => {
     if (params.componentType === 'series' && params.seriesType === 'effectScatter') {
       const city = params.data.name;
-      if(city === "北京(master 1)"){
+      if(city === "北京(云节点 1)"){
         sessionStorage.setItem("nodename", "master1");
         sessionStorage.setItem("ip", "39.98.124.97");
       }
-      if(city === "青岛(worker 1)"){
+      if(city === "青岛(边节点 1)"){
         sessionStorage.setItem("nodename", "worker1");
         sessionStorage.setItem("ip", "39.101.136.242");
       }
-      if(city === "海南(worker 2)"){
+      if(city === "海南(边节点 2)"){
         sessionStorage.setItem("nodename", "worker2");
         sessionStorage.setItem("ip", "39.98.109.31");
       }
-      if(city === "上海(worker 3)"){
+      if(city === "上海(边节点 3)"){
         sessionStorage.setItem("nodename", "worker3");
         sessionStorage.setItem("ip", "39.99.252.93");
       }
-      this.$router.push("/podlist");
+      router.push("/podlist")
     }
   });
 }
