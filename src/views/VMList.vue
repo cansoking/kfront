@@ -17,6 +17,17 @@
           >新增虚拟机
         </el-button>
       </el-col>
+
+      <el-col :span="2" :offset="12">
+        <el-button
+          @click="refreshIP"
+          icon="el-icon-refresh"
+          size="medium"
+          round
+          plain
+          >更新虚拟机ip地址
+        </el-button>
+      </el-col>
     </el-row>
     <!-- 表格区域 -->
     <el-table
@@ -73,9 +84,14 @@
           <el-input
             style="width: 30%"
             v-model="psearch"
-            size="mini"
             placeholder="输入名称搜索"
           />
+        </template>
+        <template slot="header">
+          <el-select v-model="formInline.region" placeholder="请选择宿主机">
+            <el-option label="127.0.0.1" value="aliyun"></el-option>
+            <el-option label="172.26.82.161" value="aliyun2"></el-option>
+          </el-select>
         </template>
         <template slot-scope="scope">
           <el-button-group>
@@ -285,6 +301,9 @@ export default {
       curpage: 1,
       totalvm: 0,
       pagesize: 10,
+      formInline: {
+
+        },
       buildvmvisible: false,
       nettype_options: [
         {
@@ -299,7 +318,7 @@ export default {
       node_options: [
         {
           label: "127.0.0.1",
-          value: "127.0.0.1",
+          value: "172.26.82.161",
         },
       ],
       ostype_options: [
@@ -427,6 +446,20 @@ export default {
     },
     openCreateVM() {
       this.buildvmvisible = true;
+    },
+
+    refreshIP() {
+      this.$axios
+        .get(this.baseurl + "/VMInfo/updateip")
+        .then((response) => {
+          const data = response.data;
+          if (data.success) {
+            this.$message.success("更新成功！");
+            this.getVMList();
+          } else {
+            this.$message.success("更新失败！");
+          }
+        });
     },
 
     validName() {
