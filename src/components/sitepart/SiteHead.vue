@@ -12,9 +12,28 @@
             >基于虚拟化的资源管理演示验证原型系统</span
           >
         </el-col>
-        <el-col :offset="10" :span="4">
+        <el-col :offset="8" :span="6">
           <div style="color: #ffffff; font-size: 20px; line-height: 40px">
-            {{ nodename }}—{{ nodeip }}
+            当前节点：
+            <el-select
+              v-model="value"
+              placeholder="请选择"
+              :loading="isloading"
+              loading-text="正在拉取数据"
+              @visible-change="noderemote"
+            >
+              <el-option
+                v-for="item in nodeoption"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+                <span style="float: left">{{ item.label }}</span>
+                <span style="float: right; color: #8492a6; font-size: 13px">{{
+                  item.value
+                }}</span>
+              </el-option>
+            </el-select>
           </div>
         </el-col>
       </el-row>
@@ -28,6 +47,8 @@ export default {
   data() {
     return {
       search: "",
+      isloading: false,
+      nodeoption: [],
     };
   },
   computed: {
@@ -39,7 +60,24 @@ export default {
     },
   },
   created() {},
-  methods: {},
+  methods: {
+    noderemote() {
+      this.$axios
+        .get(this.baseurl + "/node/getNodeList1")
+        .then((res) => {
+          this.nodeinfo = res.data.content;
+          for(let i = 0; i < nodeinfo.length; i++) {
+            this.nodeoption.push({
+              label: nodeinfo[i].nodeType + "节点" + nodeinfo[i].nodeName[-1],
+              value: nodeinfo[i].nodeName,
+            })
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+  },
   mounted() {
     this.$store.nodename = window.sessionStorage.getItem("nodename");
     this.$store.nodeip = window.sessionStorage.getItem("ip");

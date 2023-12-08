@@ -153,6 +153,11 @@ const routes = [
     name: 'index',
     component: () => import('../views/IndexView.vue')
   },
+  {
+    path: '/map',
+    name: 'map',
+    component: () => import('../views/Map.vue')
+  },
 ]
 
 const router = new VueRouter({
