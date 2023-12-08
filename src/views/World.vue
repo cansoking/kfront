@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import $ from "jquery";/* 引入JQUERY，此处不赘述，用于调用$.get函数。 */
+// import $ from "jquery";/* 引入JQUERY，此处不赘述，用于调用$.get函数。 */
 var echarts = require("echarts");/* 引入echarts模块，此处不赘述 */
 import geoJson from '../assets/world.json'
 export default {

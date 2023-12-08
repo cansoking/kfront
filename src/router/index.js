@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    redirect: '/index'
+    redirect: '/world'
   },
   {
     path: '/manage',
@@ -157,6 +157,11 @@ const routes = [
     path: '/map',
     name: 'map',
     component: () => import('../views/Map.vue')
+  },
+  {
+    path: '/world',
+    name: 'world',
+    component: () => import('../views/World.vue')
   },
 ]
 

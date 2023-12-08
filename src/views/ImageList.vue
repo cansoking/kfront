@@ -7,7 +7,17 @@
           容器镜像列表
         </p></el-col
       >
-      <el-col :span="2" :offset="12">
+      <el-col :span="3" :offset="9">
+        <el-button
+          @click="openUploadImage"
+          icon="el-icon-s-promotion"
+          size="medium"
+          round
+          plain
+          >分发镜像到端</el-button
+        >
+      </el-col>
+      <el-col :span="2" :offset="0">
         <el-button
           @click="openUploadImage"
           icon="el-icon-circle-plus-outline"
@@ -32,7 +42,9 @@
       style="width: 100%"
       empty-text="暂无容器镜像"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column width="80" type="index" label="序号"> </el-table-column>
       <el-table-column width="500" sortable label="镜像名称" prop="imageName">
       </el-table-column>
@@ -99,7 +111,7 @@
 </template>
   
   <script>
-import { del } from 'vue';
+import { del } from "vue";
 
 export default {
   name: "ImageList",
@@ -115,11 +127,11 @@ export default {
       totalci: 0,
       pagesize: 10,
       uploadimagevisible: false,
-      reqData:{
+      reqData: {
         virtualMachineIp: "",
         userName: "",
         userPassword: "",
-        imageId:""
+        imageId: "",
       },
       formData: {
         virtualMachineIp: "39.98.124.97",
@@ -129,13 +141,17 @@ export default {
     };
   },
   methods: {
+    // 多选
+    handleSelectionChange(val) {
+      console.log(val);
+    },
     // 删除镜像
     deleteimage(idx, row) {
       this.reqData.virtualMachineIp = this.formData.virtualMachineIp;
       this.reqData.userName = this.formData.userName;
       this.reqData.userPassword = this.formData.userPassword;
       this.reqData.imageId = row.imageid;
-      console.log("row:"+row)
+      console.log("row:" + row);
       this.$axios
         .post(this.baseurl + "/containerd/deleteImage", {
           imageInfo: row,
@@ -144,22 +160,22 @@ export default {
         .then((res) => {
           console.log(res);
           if (res.data[0] === "I") {
-        this.$notify.success({
-          title: "删除成功",
-          message: "镜像删除成功",
-          position: "bottom-right",
-          duration: 6000,
-        });
-        this.getVMList();
-      } else {
-        this.$notify.error({
-          title: "删除失败",
-          message: response,
-          position: "bottom-right",
-          duration: 6000,
-        });
-        this.getVMList();
-      }
+            this.$notify.success({
+              title: "删除成功",
+              message: "镜像删除成功",
+              position: "bottom-right",
+              duration: 6000,
+            });
+            this.getVMList();
+          } else {
+            this.$notify.error({
+              title: "删除失败",
+              message: response,
+              position: "bottom-right",
+              duration: 6000,
+            });
+            this.getVMList();
+          }
         })
         .catch((err) => {
           console.log("errors", err);
@@ -232,11 +248,16 @@ export default {
     // 获取容器镜像列表数据
     getVMList() {
       this.$axios
-        .post(this.baseurl + "/containerd/images/list?nodeName=" + this.$store.nodename, {
-          virtualMachineIp: "39.98.124.97",
-          userName: "root",
-          userPassword: "Upc123456@",
-        })
+        .post(
+          this.baseurl +
+            "/containerd/images/list?nodeName=" +
+            this.$store.nodename,
+          {
+            virtualMachineIp: "39.98.124.97",
+            userName: "root",
+            userPassword: "Upc123456@",
+          }
+        )
         .then((res) => {
           let s_data = this.data_resolver(res.data.result);
           this.cidata = s_data;

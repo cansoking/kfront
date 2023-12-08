@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="side-head">
-      <a href="/static/pages/index.html#/index">
+      <a href="/static/pages/index.html#/world">
         <el-image
           style="width: 200px; margin-left: 30px;"
           :src="require('../../images/xw.png')"

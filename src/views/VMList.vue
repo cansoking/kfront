@@ -7,18 +7,21 @@
           虚拟机列表
         </p></el-col
       >
-      <el-col :span="2" :offset="12">
-        <el-button
-          @click="openCreateVM"
-          icon="el-icon-circle-plus-outline"
-          size="medium"
-          round
-          plain
-          >新增虚拟机
-        </el-button>
+      <el-col :span="1" :offset="4">
+        <div style="font-size: 16px; line-height: 36px">宿主机：</div>
       </el-col>
 
-      <el-col :span="2" :offset="12">
+      <el-col :span="3" :offset="0">
+        <el-select
+          style="width: 80%"
+          v-model="formInline.region"
+          placeholder="请选择宿主机"
+        >
+          <el-option label="127.0.0.1" value="aliyun"></el-option>
+          <el-option label="172.26.82.161" value="aliyun2"></el-option>
+        </el-select>
+      </el-col>
+      <el-col :span="3" :offset="0">
         <el-button
           @click="refreshIP"
           icon="el-icon-refresh"
@@ -26,6 +29,16 @@
           round
           plain
           >更新虚拟机ip地址
+        </el-button>
+      </el-col>
+      <el-col :span="2" :offset="0">
+        <el-button
+          @click="openCreateVM"
+          icon="el-icon-circle-plus-outline"
+          size="medium"
+          round
+          plain
+          >新增虚拟机
         </el-button>
       </el-col>
     </el-row>
@@ -47,7 +60,7 @@
       <el-table-column type="index" label="序号" width="100"> </el-table-column>
       <el-table-column width="240" sortable label="名称" prop="name">
       </el-table-column>
-      <el-table-column width="200" sortable label="状态" prop="state">
+      <el-table-column width="100" sortable label="状态" prop="state">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
             >挂起</el-tag
@@ -58,7 +71,7 @@
           <el-tag v-else type="danger">关机</el-tag>
         </template>
       </el-table-column>
-      <el-table-column width="120" sortable label="cpu个数" prop="cpuNum">
+      <el-table-column width="100" sortable label="cpu个数" prop="cpuNum">
       </el-table-column>
       <!-- <el-table-column
         width="120"
@@ -67,7 +80,7 @@
         prop="usecpu"
       >
       </el-table-column> -->
-      <el-table-column width="120" sortable label="分配内存(GiB)" prop="maxMem">
+      <el-table-column width="140" sortable label="分配内存(GiB)" prop="maxMem">
       </el-table-column>
       <el-table-column width="180" sortable label="IP地址" prop="ipaddr">
       </el-table-column>
@@ -86,12 +99,6 @@
             v-model="psearch"
             placeholder="输入名称搜索"
           />
-        </template>
-        <template slot="header">
-          <el-select v-model="formInline.region" placeholder="请选择宿主机">
-            <el-option label="127.0.0.1" value="aliyun"></el-option>
-            <el-option label="172.26.82.161" value="aliyun2"></el-option>
-          </el-select>
         </template>
         <template slot-scope="scope">
           <el-button-group>
@@ -115,6 +122,9 @@
             >
             <el-button plain type="danger" @click="vmdelete(scope.row)"
               >删除</el-button
+            >
+            <el-button plain type="warning" @click="opencommand(scope.row)"
+              >执行命令</el-button
             >
           </el-button-group>
         </template>
@@ -283,6 +293,90 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog title="执行命令" :visible.sync="commandvisible">
+      <el-descriptions title="虚拟机信息">
+        <el-descriptions-item label="名称">{{ this.command_tmp_data.name }}</el-descriptions-item>
+        <el-descriptions-item label="状态">
+          <el-tag v-if="this.command_tmp_data.name.state === 'VIR_DOMAIN_PAUSED'" type="warning"
+            >挂起</el-tag
+          >
+          <el-tag v-else-if="this.command_tmp_data.name.state === 'VIR_DOMAIN_RUNNING'"
+            >运行</el-tag
+          >
+          <el-tag v-else type="danger">关机</el-tag>  
+        </el-descriptions-item>
+        <el-descriptions-item label="cpu个数">{{ this.command_tmp_data.cpuNum }}</el-descriptions-item>
+        <el-descriptions-item label="分配内存(GiB)">{{ this.command_tmp_data.maxMem }}</el-descriptions-item>
+        <el-descriptions-item label="IP地址">{{ this.command_tmp_data.ipaddr }}</el-descriptions-item>
+      </el-descriptions>
+      <el-form
+        label-position="top"
+        label-width="80px"
+        :model="commandForm"
+        :status-icon="true"
+        :rules="command_rules"
+        ref="commandForm"
+      >
+        <el-form-item label="命令" prop="command">
+          <el-input
+            v-model="commandForm.command"
+            placeholder="请输入要执行的命令"
+            type="textarea"
+            :rows="8"
+            clearable
+          ></el-input>
+        </el-form-item>
+
+        <!-- <el-form-item label="端服务器" prop="edgeserver">
+          <el-select
+            style="width: 60%"
+            v-model="commandForm.edgeserver"
+            clearable
+            placeholder="请选择端服务器"
+          >
+            <el-option
+              v-for="item in edgeserver_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="容器" prop="pod">
+          <el-select
+            style="width: 60%"
+            v-model="commandForm.pod"
+            clearable
+            placeholder="请选择执行容器"
+          >
+            <el-option
+              v-for="item in pod_options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item> -->
+
+        <el-form-item size="large">
+          <div style="text-align: right; margin-top: 50px" class="vmc-sbm-area">
+            <el-button round @click="resetForm('commandForm')"
+              >清空输入</el-button
+            >
+            <el-button
+              round
+              type="primary"
+              @click="start_command('commandForm')"
+              >立即执行</el-button
+            >
+          </div>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -295,16 +389,23 @@ export default {
   data() {
     return {
       baseurl: "http://39.98.124.97:8080",
+      // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
       images: [],
       curpage: 1,
       totalvm: 0,
       pagesize: 10,
-      formInline: {
-
-        },
+      formInline: {},
       buildvmvisible: false,
+      commandvisible: false,
+      command_tmp_data: {
+        name: "无",
+        state: "无",
+        cpuNum: "无",
+        ipaddr: "无",
+        maxMem: "无"
+      },
       nettype_options: [
         {
           label: "bridge",
@@ -391,6 +492,18 @@ export default {
           value: "32",
         },
       ],
+      edgeserver_options: [
+        {
+          label: "端1",
+          value: "worker1",
+        },
+      ],
+      pod_options: [
+        {
+          label: "容器1",
+          value: "pod1",
+        },
+      ],
       // 虚拟机信息
       formData: {
         name: "",
@@ -399,6 +512,11 @@ export default {
         OStype: "",
         node: "",
         nettype: "",
+      },
+      commandForm: {
+        command: "",
+        edgeserver: "",
+        pod: "",
       },
       // 校验规则
       vm_rules: {
@@ -429,9 +547,23 @@ export default {
           { required: true, message: "请选择系统类型", trigger: "change" },
         ],
       },
+      command_rules: {
+        command: [{ required: true, message: "请输入命令", trigger: "blur" }],
+        // edgeserver: [
+        //   { required: true, message: "请选择端服务器", trigger: "change" },
+        // ],
+        // pod: [
+        //   { required: true, message: "请选择要执行的容器", trigger: "change" },
+        // ]
+      },
     };
   },
   methods: {
+    // 打开执行命令
+    opencommand(row) {
+      this.commandvisible = true
+      this.command_tmp_data = row
+    },
     // 获取虚拟机列表数据
     getVMList() {
       this.$axios
@@ -449,17 +581,15 @@ export default {
     },
 
     refreshIP() {
-      this.$axios
-        .get(this.baseurl + "/VMInfo/updateip")
-        .then((response) => {
-          const data = response.data;
-          if (data.success) {
-            this.$message.success("更新成功！");
-            this.getVMList();
-          } else {
-            this.$message.success("更新失败！");
-          }
-        });
+      this.$axios.get(this.baseurl + "/VMInfo/updateip").then((response) => {
+        const data = response.data;
+        if (data.success) {
+          this.$message.success("更新成功！");
+          this.getVMList();
+        } else {
+          this.$message.success("更新失败！");
+        }
+      });
     },
 
     validName() {
@@ -535,7 +665,7 @@ export default {
         if (valid) {
           // 提交表单，创建虚拟机
           // this.$refs.upload.submit();
-          this.buildvmvisible = false
+          this.buildvmvisible = false;
           this.$axios
             .get(
               this.baseurl +
