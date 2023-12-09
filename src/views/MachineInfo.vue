@@ -179,6 +179,7 @@ export default {
       nodeinfo: [],
       dialogTableVisible: false,
       baseurl: "http://39.98.124.97:8080",
+      // baseurl: "http://127.0.0.1:8080",
 
       cpuInfo: {
         cpuNum: "",
