@@ -5,39 +5,41 @@
         节点信息
       </div>
       <el-table
-        :data="
-          nodeinfo.filter(
-            (data) =>
-              !psearch ||
-              data.nodeName.toLowerCase().includes(psearch.toLowerCase())
-          )
-        "
+        :data="nodeinfo"
         style="width: 100%"
         empty-text="暂无节点信息"
         :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+        :row-class-name="tableRowClassName"
       >
-        <el-table-column type="index" label="序号"> </el-table-column>
-        <el-table-column sortable prop="nodeName" label="节点名称" width="180">
+        <el-table-column width="100" type="index" label="序号">
         </el-table-column>
-        <el-table-column sortable prop="nodeIp" label="节点IP" width="180">
+        <el-table-column sortable prop="nodeName" label="节点名称" width="300">
+        </el-table-column>
+        <el-table-column sortable prop="nodeIp" label="节点IP" width="300">
         </el-table-column>
         <el-table-column
           sortable
           prop="nodeStatus"
           label="节点状态"
-          width="180"
+          width="200"
         >
         </el-table-column>
         <el-table-column
           sortable
           prop="nodeLocation"
           label="节点位置"
-          width="180"
+          width="200"
         >
         </el-table-column>
         <el-table-column sortable prop="nodeType" label="节点类型" width="180">
         </el-table-column>
         <el-table-column sortable prop="nodeConnectivity" label="是否连接">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.nodeConnectivity === 1" type="success"
+              >已连接</el-tag
+            >
+            <el-tag v-else type="danger">未连接</el-tag>
+          </template>
         </el-table-column>
         <!-- <el-table-column
           width="100"
@@ -54,24 +56,6 @@
             <el-tag v-else type="danger">不可用</el-tag>
           </template>
         </el-table-column> -->
-        <el-table-column width="210" align="center">
-          <template slot="header">
-            <el-input
-              v-model="psearch"
-              size="mini"
-              placeholder="输入名称搜索"
-            />
-          </template>
-          <template slot-scope="scope">
-            <el-button
-              plain
-              type="info"
-              size="mini"
-              @click="checkinfo(scope.row)"
-              >查看详情</el-button
-            >
-          </template>
-        </el-table-column>
       </el-table>
       <el-card class="info-card" v-show="showInfo">
         <h2>CPU信息：</h2>
@@ -170,7 +154,8 @@ import "animate.css";
 export default {
   name: "machineinfo",
   mounted() {
-    this.getMachineInfo();
+    this.curnode = this.$store.state.nodename;
+    this.getMachineInfoByIp(this.$store.state.nodeip);
     this.getnodeinfo();
   },
   data() {
@@ -222,6 +207,8 @@ export default {
         usage: "",
       },
       showInfo: false,
+      curnode: "",
+      data_nodename_w: "",
     };
   },
   filters: {
@@ -237,17 +224,11 @@ export default {
   },
 
   methods: {
-    // 切换节点
-    checkinfo(row) {
-      sessionStorage.setItem("nodename", row.nodeName);
-      sessionStorage.setItem("ip", row.nodeIp);
-      this.$store.nodename = row.nodeName;
-      this.$store.nodeip = row.nodeIp;
-      this.getMachineInfoByIp(row.nodeIp);
-      this.$message({
-        message: "已切换" + row.nodeName + "详情信息",
-        type: "success",
-      });
+    tableRowClassName({ row, rowIndex }) {
+      if (row.nodeName === this.curnode) {
+        return "success-row";
+      }
+      return "";
     },
     // 获取节点信息
     getnodeinfo() {
@@ -428,8 +409,33 @@ export default {
       cpuChart.setOption(option);
     },
   },
+  computed: {
+    tmp_nodename() {
+      return this.$store.state.nodename;
+    },
+  },
+  watch: {
+    tmp_nodename(nv, ov) {
+      this.curnode = nv;
+      this.getMachineInfoByIp(this.$store.state.nodeip);
+      this.$message({
+        message: "已切换" + nv + "详情信息",
+        type: "success",
+      });
+    },
+  },
 };
 </script>
+
+<style>
+.el-table .warning-row {
+  background: oldlace;
+}
+
+.el-table .success-row {
+  background: #f0f9eb;
+}
+</style>
 
 <style>
 .machinearea {

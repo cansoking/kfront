@@ -481,13 +481,13 @@ export default {
             for (let j = 0; j < res.data.pvList.length; j++) {
               if (this.vsdata[i].metadata.name === res.data.pvList[j].pvName) {
                 flag = 1;
-                if (this.$store.nodename === res.data.pvList[j].pvNodeName) {
+                if (this.$store.state.nodename === res.data.pvList[j].pvNodeName) {
                   tmp.push(this.vsdata[i]);
                   j = res.data.pvList.length;
                 }
               }
             }
-            if (flag == 0 && this.$store.nodename === "master1") {
+            if (flag == 0 && this.$store.state.nodename === "master1") {
               tmp.push(this.vsdata[i]);
             }
           }
@@ -549,6 +549,16 @@ export default {
       this.$refs[formName].resetFields();
     },
   },
+  computed: {
+    tmp_nodename_w() {
+      return this.$store.state.nodename
+    }
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.getPerVList()
+    }
+  }
 };
 </script>
     

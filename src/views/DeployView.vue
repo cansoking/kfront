@@ -364,7 +364,7 @@ export default {
           this.dpdata = JSON.parse(res.data.result).items;
           this.dpdata = this.dpdata.filter(
             (data) =>
-              this.$store.nodename ===
+              this.$store.state.nodename ===
               (data.spec.template.spec.nodeName
                 ? data.spec.template.spec.nodeName
                 : "master1")
@@ -523,6 +523,16 @@ export default {
       );
     },
   },
+  computed: {
+    tmp_nodename_w() {
+      return this.$store.state.nodename
+    }
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.getDeploymentList()
+    }
+  }
 };
 </script>
   

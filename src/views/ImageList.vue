@@ -251,7 +251,7 @@ export default {
         .post(
           this.baseurl +
             "/containerd/images/list?nodeName=" +
-            this.$store.nodename,
+            this.$store.state.nodename,
           {
             virtualMachineIp: "39.98.124.97",
             userName: "root",
@@ -272,6 +272,16 @@ export default {
       this.uploadimagevisible = true;
     },
   },
+  computed: {
+    tmp_nodename_w() {
+      return this.$store.state.nodename
+    }
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.getVMList()
+    }
+  }
 };
 </script>
   

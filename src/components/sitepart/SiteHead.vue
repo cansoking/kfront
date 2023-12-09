@@ -12,7 +12,7 @@
             >基于虚拟化的资源管理演示验证原型系统</span
           >
         </el-col>
-        <el-col :offset="8" :span="6">
+        <el-col :offset="7" :span="6">
           <div style="color: #ffffff; font-size: 20px; line-height: 40px">
             当前节点：
             <el-select
@@ -37,6 +37,21 @@
             </el-select>
           </div>
         </el-col>
+        <el-col :span="1" :offset="0">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="回到主页"
+            placement="bottom"
+          >
+            <a href="/static/pages/index.html#/world">
+              <i
+                style="color: white; font-size: 35px; line-height: 50px"
+                class="el-icon-switch-button"
+              ></i>
+            </a>
+          </el-tooltip>
+        </el-col>
       </el-row>
     </div>
   </div>
@@ -57,23 +72,23 @@ export default {
   },
   computed: {
     nodename() {
-      return this.$store.nodename;
+      return this.$store.state.nodename;
     },
     nodeip() {
-      return this.$store.nodeip;
+      return this.$store.state.nodeip;
     },
   },
   methods: {
     nodechange(item) {
-      this.$store.nodename = item;
-      if(this.$store.nodename === 'master1') {
-        this.$store.nodetype = '云';
-      }else {
-        this.$store.nodetype = '边';
+      this.$store.state.nodename = item;
+      if (this.$store.state.nodename === "master1") {
+        this.$store.state.nodetype = "云";
+      } else {
+        this.$store.state.nodetype = "边";
       }
       for (let i = 0; i < this.nodeinfo.length; i++) {
         if (this.nodeinfo[i].nodeName === item) {
-          this.$store.nodeip = this.nodeinfo[i].nodeIp;
+          this.$store.state.nodeip = this.nodeinfo[i].nodeIp;
           i = this.nodeinfo.length;
         }
       }
@@ -104,10 +119,10 @@ export default {
   },
   mounted() {
     this.noderemote();
-    this.$store.nodename = window.sessionStorage.getItem("nodename");
-    this.$store.nodeip = window.sessionStorage.getItem("ip");
-    this.$store.nodetype = window.sessionStorage.getItem("nodetype");
-    this.value = this.$store.nodename;
+    this.$store.state.nodename = window.sessionStorage.getItem("nodename");
+    this.$store.state.nodeip = window.sessionStorage.getItem("ip");
+    this.$store.state.nodetype = window.sessionStorage.getItem("nodetype");
+    this.value = this.$store.state.nodename;
   },
 };
 </script>

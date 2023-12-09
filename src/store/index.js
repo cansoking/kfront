@@ -5,6 +5,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    nodename: "",
+    nodeip: "",
+    nodetype: ""
   },
   getters: {
   },
@@ -13,5 +16,5 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
-  }
+  },
 })

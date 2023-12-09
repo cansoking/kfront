@@ -137,9 +137,9 @@
       <el-table-column sortable label="节点" prop="spec.nodeName">
         <template slot-scope="scope">
           {{
-            $store.nodetype +
+            $store.state.nodetype +
             "节点" +
-            $store.nodename[$store.nodename.length - 1]
+            $store.state.nodename[$store.state.nodename.length - 1]
           }}
         </template>
       </el-table-column>
@@ -676,7 +676,7 @@ export default {
           this.poddata = JSON.parse(res.data.result).items;
           this.poddata = this.poddata.filter(
             (data) =>
-              this.$store.nodename ===
+              this.$store.state.nodename ===
               (data.spec.nodeName ? data.spec.nodeName : "master1")
           );
           // 获取namepath
@@ -1044,6 +1044,16 @@ export default {
       return res;
     },
   },
+  computed: {
+    tmp_nodename_w() {
+      return this.$store.state.nodename
+    }
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.getPodList()
+    }
+  }
 };
 </script>
 
