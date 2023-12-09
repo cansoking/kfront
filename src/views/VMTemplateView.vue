@@ -32,6 +32,10 @@
       </el-table-column>
       <el-table-column sortable label="操作系统类型" prop="OStype">
       </el-table-column>
+      <el-table-column sortable label="镜像名称" prop="ImgName">
+      </el-table-column>
+      <el-table-column sortable label="网络类型" prop="nettype">
+      </el-table-column>
       <el-table-column fixed="right" label="操作">
         <template slot-scope="scope">
           <el-button
@@ -71,12 +75,17 @@
         :rules="vmtem_rules"
         ref="vmtem_form"
       >
+
+      <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
         <el-form-item label="模版名称" prop="name">
           <el-input
             v-model="vmtem_form.name"
             placeholder="请输入模版名称"
           ></el-input>
         </el-form-item>
+      </el-col>
+            <el-col :span="12" :offset="0">
         <el-form-item label="内存大小" prop="memory">
           <el-input
             v-model="vmtem_form.memory"
@@ -85,6 +94,10 @@
             @blur="validMemory('vmtem_form')"
           ></el-input>
         </el-form-item>
+      </el-col>
+           </el-row>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
         <el-form-item label="处理器个数" prop="cpuNum">
           <el-select
             style="width: 100%"
@@ -101,6 +114,8 @@
             </el-option>
           </el-select>
         </el-form-item>
+      </el-col>
+            <el-col :span="12" :offset="0">
         <el-form-item label="操作系统类型" prop="OStype">
           <el-select
             style="width: 100%"
@@ -117,6 +132,48 @@
             </el-option>
           </el-select>
         </el-form-item>
+      </el-col>
+           </el-row>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
+        <el-form-item label="虚拟机镜像,#仅支持qcow2格式" prop="ImgName">
+              <el-select
+                style="width: 60%"
+                v-model="vmtem_form.ImgName"
+                clearable
+                @visible-change="nsremote"
+                placeholder="请选择虚拟机镜像"
+              >
+                <el-option
+                  v-for="item in images"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+            <el-form-item label="网络类型" prop="nettype">
+              <el-select
+                style="width: 60%"
+                v-model="vmtem_form.nettype"
+                clearable
+                placeholder="请选择创建虚拟机的网络类型"
+              >
+                <el-option
+                  v-for="item in nettype_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+              </el-col>
+           </el-row>
+
         <div class="cp-sbm-area" style="margin-left: 450px; margin-top: 20px">
           <el-button round @click="resetForm('vmtem_form')">重置</el-button>
           <el-button round type="primary" @click="vmtem_sumbit('vmtem_form')"
@@ -135,6 +192,8 @@
         :rules="vmtem_rules"
         ref="editvmtem_form"
       >
+      <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
         <el-form-item label="模版名称" prop="name">
           <el-input
             v-model="editvmtem_form.name"
@@ -142,6 +201,8 @@
             @blur="validName('editvmtem_form')"
           ></el-input>
         </el-form-item>
+      </el-col>
+            <el-col :span="12" :offset="0">
         <el-form-item label="内存大小" prop="memory">
           <el-input
             v-model="editvmtem_form.memory"
@@ -150,6 +211,10 @@
             @blur="validMemory('editvmtem_form')"
           ></el-input>
         </el-form-item>
+      </el-col>
+           </el-row>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
         <el-form-item label="处理器个数" prop="cpuNum">
           <el-select
             style="width: 100%"
@@ -166,6 +231,8 @@
             </el-option>
           </el-select>
         </el-form-item>
+      </el-col>
+            <el-col :span="12" :offset="0">
         <el-form-item label="操作系统类型" prop="OStype">
           <el-select
             style="width: 100%"
@@ -182,6 +249,48 @@
             </el-option>
           </el-select>
         </el-form-item>
+      </el-col>
+           </el-row>
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
+        <el-form-item label="虚拟机镜像,#仅支持qcow2格式" prop="ImgName">
+              <el-select
+                style="width: 60%"
+                v-model="editvmtem_form.ImgName"
+                clearable
+                @visible-change="nsremote"
+                placeholder="请选择虚拟机镜像"
+              >
+                <el-option
+                  v-for="item in images"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+            <el-form-item label="网络类型" prop="nettype">
+              <el-select
+                style="width: 60%"
+                v-model="editvmtem_form.nettype"
+                clearable
+                placeholder="请选择创建虚拟机的网络类型"
+              >
+                <el-option
+                  v-for="item in nettype_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+              </el-col>
+           </el-row>
+
         <div class="cp-sbm-area" style="margin-left: 450px; margin-top: 20px">
           <el-button round @click="resetForm('editvmtem_form')">重置</el-button>
           <el-button
@@ -197,38 +306,72 @@
     <el-dialog title="创建虚拟机" :visible.sync="buildvmtemvisible">
       <el-form
         label-position="top"
-        label-width="80px"
+        label-width="50px"
         :model="buildvmtem_form"
         :status-icon="true"
         ref="buildvmtem_form"
       >
+      <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
         <el-form-item label="请输入虚拟机名称" prop="vmname">
           <el-input
             v-model="buildvmtem_form.vmname"
             placeholder="请输入虚拟机名称"
+            style="width: 60%"
             @blur="validName('buildvmtem_form')"
           ></el-input>
         </el-form-item>
+          </el-col>
+          <el-col :span="12" :offset="0">
+        <el-form-item label="节点" prop="node">
+              <el-select
+                style="width: 60%"
+                v-model="buildvmtem_form.node"
+                clearable
+                placeholder="请选择创建虚拟机所在宿主机节点"
+              >
+                <el-option
+                  v-for="item in node_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            </el-col>
+            </el-row>
 
+         <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
         <el-form-item label="模版名称" prop="name">
           <el-input
             v-model="buildvmtem_form.name"
             placeholder="请输入模版名称"
+            style="width: 60%"
             disabled
           ></el-input>
         </el-form-item>
+          </el-col>
+          <el-col :span="12" :offset="0">
         <el-form-item label="内存大小" prop="memory">
           <el-input
             v-model="buildvmtem_form.memory"
             placeholder="请输入内存大小(单位G)"
+            style="width: 60%"
             clearables
             @blur="validMemory('editvmtem_form')"
             disabled
           ></el-input>
         </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
         <el-form-item label="处理器个数" prop="cpuNum">
           <el-select
-            style="width: 100%"
+            style="width: 60%"
             v-model="buildvmtem_form.cpuNum"
             clearable
             placeholder="请选择处理器个数"
@@ -243,9 +386,11 @@
             </el-option>
           </el-select>
         </el-form-item>
+          </el-col>
+          <el-col :span="12" :offset="0">
         <el-form-item label="操作系统类型" prop="OStype">
           <el-select
-            style="width: 100%"
+            style="width: 60%"
             v-model="buildvmtem_form.OStype"
             clearable
             placeholder="请选择操作系统类型"
@@ -261,32 +406,50 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="虚拟机映像文件" prop="vm_iso">
-          <el-upload
-            class="upload-demo"
-            drag
-            ref="upload"
-            :action="baseurl + '/Template/addVirtual'"
-            :multiple="false"
-            :data="buildvmtem_form"
-            accept=".iso"
-            :auto-upload="false"
-            :limit="1"
-            :before-upload="handleBeforeUpload"
-            :on-success="sucupload"
-            :on-error="errupload"
-            style="width: 30%"
-          >
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text">
-              将文件拖到此处，或<em>点击上传</em>
-            </div>
-            <div class="el-upload__tip" slot="tip">
-              *只能上传.iso/ .qemu2/ .img文件
-            </div>
-          </el-upload>
-        </el-form-item>
-
+          </el-col>
+         </el-row>
+         
+        <el-row :gutter="30">
+          <el-col :span="12" :offset="0">
+        <el-form-item label="虚拟机镜像,#仅支持qcow2格式" prop="ImgName">
+              <el-select
+                style="width: 60%"
+                v-model="buildvmtem_form.ImgName"
+                clearable
+                @visible-change="nsremote"
+                placeholder="请选择虚拟机镜像"
+                disabled
+              >
+                <el-option
+                  v-for="item in images"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+            <el-form-item label="网络类型" prop="nettype">
+              <el-select
+                style="width: 60%"
+                v-model="buildvmtem_form.nettype"
+                clearable
+                placeholder="请选择创建虚拟机的网络类型"
+                disabled
+              >
+                <el-option
+                  v-for="item in nettype_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+              </el-col>
+           </el-row>
         <div class="cp-sbm-area" style="margin-left: 450px; margin-top: 20px">
           <el-button
             round
@@ -312,6 +475,7 @@ export default {
       pagesize: 10,
       createvmtemvisible: false,
       editvmtemvisible: false,
+      images:[],
       buildvmtemvisible: false,
       vmtemdata: [],
       cpuNum_options: [
@@ -350,6 +514,22 @@ export default {
           label: "ARM",
         },
       ],
+      nettype_options: [
+        {
+          label: "bridge",
+          value: "bridge",
+        },
+        {
+          label: "nat",
+          value: "nat",
+        },
+      ],
+      node_options: [
+        {
+          label: "127.0.0.1",
+          value: "172.26.82.161",
+        },
+      ],
       vmtem_form: {
         name: "",
         memory: "",
@@ -362,6 +542,8 @@ export default {
         memory: "",
         cpuNum: "",
         OStype: "",
+        ImgName: "",
+        nettype: "",
       },
       buildvmtem_form: {
         vmname: "",
@@ -369,6 +551,8 @@ export default {
         memory: "",
         cpuNum: "",
         OStype: "",
+        ImgName: "",
+        nettype: "",
       },
       // 添加容器校验规则
       vmtem_rules: {
@@ -419,11 +603,46 @@ export default {
       }
     },
     buildvmtem_sumbit(formName) {
-      // 校验表单
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // 提交表单，创建虚拟机
-          this.$refs.upload.submit();
+          // this.$refs.upload.submit();
+          this.buildvmvisible = false;
+          this.$axios
+            .get(
+              this.baseurl +
+                "/Template/addVirtual?ImgName=" +
+                this.buildvmtem_form.ImgName +
+                "&name=" +
+                this.buildvmtem_form.vmname +
+                "&memory=" +
+                this.buildvmtem_form.memory +
+                "&cpuNum=" +
+                this.buildvmtem_form.cpuNum +
+                "&OStype=" +
+                this.buildvmtem_form.OStype +
+                "&nettype=" +
+                this.buildvmtem_form.nettype +
+                "&serverip=" +
+                this.buildvmtem_form.node
+            )
+            .then((response) => {
+              this.$notify.success({
+                title: "创建成功",
+                message: "虚拟机 " + this.buildvmtem_form.name + " 创建成功！",
+                position: "bottom-right",
+                duration: 6000,
+              });
+              this.getVMList();
+            })
+            .catch((err) => {
+              this.$notify.error({
+                title: "创建失败",
+                message: err,
+                position: "bottom-right",
+                duration: 6000,
+              });
+            });
         } else {
           console.log("表单验证不通过");
           return false;
@@ -494,6 +713,25 @@ export default {
         }
       });
     },
+
+    nsremote() {
+      this.$axios
+        .get(this.baseurl + "/Images/imgList")
+        .then((res) => {
+          let resop = [];
+          for (let i = 0; i < res.data.content.length; i++) {
+            let tmp = {};
+            tmp["label"] = res.data.content[i].name;
+            tmp["value"] = res.data.content[i].name;
+            resop.push(tmp);
+          }
+          this.images = resop;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+
     editvmtem_sumbit(formName) {
       // 校验表单
       this.$refs[formName].validate((valid) => {
@@ -577,6 +815,8 @@ export default {
       this.editvmtem_form.memory = row.memory;
       this.editvmtem_form.cpuNum = row.cpuNum;
       this.editvmtem_form.OStype = row.OStype;
+      this.editvmtem_form.ImgName = row.ImgName;
+      this.editvmtem_form.nettype = row.nettype;
       this.editvmtemvisible = true;
     },
     build(row) {
@@ -584,48 +824,15 @@ export default {
       this.buildvmtem_form.memory = row.memory;
       this.buildvmtem_form.cpuNum = row.cpuNum;
       this.buildvmtem_form.OStype = row.OStype;
+      this.buildvmtem_form.ImgName = row.ImgName;
+      this.buildvmtem_form.nettype = row.nettype;
       this.buildvmtemvisible = true;
     },
-    create(index, row) {
-      this.$confirm(`您确定删除吗?`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.$axios
-            .delete(this.baseurl + "/workload/deleteVMLog/" + row.id)
-            .then((response) => {
-              const data = response.data;
-              if (data.success) {
-                this.$message.success("删除成功！");
-                this.getVMLog();
-              } else {
-                this.$message.success("删除失败！");
-              }
-            });
-        })
-        .catch(() => {
-          // 取消操作
-          this.$message({
-            type: "info",
-            message: "已取消",
-          });
-        });
-    },
+
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    handleBeforeUpload(file) {
-      console.log(file);
-      var iso = file.name.substring(file.name.lastIndexOf(".") + 1);
-      const suffix = iso === "iso";
-      if (!suffix) {
-        this.$message.error("只能上传ISO文件！");
-        return false;
-      }
-      return suffix;
-    },
+
     sucupload(response, file, fileList) {
       if (response === "ok") {
         this.$notify.success({

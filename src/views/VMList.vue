@@ -18,8 +18,8 @@
           placeholder="请选择宿主机"
           @change="suzhuchange"
         >
-          <el-option label="aliyun" value="39.98.124.97/"></el-option>
-          <el-option label="aliyun2" value="172.26.82.161"></el-option>
+          <el-option label="39.98.124.97" value="39.98.124.97/"></el-option>
+          <el-option label="172.26.82.161" value="172.26.82.161"></el-option>
         </el-select>
       </el-col>
       <el-col :span="3" :offset="0">
@@ -249,7 +249,7 @@
                 style="width: 60%"
                 v-model="formData.node"
                 clearable
-                placeholder="请选择创建虚拟机所在节点"
+                placeholder="请选择创建虚拟机所在宿主机节点"
               >
                 <el-option
                   v-for="item in node_options"
@@ -406,6 +406,7 @@ export default {
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
+      serverip:"",
       images: [],
       curpage: 1,
       totalvm: 0,
@@ -574,6 +575,7 @@ export default {
   },
   methods: {
     suzhuchange(item) {
+      this.serverip=item
       this.$axios
         .get("http://" + item + ":8080/getVMList")
         .then((res) => {
@@ -614,7 +616,7 @@ export default {
     },
 
     refreshIP() {
-      this.$axios.get(this.baseurl + "/VMInfo/updateip").then((response) => {
+      this.$axios.get(this.baseurl + "/VMInfo/updateip/"+this.serverip).then((response) => {
         const data = response.data;
         if (data.success) {
           this.$message.success("更新成功！");
