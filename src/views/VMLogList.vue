@@ -164,8 +164,19 @@ export default {
           .then((res) => {
             console.log(res.data);
             if (res.data.success) {
-              this.vmlogdata = res.data.content;
-              this.totalvmlog = res.data.content.length;
+
+              let tmp = [];
+              console.log(res.data.content.length)
+              console.log(this.$store.ip)
+
+              for (let i = 0; i < res.data.content.length; i++) {
+                if (this.$store.ip === res.data.content[i].NodeIp) {
+                  tmp.push(res.data.content[i]);
+                }
+              }
+              this.vmlogdata = tmp
+              this.totalvmlog = this.vmlogdata.length;
+
             } else {
               alert(res.data.msg);
             }

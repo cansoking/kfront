@@ -180,8 +180,17 @@ export default {
         .then((res) => {
           console.log(res);
           if (res.data.success) {
-            this.podlogdata = res.data.content;
-            this.totalpodlog = res.data.content.length;
+            let tmp = [];
+            console.log(res.data.content.length)
+            console.log(this.$store.nodename)
+
+              for (let i = 0; i < res.data.content.length; i++) {
+                  if (this.$store.nodename === res.data.content[i].nodeName) {
+                    tmp.push(res.data.content[i]);
+                  }
+              }
+            this.podlogdata = tmp
+            this.totalpodlog = this.podlogdata.length;
           } else {
             alert(res.data.msg);
           }

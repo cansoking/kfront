@@ -13,7 +13,8 @@ export default {
   data() {
     return {
       myChart: undefined,/* 定义变量 */
-      regions: [
+      baseurl: "http://39.98.124.97:8080",
+      /*    regions: [
 
         {
           name: '山东省',
@@ -43,20 +44,21 @@ export default {
             opacity: 1,
           },
         },
-      ],
-      scatter:
-          [
+      ],*/
+      nodeList: [],
+      scatter: []
+      /*[
             { name: '北京(云节点 1)', value: [116.46122, 39.97886, 9] },
             { name: '海南(边节点 1)', value: [109.12, 19.12, 9] },
             { name: '青岛(边节点 1)', value: [120.30, 36.40, 9] },
             { name: '上海(边节点 2)', value: [121.47, 31.23, 9] },
-          ]
+          ]*/
     };
   },
   mounted() {
-    this.drawChina()
+    this.getNodes();
     // $.get('../assets/world.json', function (geoJson) {/* 请求世界地图的本地json数据 */
-      /*this.myChart = echarts.init(document.getElementById('myEchart'));/!* 初始画布 *!/
+    /*this.myChart = echarts.init(document.getElementById('myEchart'));/!* 初始画布 *!/
       echarts.registerMap('world', geoJson);/!* 注册world地图 *!/
       this.myChart.setOption({/!* 设置myChart配置项 *!/
         tooltip: {
@@ -147,8 +149,8 @@ export default {
 
     // })
   },
-  methods:{
-    drawChina(){
+  methods: {
+    drawChina() {
       // $.get('../assets/world.json', function (geoJson) {/* 请求世界地图的本地json数据 */
       this.myChart = echarts.init(document.getElementById('myEchart'));/* 初始画布 */
       echarts.registerMap('world', geoJson);/* 注册world地图 */
@@ -170,7 +172,7 @@ export default {
           //设置中心点
           center: [115.97, 29.71],
           //省份地图添加背景
-          regions: this.regions,
+          // regions: this.regions,
           itemStyle: {
             areaColor: '#DCDCDC',
             color: 'red',
@@ -218,32 +220,74 @@ export default {
       })
       this.myChart.on('click', (params) => {
         if (params.componentType === 'series' && params.seriesType === 'effectScatter') {
-          const city = params.data.name;
-          if(city === "北京(云节点 1)"){
+          let city = params.data.name;
+          city = city.split("(")[0];
+          for(let i = 0; i < this.nodeList.length; i++){
+            if(city === this.nodeList[i].nodeLocation){
+              sessionStorage.setItem("nodename",this.nodeList[i].nodeName);
+              sessionStorage.setItem("ip", this.nodeList[i].nodeip);
+              sessionStorage.setItem("nodetype", this.nodeList[i].nodeType);
+              break;
+            }
+
+          }
+
+          /*if (city === "北京(云节点 1)") {
             sessionStorage.setItem("nodename", "master1");
             sessionStorage.setItem("ip", "39.98.124.97");
             sessionStorage.setItem("nodetype", "云");
           }
-          if(city === "青岛(边节点 1)"){
+          if (city === "青岛(边节点 1)") {
             sessionStorage.setItem("nodename", "worker1");
             sessionStorage.setItem("ip", "39.101.136.242");
             sessionStorage.setItem("nodetype", "边");
           }
-          if(city === "海南(边节点 2)"){
+          if (city === "海南(边节点 2)") {
             sessionStorage.setItem("nodename", "worker2");
             sessionStorage.setItem("ip", "39.98.109.31");
             sessionStorage.setItem("nodetype", "边");
           }
-          if(city === "上海(边节点 3)"){
+          if (city === "上海(边节点 3)") {
             sessionStorage.setItem("nodename", "worker3");
             sessionStorage.setItem("ip", "39.99.252.93");
             sessionStorage.setItem("nodetype", "边");
-          }
+          }*/
           this.$router.push("/machineinfo")
           // router.push("/podlist")
         }
       });
-    }
+    },
+    getNodes() {
+      this.$axios
+          .get(this.baseurl + "/log/getNodes")
+          .then((res) => {
+            this.nodeList = res.data.content;
+            for(let i = 0; i < this.nodeList.length; i++) {
+              let t = {};
+              let name = "";
+              name = this.nodeList[i].nodeLocation;
+              if(this.nodeList[i].nodeType==='云')
+                name += "(云节点)"
+              else if(this.nodeList[i].nodeType==='边')
+                name += "(边节点)"
+              else
+                name += "(端节点)"
+              t["name"] = name;
+
+              let t1 = [];
+              t1.push(this.nodeList[i].nodeLon);
+              t1.push(this.nodeList[i].nodeLat);
+              t1.push(9);
+              t["value"] = t1;
+              this.scatter.push(t);
+            }
+
+            this.drawChina()
+          })
+          .catch((err) => {
+            console.log("errors", err);
+          });
+    },
   }
-};
+}
 </script>
