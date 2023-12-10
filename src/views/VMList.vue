@@ -127,10 +127,10 @@
             <el-button plain type="warning" @click="opencommand(scope.row)"
               >执行命令</el-button
             >
-            <el-button plain type="default" @click="openpod(scope.row)"
+            <el-button plain type="primary" @click="openpod(scope.row)"
               >容器管理</el-button
             >
-            <el-button plain type="default" @click="openimage(scope.row)"
+            <el-button plain type="primary" @click="openimage(scope.row)"
               >镜像管理</el-button
             >
           </el-button-group>
@@ -420,15 +420,100 @@
     </el-dialog>
     <!-- 虚拟机镜像 -->
     <el-drawer
-      title="虚拟机镜像"
+      :title="'虚拟机镜像管理-' + vmimg_tmp_data.name"
       :visible.sync="imagedrawer"
       direction="ttb"
     >
-      <span>我来啦!</span>
+      <!-- 头部标题操作 -->
+      <div slot="title">
+        <el-row :gutter="0">
+          <el-col :span="3" :offset="0"
+            ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+              容器镜像列表
+            </p></el-col
+          >
+          <el-col :span="2" :offset="0">
+            <el-button
+              @click="openUploadImage"
+              icon="el-icon-circle-plus-outline"
+              size="medium"
+              round
+              plain
+              >上传镜像</el-button
+            >
+          </el-col>
+        </el-row>
+      </div>
+      <div style="margin-left: 50px; margin-right: 50px;">
+        <!-- 表格区域 -->
+        <el-table
+          :data="
+            cidata
+              .slice((curpage - 1) * pagesize, curpage * pagesize)
+              .filter(
+                (data) =>
+                  !psearch ||
+                  data.image.toLowerCase().includes(psearch.toLowerCase())
+              )
+          "
+          style="width: 100%"
+          empty-text="暂无容器镜像"
+          :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+          @selection-change="handleSelectionChange"
+        >
+          <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
+          <el-table-column width="80" type="index" label="序号">
+          </el-table-column>
+          <el-table-column
+            width="500"
+            sortable
+            label="镜像名称"
+            prop="imageName"
+          >
+          </el-table-column>
+          <el-table-column width="300" sortable label="标签" prop="imageTag">
+          </el-table-column>
+          <el-table-column width="200" sortable label="镜像ID" prop="imageId">
+          </el-table-column>
+          <el-table-column width="200" sortable label="体积" prop="imageSize">
+          </el-table-column>
+          <el-table-column align="right">
+            <template slot="header">
+              <el-input
+                v-model="psearch"
+                size="mini"
+                placeholder="输入名称搜索"
+              />
+            </template>
+            <template slot-scope="scope">
+              <div style="text-align: center">
+                <el-button
+                  plain
+                  type="danger"
+                  @click="deleteimage(scope.$index, scope.row)"
+                  >删除</el-button
+                >
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+        <!-- 分页栏 -->
+        <div v-if="cidata.length != 0" style="margin-top: 30px">
+          <el-pagination
+            :current-page.sync="curpage"
+            :page-sizes="[10, 20, 30, 40, 50]"
+            :page-size.sync="pagesize"
+            layout="sizes, total, prev, pager, next, jumper"
+            :total="totalci"
+            background
+          >
+          </el-pagination>
+        </div>
+      </div>
     </el-drawer>
     <!-- 虚拟机容器 -->
     <el-drawer
-      title="虚拟机容器"
+      :title="'虚拟机容器管理-' + vmpod_tmp_data.name"
       :visible.sync="poddrawer"
       direction="ttb"
     >
@@ -621,16 +706,22 @@ export default {
         //   { required: true, message: "请选择要执行的容器", trigger: "change" },
         // ]
       },
+      vmpod_tmp_data: {},
+      vmimg_tmp_data: {},
+      // 虚拟机镜像
+      cidata: [],
     };
   },
   methods: {
     // 打开pod
     openpod(row) {
-      this.poddrawer = true
+      this.poddrawer = true;
+      this.vmpod_tmp_data = row;
     },
     // 打开image
     openimage(row) {
-      this.imagedrawer = true
+      this.imagedrawer = true;
+      this.vmimg_tmp_data = row;
     },
     // 发送执行命令
     start_command(formName) {
