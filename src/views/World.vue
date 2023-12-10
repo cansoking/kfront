@@ -225,7 +225,7 @@ export default {
           for(let i = 0; i < this.nodeList.length; i++){
             if(city === this.nodeList[i].nodeLocation){
               sessionStorage.setItem("nodename",this.nodeList[i].nodeName);
-              sessionStorage.setItem("ip", this.nodeList[i].nodeip);
+              sessionStorage.setItem("ip", this.nodeList[i].nodeIp);
               sessionStorage.setItem("nodetype", this.nodeList[i].nodeType);
               break;
             }

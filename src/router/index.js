@@ -18,6 +18,11 @@ const routes = [
     component: () => import('../views/ManagementView.vue'),
     children: [
       {
+        path: '/dockerimage',
+        name: 'dockerimage',
+        component: () => import('../views/DockerImage.vue')
+      },
+      {
         path: '/podlist',
         name: 'podlist',
         component: () => import('../views/PodList.vue')

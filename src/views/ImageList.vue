@@ -7,7 +7,7 @@
           容器镜像列表
         </p></el-col
       >
-      <el-col :span="3" :offset="9">
+      <!-- <el-col :span="3" :offset="9">
         <el-button
           @click="openUploadImage"
           icon="el-icon-s-promotion"
@@ -16,8 +16,8 @@
           plain
           >分发镜像到端</el-button
         >
-      </el-col>
-      <el-col :span="2" :offset="0">
+      </el-col> -->
+      <el-col :span="2" :offset="12">
         <el-button
           @click="openUploadImage"
           icon="el-icon-circle-plus-outline"
@@ -44,7 +44,7 @@
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55"> </el-table-column>
+      <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
       <el-table-column width="80" type="index" label="序号"> </el-table-column>
       <el-table-column width="500" sortable label="镜像名称" prop="imageName">
       </el-table-column>
