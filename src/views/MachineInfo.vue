@@ -13,9 +13,9 @@
       >
         <el-table-column width="100" type="index" label="序号">
         </el-table-column>
-        <el-table-column sortable prop="nodeName" label="节点名称" width="300">
+        <el-table-column sortable prop="nodeName" label="节点名称" width="200">
         </el-table-column>
-        <el-table-column sortable prop="nodeIp" label="节点IP" width="300">
+        <el-table-column sortable prop="nodeIp" label="节点IP" width="200">
         </el-table-column>
         <el-table-column
           sortable
@@ -33,7 +33,7 @@
         </el-table-column>
         <el-table-column sortable prop="nodeType" label="节点类型" width="180">
         </el-table-column>
-        <el-table-column sortable prop="nodeConnectivity" label="是否连接">
+        <el-table-column width="100" sortable prop="nodeConnectivity" label="是否连接">
           <template slot-scope="scope">
             <el-tag v-if="scope.row.nodeConnectivity === 1" type="success"
               >已连接</el-tag
@@ -41,6 +41,19 @@
             <el-tag v-else type="danger">未连接</el-tag>
           </template>
         </el-table-column>
+        <el-table-column label="内容" align="center">
+          <template slot-scope="scope">
+            <el-button-group>
+              <el-button size="mini" plain type="default" @click="topod(scope.row)"
+                >容器管理</el-button
+              >
+              <el-button size="mini" plain type="default" @click="tovm(scope.row)"
+                >虚拟机管理</el-button
+              >
+            </el-button-group>
+          </template>
+        </el-table-column>
+
         <!-- <el-table-column
           width="100"
           sortable
@@ -224,6 +237,17 @@ export default {
   },
 
   methods: {
+    // 跳转容器页
+    topod(row) {
+      this.$store.state.nodename = row.nodeName
+      this.$store.state.nodeip = row.nodeIp
+      this.$router.push("/podlist")
+    },
+    tovm(row) {
+      this.$store.state.nodename = row.nodeName
+      this.$store.state.nodeip = row.nodeIp
+      this.$router.push("/vmlist")
+    },
     tableRowClassName({ row, rowIndex }) {
       if (row.nodeName === this.curnode) {
         return "success-row";

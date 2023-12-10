@@ -574,6 +574,10 @@ export default {
     };
   },
   methods: {
+    // 根据ip获取虚拟机数据
+    getVmListByIp(ip) {
+
+    },
     suzhuchange(item) {
       this.serverip=item
       this.$axios

@@ -124,6 +124,16 @@ export default {
     this.$store.state.nodetype = window.sessionStorage.getItem("nodetype");
     this.value = this.$store.state.nodename;
   },
+  computed: {
+    tmp_nodename_w() {
+      return this.$store.state.nodename
+    }
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.value = nv
+    }
+  }
 };
 </script>
 
