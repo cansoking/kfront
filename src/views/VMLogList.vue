@@ -2,12 +2,12 @@
   <div class="vmarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-      <el-col span="4" :offset="0"
+      <el-col :span="4" :offset="0"
       ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
         虚拟机日志列表
       </p></el-col
       >
-      <el-col span="4" offset="">
+      <el-col :span="4" >
         <el-select v-model="searchvm" placeholder="请选择虚拟机">
           <el-option
               v-for="item in options"
@@ -18,7 +18,7 @@
           </el-option>
         </el-select>
       </el-col>
-      <el-col span="4" >
+      <el-col :span="4" >
         <el-date-picker
             v-model="starttime"
             type="datetime"
@@ -26,7 +26,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="4" >
+      <el-col :span="4" >
         <el-date-picker
             v-model="endtime"
             type="datetime"
@@ -34,10 +34,10 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="1">
+      <el-col :span="1">
         <el-button round plain type="primary" @click="getVMLog">查询</el-button>
       </el-col>
-      <el-col span="4" :offset="3"
+      <el-col :span="4" :offset="3"
       ><p style="font-size: 20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
         日志保存时间:{{savedays}}天
       </p></el-col
@@ -167,10 +167,9 @@ export default {
 
               let tmp = [];
               console.log(res.data.content.length)
-              console.log(this.$store.ip)
-
+              console.log("sc"+this.$store.state.nodeip)
               for (let i = 0; i < res.data.content.length; i++) {
-                if (this.$store.ip === res.data.content[i].NodeIp) {
+                if (this.$store.state.nodeip === res.data.content[i].NodeIp) {
                   tmp.push(res.data.content[i]);
                 }
               }

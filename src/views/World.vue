@@ -1,7 +1,6 @@
 <template>
-  <div class="content">
-    <!-- 设置容器ID，宽度1920PX，高度1080PX -->
-    <div id="myEchart" style="width:1920px; height:1080px;"></div>
+  <div class="content" style="background-color: 	#F5F5F5">
+    <div id="myEchart" style="width:1920px; height:1200px;"></div>
   </div>
 </template>
 
@@ -14,140 +13,13 @@ export default {
     return {
       myChart: undefined,/* 定义变量 */
       baseurl: "http://39.98.124.97:8080",
-      /*    regions: [
-
-        {
-          name: '山东省',
-          itemStyle: {
-            areaColor: '#fe9b45',
-            opacity: 1,
-          },
-        },
-        {
-          name: '北京市',
-          itemStyle: {
-            areaColor: '#fd691b',
-            opacity: 1,
-          },
-        },
-        {
-          name: '上海市',
-          itemStyle: {
-            areaColor: '#fd691b',
-            opacity: 1,
-          },
-        },
-        {
-          name: '海南省',
-          itemStyle: {
-            areaColor: '#ffc556',
-            opacity: 1,
-          },
-        },
-      ],*/
       nodeList: [],
       scatter: []
-      /*[
-            { name: '北京(云节点 1)', value: [116.46122, 39.97886, 9] },
-            { name: '海南(边节点 1)', value: [109.12, 19.12, 9] },
-            { name: '青岛(边节点 1)', value: [120.30, 36.40, 9] },
-            { name: '上海(边节点 2)', value: [121.47, 31.23, 9] },
-          ]*/
     };
   },
   mounted() {
     this.getNodes();
-    // $.get('../assets/world.json', function (geoJson) {/* 请求世界地图的本地json数据 */
-    /*this.myChart = echarts.init(document.getElementById('myEchart'));/!* 初始画布 *!/
-      echarts.registerMap('world', geoJson);/!* 注册world地图 *!/
-      this.myChart.setOption({/!* 设置myChart配置项 *!/
-        tooltip: {
-          trigger: 'item',
-          formatter: '{b}'
-        },
 
-        geo: {
-          map: 'world',
-          roam: true, //是否允许缩放，拖拽
-          zoom: 1.2, //初始化大小
-          //缩放大小限制
-          scaleLimit: {
-            min: 1, //最小
-            max: 2, //最大
-          },
-          //设置中心点
-          center: [115.97, 29.71],
-          //省份地图添加背景
-          regions: this.regions,
-          itemStyle: {
-            areaColor: '#DCDCDC',
-            color: 'red',
-            borderColor: '#232652',
-            borderWidth: 1.5,
-          },
-          //高亮状态
-          emphasis: {
-            itemStyle: {
-              areaColor: '#1af9e5',
-              color: '#fff',
-            },
-          },
-        },
-
-        series: {
-          type: 'effectScatter',
-          coordinateSystem: 'geo',
-          data: this.scatter,
-          showEffectOn: 'render',
-          rippleEffect: {
-            //涟漪特效相关配置
-            brushType: 'stroke', //波纹的绘制方式，可选 'stroke' 和 'fill'
-          },
-          hoverAnimation: true, //是否开启鼠标 hover 的提示动画效果
-          label: {
-            //图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等，
-            normal: {
-              formatter: '{b}',
-              position: 'right',
-              show: true,
-            },
-          },
-          itemStyle: {
-            //图形样式，normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时
-            normal: {
-              color: '#ffffff', //散点的颜色
-              shadowBlur: 10,
-              shadowColor: 20,
-              fontSize: '12px',
-            },
-          },
-          zlevel: 1,
-        },
-      })
-    this.myChart.on('click', (params) => {
-      if (params.componentType === 'series' && params.seriesType === 'effectScatter') {
-        const city = params.data.name;
-        if(city === "北京(云节点 1)"){
-          sessionStorage.setItem("nodename", "master1");
-          sessionStorage.setItem("ip", "39.98.124.97");
-        }
-        if(city === "青岛(边节点 1)"){
-          sessionStorage.setItem("nodename", "worker1");
-          sessionStorage.setItem("ip", "39.101.136.242");
-        }
-        if(city === "海南(边节点 2)"){
-          sessionStorage.setItem("nodename", "worker2");
-          sessionStorage.setItem("ip", "39.98.109.31");
-        }
-        if(city === "上海(边节点 3)"){
-          sessionStorage.setItem("nodename", "worker3");
-          sessionStorage.setItem("ip", "39.99.252.93");
-        }
-        router.push("/podlist")
-      }
-    });*/
-
-    // })
   },
   methods: {
     drawChina() {
@@ -155,6 +27,7 @@ export default {
       this.myChart = echarts.init(document.getElementById('myEchart'));/* 初始画布 */
       echarts.registerMap('world', geoJson);/* 注册world地图 */
       this.myChart.setOption({/* 设置myChart配置项 */
+
         tooltip: {
           trigger: 'item',
           formatter: '{b}'
@@ -170,20 +43,21 @@ export default {
             max: 2, //最大
           },
           //设置中心点
-          center: [115.97, 29.71],
+          center: [10.97, 20.71],
           //省份地图添加背景
           // regions: this.regions,
           itemStyle: {
-            areaColor: '#DCDCDC',
+            areaColor: '#3a535e',
             color: 'red',
-            borderColor: '#232652',
-            borderWidth: 1.5,
+            borderColor: '#36e7ee',
+            borderWidth:1.5,
           },
           //高亮状态
           emphasis: {
             itemStyle: {
               areaColor: '#1af9e5',
               color: '#fff',
+              borderColor: '#fff'
             },
           },
         },
@@ -193,7 +67,7 @@ export default {
           coordinateSystem: 'geo',
           data: this.scatter,
           showEffectOn: 'render',
-          rippleEffect: {
+           rippleEffect: {
             //涟漪特效相关配置
             brushType: 'stroke', //波纹的绘制方式，可选 'stroke' 和 'fill'
           },
@@ -204,9 +78,10 @@ export default {
               formatter: '{b}',
               position: 'right',
               show: true,
+              fontSize:'15px'
             },
           },
-          itemStyle: {
+          /*  itemStyle: {
             //图形样式，normal 是图形在默认状态下的样式；emphasis 是图形在高亮状态下的样式，比如在鼠标悬浮或者图例联动高亮时
             normal: {
               color: '#ffffff', //散点的颜色
@@ -214,7 +89,7 @@ export default {
               shadowColor: 20,
               fontSize: '12px',
             },
-          },
+          },*/
           zlevel: 1,
         },
       })
@@ -222,38 +97,17 @@ export default {
         if (params.componentType === 'series' && params.seriesType === 'effectScatter') {
           let city = params.data.name;
           city = city.split("(")[0];
-          for(let i = 0; i < this.nodeList.length; i++){
-            if(city === this.nodeList[i].nodeLocation){
-              sessionStorage.setItem("nodename",this.nodeList[i].nodeName);
-              sessionStorage.setItem("ip", this.nodeList[i].nodeIp);
+          for (let i = 0; i < this.nodeList.length; i++) {
+            if (city === this.nodeList[i].nodeLocation) {
+              sessionStorage.setItem("nodename", this.nodeList[i].nodeName);
+              sessionStorage.setItem("nodeip", this.nodeList[i].nodeip);
               sessionStorage.setItem("nodetype", this.nodeList[i].nodeType);
               break;
             }
 
           }
 
-          /*if (city === "北京(云节点 1)") {
-            sessionStorage.setItem("nodename", "master1");
-            sessionStorage.setItem("ip", "39.98.124.97");
-            sessionStorage.setItem("nodetype", "云");
-          }
-          if (city === "青岛(边节点 1)") {
-            sessionStorage.setItem("nodename", "worker1");
-            sessionStorage.setItem("ip", "39.101.136.242");
-            sessionStorage.setItem("nodetype", "边");
-          }
-          if (city === "海南(边节点 2)") {
-            sessionStorage.setItem("nodename", "worker2");
-            sessionStorage.setItem("ip", "39.98.109.31");
-            sessionStorage.setItem("nodetype", "边");
-          }
-          if (city === "上海(边节点 3)") {
-            sessionStorage.setItem("nodename", "worker3");
-            sessionStorage.setItem("ip", "39.99.252.93");
-            sessionStorage.setItem("nodetype", "边");
-          }*/
           this.$router.push("/machineinfo")
-          // router.push("/podlist")
         }
       });
     },
@@ -262,23 +116,26 @@ export default {
           .get(this.baseurl + "/log/getNodes")
           .then((res) => {
             this.nodeList = res.data.content;
-            for(let i = 0; i < this.nodeList.length; i++) {
+            for (let i = 0; i < this.nodeList.length; i++) {
               let t = {};
               let name = "";
               name = this.nodeList[i].nodeLocation;
-              if(this.nodeList[i].nodeType==='云')
+              if (this.nodeList[i].nodeType === '云')
                 name += "(云节点)"
-              else if(this.nodeList[i].nodeType==='边')
+              else if (this.nodeList[i].nodeType === '边')
                 name += "(边节点)"
               else
                 name += "(端节点)"
               t["name"] = name;
-
               let t1 = [];
               t1.push(this.nodeList[i].nodeLon);
               t1.push(this.nodeList[i].nodeLat);
               t1.push(9);
               t["value"] = t1;
+              t["symbol"] = 'diamond'
+              let t2 = {};
+              t2["color"] = this.getNodeColor(this.nodeList[i].nodeType)
+              t["itemStyle"] = t2;
               this.scatter.push(t);
             }
 
@@ -287,6 +144,16 @@ export default {
           .catch((err) => {
             console.log("errors", err);
           });
+    },
+    getNodeColor(nodeType) {
+      // 根据节点类型返回不同的颜色
+      if (nodeType === '云') {
+        return '#17f600'; // 云节点颜色
+      } else if (nodeType === '边') {
+        return '#cbb971'; // 边节点颜色
+      } else {
+        return '#c46d61'; // 其他节点颜色
+      }
     },
   }
 }

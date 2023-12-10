@@ -150,24 +150,25 @@ const routes = [
         path: '/vminfo',
         name: 'vminfo',
         component: () => import('../views/VMIndexView.vue')
-      }
+      },
+      {
+        path: '/world',
+        name: 'world',
+        component: () => import('../views/World.vue')
+      },
     ]
   },
   {
     path: '/index',
     name: 'index',
-    component: () => import('../views/IndexView.vue')
+    component: () => import('../views/World.vue')
   },
   {
     path: '/map',
     name: 'map',
     component: () => import('../views/Map.vue')
   },
-  {
-    path: '/world',
-    name: 'world',
-    component: () => import('../views/World.vue')
-  },
+
 ]
 
 const router = new VueRouter({
