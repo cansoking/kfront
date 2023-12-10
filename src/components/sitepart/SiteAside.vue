@@ -100,6 +100,10 @@
           <i class="el-icon-c-scale-to-original"></i>
           <span slot="title">虚拟机镜像</span>
         </el-menu-item>
+        <el-menu-item index="/dockerimage" route="dockerimage">
+          <i class="el-icon-c-scale-to-original"></i>
+          <span slot="title">Docker镜像</span>
+        </el-menu-item>
       </el-submenu>
       <el-submenu index="virstorage">
         <template slot="title">

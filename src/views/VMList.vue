@@ -58,8 +58,8 @@
       empty-text="暂无虚拟机"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-      <el-table-column type="index" label="序号" width="100"> </el-table-column>
-      <el-table-column width="240" sortable label="名称" prop="name">
+      <el-table-column type="index" label="序号" width="50"> </el-table-column>
+      <el-table-column width="150" sortable label="名称" prop="name">
       </el-table-column>
       <el-table-column width="100" sortable label="状态" prop="state">
         <template slot-scope="scope">
@@ -126,6 +126,12 @@
             >
             <el-button plain type="warning" @click="opencommand(scope.row)"
               >执行命令</el-button
+            >
+            <el-button plain type="default" @click="openpod(scope.row)"
+              >容器管理</el-button
+            >
+            <el-button plain type="default" @click="openimage(scope.row)"
+              >镜像管理</el-button
             >
           </el-button-group>
         </template>
@@ -302,14 +308,12 @@
         }}</el-descriptions-item>
         <el-descriptions-item label="状态">
           <el-tag
-            v-if="this.command_tmp_data.name.state === 'VIR_DOMAIN_PAUSED'"
+            v-if="this.command_tmp_data.state === 'VIR_DOMAIN_PAUSED'"
             type="warning"
             >挂起</el-tag
           >
           <el-tag
-            v-else-if="
-              this.command_tmp_data.name.state === 'VIR_DOMAIN_RUNNING'
-            "
+            v-else-if="this.command_tmp_data.state === 'VIR_DOMAIN_RUNNING'"
             >运行</el-tag
           >
           <el-tag v-else type="danger">关机</el-tag>
@@ -341,7 +345,30 @@
             clearable
           ></el-input>
         </el-form-item>
-
+        <el-form-item prop="result">
+          <template slot="label"> 执行结果 </template>
+          <el-input
+            v-model="commandForm.result"
+            placeholder="命令执行的结果将会显示在这里"
+            type="textarea"
+            :rows="8"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item prop="res_state">
+          <div style="float: right">
+            <span
+              style="color: #67c23a; font-size: 15px"
+              v-if="this.commandForm.res_state === 'yes'"
+              ><i class="el-icon-success"></i>执行成功</span
+            >
+            <span
+              style="color: #f56c6c; font-size: 15px"
+              v-if="this.commandForm.res_state === 'no'"
+              ><i class="el-icon-error"></i>执行出错</span
+            >
+          </div>
+        </el-form-item>
         <!-- <el-form-item label="端服务器" prop="edgeserver">
           <el-select
             style="width: 60%"
@@ -391,6 +418,22 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 虚拟机镜像 -->
+    <el-drawer
+      title="虚拟机镜像"
+      :visible.sync="imagedrawer"
+      direction="ttb"
+    >
+      <span>我来啦!</span>
+    </el-drawer>
+    <!-- 虚拟机容器 -->
+    <el-drawer
+      title="虚拟机容器"
+      :visible.sync="poddrawer"
+      direction="ttb"
+    >
+      <span>我来啦!</span>
+    </el-drawer>
   </div>
 </template>
 
@@ -402,11 +445,16 @@ export default {
   },
   data() {
     return {
+      // 抽屉显示控制
+      poddrawer: false,
+      imagedrawer: false,
+      // 命令执行结果flag
+      res_state: "",
       baseurl: "http://39.98.124.97:8080",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
-      serverip:"",
+      serverip: "",
       images: [],
       curpage: 1,
       totalvm: 0,
@@ -532,6 +580,8 @@ export default {
         command: "",
         edgeserver: "",
         pod: "",
+        res_state: "",
+        result: "",
       },
       // 校验规则
       vm_rules: {
@@ -574,8 +624,57 @@ export default {
     };
   },
   methods: {
+    // 打开pod
+    openpod(row) {
+      this.poddrawer = true
+    },
+    // 打开image
+    openimage(row) {
+      this.imagedrawer = true
+    },
+    // 发送执行命令
+    start_command(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 处理命令
+          this.$axios({
+            method: "post",
+            url: "http://39.98.124.97:8081" + "/api/ssh/execute",
+            data: {
+              VMname: this.command_tmp_data.name,
+              commands: this.commandForm.command.split("\n"),
+            },
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(
+            (res) => {
+              console.log(res);
+              if (res.data.exitStatus === 0) {
+                this.commandForm.res_state = "yes";
+                this.commandForm.result = res.data.output;
+              } else {
+                this.commandForm.res_state = "no";
+                this.commandForm.result = res.data.errorOutput;
+              }
+            },
+            (err) => {
+              console.log(err);
+              this.commandForm.result = "网络错误，请检查网络";
+              this.commandForm.res_state = "no";
+            }
+          );
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
+    // 根据ip获取虚拟机数据
+    getVmListByIp(ip) {},
     suzhuchange(item) {
-      this.serverip=item
+      this.serverip = item;
       this.$axios
         .get("http://" + item + ":8080/getVMList")
         .then((res) => {
@@ -616,15 +715,17 @@ export default {
     },
 
     refreshIP() {
-      this.$axios.get(this.baseurl + "/VMInfo/updateip/"+this.serverip).then((response) => {
-        const data = response.data;
-        if (data.success) {
-          this.$message.success("更新成功！");
-          this.getVMList();
-        } else {
-          this.$message.success("更新失败！");
-        }
-      });
+      this.$axios
+        .get(this.baseurl + "/VMInfo/updateip/" + this.serverip)
+        .then((response) => {
+          const data = response.data;
+          if (data.success) {
+            this.$message.success("更新成功！");
+            this.getVMList();
+          } else {
+            this.$message.success("更新失败！");
+          }
+        });
     },
 
     validName() {
