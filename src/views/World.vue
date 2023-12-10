@@ -1,6 +1,6 @@
 <template>
   <div class="content" style="background-color: 	#F5F5F5">
-    <div id="myEchart" style="width:1920px; height:1200px;"></div>
+    <div id="myEchart" style="width:1920px; height:1200px"></div>
   </div>
 </template>
 
@@ -24,6 +24,35 @@ export default {
   methods: {
     drawChina() {
       // $.get('../assets/world.json', function (geoJson) {/* 请求世界地图的本地json数据 */
+      let fixPlaces = ['格陵兰', 'Greenland'];
+      // 欧洲视图 转为 中欧视图（中国在左，欧洲在右）
+      let features = geoJson.features;
+      for (let i = 0, length = features.length; i < length; ++i) {
+        let feature = features[i];
+        let geometry = feature.geometry;
+        let coordinates = geometry.coordinates;
+        if (fixPlaces.includes(feature.properties.name)) {
+          continue;
+        }
+      /*  if (feature.properties.cp) {
+          feature.properties.cp[0] = feature.properties.cp[0] >= -30 ? feature.properties.cp[0] - 180 : feature.properties.cp[0] + 180;
+        }*/
+     /*   if (feature.properties.center) {
+          feature.properties.center[0] = feature.properties.center[0] >= -30 ? feature.properties.center[0] - 180 : feature.properties.center[0] + 180;
+        }*/
+        for (let j = 0, length = coordinates.length; j < length; ++j) {
+          let coordinate = coordinates[j];
+          for (let k = 0, length = coordinate.length; k < length; ++k) {
+            if (coordinate[k].length > 2) {
+              for (let m = 0, length = coordinate[k].length; m < length; ++m) {
+                coordinate[k][m][0] = coordinate[k][m][0] >= -30 ? coordinate[k][m][0] - 180 : coordinate[k][m][0] + 180;
+              }
+            } else {
+              coordinate[k][0] = coordinate[k][0] >= -30 ? coordinate[k][0] - 180 : coordinate[k][0] + 180;
+            }
+          }
+        }
+      }
       this.myChart = echarts.init(document.getElementById('myEchart'));/* 初始画布 */
       echarts.registerMap('world', geoJson);/* 注册world地图 */
       this.myChart.setOption({/* 设置myChart配置项 */
@@ -56,8 +85,7 @@ export default {
           emphasis: {
             itemStyle: {
               areaColor: '#1af9e5',
-              color: '#fff',
-              borderColor: '#fff'
+              color: '#fff'
             },
           },
         },
@@ -78,7 +106,9 @@ export default {
               formatter: '{b}',
               position: 'right',
               show: true,
-              fontSize:'15px'
+              fontSize:'17px',
+              color: '#100f0f',
+              fontWeight: 'bold'
             },
           },
           /*  itemStyle: {
@@ -100,8 +130,11 @@ export default {
           for (let i = 0; i < this.nodeList.length; i++) {
             if (city === this.nodeList[i].nodeLocation) {
               sessionStorage.setItem("nodename", this.nodeList[i].nodeName);
-              sessionStorage.setItem("nodeip", this.nodeList[i].nodeip);
+              sessionStorage.setItem("ip", this.nodeList[i].nodeIp);
               sessionStorage.setItem("nodetype", this.nodeList[i].nodeType);
+              this.$store.state.nodename = this.nodeList[i].nodeName
+              this.$store.state.nodeip = this.nodeList[i].nodeIp
+              this.$store.state.nodetype = this.nodeList[i].nodeType
               break;
             }
 
@@ -116,6 +149,7 @@ export default {
           .get(this.baseurl + "/log/getNodes")
           .then((res) => {
             this.nodeList = res.data.content;
+            console.log(res.data.content);
             for (let i = 0; i < this.nodeList.length; i++) {
               let t = {};
               let name = "";
@@ -128,14 +162,23 @@ export default {
                 name += "(端节点)"
               t["name"] = name;
               let t1 = [];
-              t1.push(this.nodeList[i].nodeLon);
+
+              if(this.nodeList[i].nodeLon>-30){
+                t1.push(this.nodeList[i].nodeLon-180);
+              }else
+                t1.push(this.nodeList[i].nodeLon+180);
+          /*    coordinate[k][0] = coordinate[k][0] >= -30 ? coordinate[k][0] - 180 : coordinate[k][0] + 180;
+
+              */
               t1.push(this.nodeList[i].nodeLat);
               t1.push(9);
               t["value"] = t1;
               t["symbol"] = 'diamond'
+              t["symbolSize"]= 15
               let t2 = {};
               t2["color"] = this.getNodeColor(this.nodeList[i].nodeType)
               t["itemStyle"] = t2;
+
               this.scatter.push(t);
             }
 
@@ -148,11 +191,11 @@ export default {
     getNodeColor(nodeType) {
       // 根据节点类型返回不同的颜色
       if (nodeType === '云') {
-        return '#17f600'; // 云节点颜色
+        return '#fd0000'; // 云节点颜色
       } else if (nodeType === '边') {
-        return '#cbb971'; // 边节点颜色
+        return '#2607f1'; // 边节点颜色
       } else {
-        return '#c46d61'; // 其他节点颜色
+        return '#cbf806'; // 其他节点颜色
       }
     },
   }

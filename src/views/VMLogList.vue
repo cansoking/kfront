@@ -167,9 +167,9 @@ export default {
 
               let tmp = [];
               console.log(res.data.content.length)
-              console.log("sc"+this.$store.state.nodeip)
+              console.log("sc:"+this.$store.state.nodeip)
               for (let i = 0; i < res.data.content.length; i++) {
-                if (this.$store.state.nodeip === res.data.content[i].NodeIp) {
+                if (this.$store.state.nodeip === res.data.content[i].nodeIp) {
                   tmp.push(res.data.content[i]);
                 }
               }

@@ -180,7 +180,7 @@ export default {
         .then((res) => {
           if (res.data.success) {
             let tmp = [];
-              console.log("sc"+this.$store.state.nodename)
+              console.log("sc:"+this.$store.state.nodename)
               for (let i = 0; i < res.data.content.length; i++) {
                   if (this.$store.state.nodename === res.data.content[i].nodeName) {
                     tmp.push(res.data.content[i]);
