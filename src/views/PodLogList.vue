@@ -2,12 +2,12 @@
   <div class="podarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-      <el-col span="4" :offset="0"
+      <el-col :span="4" :offset="0"
         ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
           容器日志列表
         </p></el-col
       >
-      <el-col span="4" >
+      <el-col :span="4" >
         <el-cascader
           v-model="searchpod"
           :options="casoption"
@@ -16,7 +16,7 @@
           placeholder="请选择容器"
         ></el-cascader>
       </el-col>
-      <el-col span="4" >
+      <el-col :span="4" >
         <el-date-picker
           v-model="starttime"
           type="datetime"
@@ -24,7 +24,7 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="4" >
+      <el-col :span="4" >
         <el-date-picker
           v-model="endtime"
           type="datetime"
@@ -32,12 +32,12 @@
         >
         </el-date-picker>
       </el-col>
-      <el-col span="1" offset="">
+      <el-col :span="1">
         <el-button round plain type="primary" @click="getPodLog"
           >查询</el-button
         >
       </el-col>
-      <el-col span="4" :offset="3"
+      <el-col :span="4" :offset="3"
       ><p style="font-size: 20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
         日志保存时间:{{savedays}}天
       </p></el-col
@@ -178,14 +178,11 @@ export default {
           },
         })
         .then((res) => {
-          console.log(res);
           if (res.data.success) {
             let tmp = [];
-            console.log(res.data.content.length)
-            console.log(this.$store.nodename)
-
+              console.log("sc"+this.$store.state.nodename)
               for (let i = 0; i < res.data.content.length; i++) {
-                  if (this.$store.nodename === res.data.content[i].nodeName) {
+                  if (this.$store.state.nodename === res.data.content[i].nodeName) {
                     tmp.push(res.data.content[i]);
                   }
               }
