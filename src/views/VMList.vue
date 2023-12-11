@@ -20,6 +20,7 @@
         >
           <el-option label="39.98.124.97" value="39.98.124.97/"></el-option>
           <el-option label="172.26.82.161" value="172.26.82.161"></el-option>
+          <el-option label="192.168.194.164" value="192.168.194.164"></el-option>
         </el-select>
       </el-col>
       <el-col :span="3" :offset="0">
@@ -536,6 +537,7 @@ export default {
       // 命令执行结果flag
       res_state: "",
       baseurl: "http://39.98.124.97:8080",
+      execurl: "http://39.98.124.97:8081",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
@@ -566,8 +568,12 @@ export default {
       ],
       node_options: [
         {
-          label: "127.0.0.1",
+          label: "云节点172.26.82.161",
           value: "172.26.82.161",
+        },
+        {
+          label: "端节点192.168.194.164",
+          value: "192.168.194.16",
         },
       ],
       ostype_options: [
@@ -731,7 +737,7 @@ export default {
           // 处理命令
           this.$axios({
             method: "post",
-            url: "http://39.98.124.97:8081" + "/api/ssh/execute",
+            url: this.execurl + "/api/ssh/execute",
             data: {
               VMname: this.command_tmp_data.name,
               commands: this.commandForm.command.split("\n"),
@@ -762,19 +768,12 @@ export default {
         }
       });
     },
-    // 根据ip获取虚拟机数据
-    getVmListByIp(ip) {},
+    // 选择宿主机ip来更改baseurl，根据ip获取虚拟机数据
     suzhuchange(item) {
       this.serverip = item;
-      this.$axios
-        .get("http://" + item + ":8080/getVMList")
-        .then((res) => {
-          this.vmdata = res.data;
-          this.totalvm = res.data.length;
-        })
-        .catch((err) => {
-          console.log("errors", err);
-        });
+      this.baseurl = "http://" + this.serverip + ":8080";
+      this.execurl = "http://" + this.serverip + ":8081";
+      this.getVMList();
     },
     // 打开执行命令
     opencommand(row) {
@@ -876,15 +875,16 @@ export default {
       }
     },
     // 控制文件格式
-    handleBeforeUpload(file) {
-      console.log(file);
-      var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
-      if (suffix != "iso" && suffix != "img" && suffix != "qcow2") {
-        this.$message.error("只能上传iso、img或qcow2格式的文件！");
-        return false;
-      }
-      return suffix;
-    },
+    // handleBeforeUpload(file) {
+    //   console.log(file);
+    //   var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
+    //   if (suffix != "iso" && suffix != "img" && suffix != "qcow2") {
+    //     this.$message.error("只能上传iso、img或qcow2格式的文件！");
+    //     return false;
+    //   }
+    //   return suffix;
+    // },
+
     // 添加虚拟机
     vmc_sumbit(formName) {
       // 校验表单

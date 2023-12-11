@@ -525,9 +525,13 @@ export default {
         },
       ],
       node_options: [
-        {
-          label: "127.0.0.1",
+      {
+          label: "云节点172.26.82.161",
           value: "172.26.82.161",
+        },
+        {
+          label: "端节点192.168.194.164",
+          value: "192.168.194.16",
         },
       ],
       vmtem_form: {
@@ -553,6 +557,7 @@ export default {
         OStype: "",
         ImgName: "",
         nettype: "",
+        node: "",
       },
       // 添加容器校验规则
       vmtem_rules: {
@@ -610,7 +615,7 @@ export default {
           this.buildvmvisible = false;
           this.$axios
             .get(
-              this.baseurl +
+              "http://"+ this.buildvmtem_form.node + ":8080"+
                 "/Template/addVirtual?ImgName=" +
                 this.buildvmtem_form.ImgName +
                 "&name=" +
