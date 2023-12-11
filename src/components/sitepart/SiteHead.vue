@@ -44,12 +44,20 @@
             content="回到主页"
             placement="bottom"
           >
-            <a href="/static/pages/index.html#/world">
+<!--            <a href="/static/pages/index.html#/world">
               <i
                 style="color: white; font-size: 35px; line-height: 50px"
                 class="el-icon-switch-button"
               ></i>
-            </a>
+            </a>-->
+
+            <button @click="ret" class="el-icon-switch-button" style="border: none;background-color: #303641;color: white; font-size: 35px; line-height: 50px">
+<!--              <i
+                  style="color: white; font-size: 35px; line-height: 50px"
+                  class="el-icon-switch-button"
+              ></i>-->
+            </button>
+
           </el-tooltip>
         </el-col>
       </el-row>
@@ -70,14 +78,6 @@ export default {
       nodeinfo: [],
     };
   },
-  computed: {
-    nodename() {
-      return this.$store.state.nodename;
-    },
-    nodeip() {
-      return this.$store.state.nodeip;
-    },
-  },
   methods: {
     nodechange(item) {
       this.$store.state.nodename = item;
@@ -92,6 +92,10 @@ export default {
           i = this.nodeinfo.length;
         }
       }
+    },
+    ret(){
+      this.$router.push('/world')
+      location.reload();
     },
     noderemote() {
       this.nodeoption = [];

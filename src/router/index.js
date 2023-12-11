@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-
+import World from "@/views/World";
 Vue.use(VueRouter)
 
 const routes = [
@@ -154,7 +154,7 @@ const routes = [
       {
         path: '/world',
         name: 'world',
-        component: () => import('../views/World.vue')
+        component: World,
       },
     ]
   },
