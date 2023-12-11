@@ -527,7 +527,7 @@ export default {
   name: "VMList",
   mounted() {
     this.getVMList();
-  },
+   },
   data() {
     return {
       // 抽屉显示控制

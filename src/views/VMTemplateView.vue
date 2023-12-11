@@ -630,7 +630,7 @@ export default {
                 this.buildvmtem_form.nettype +
                 "&serverip=" +
                 this.buildvmtem_form.node
-            )
+            ) 
             .then((response) => {
               this.$notify.success({
                 title: "创建成功",
