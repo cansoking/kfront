@@ -221,4 +221,7 @@ export default {
   color: #fff;
   border-bottom: 1px solid #343e50;
 }
+.el-menu {
+  border-right: solid 0px #e6e6e6;
+}
 </style>

@@ -7,7 +7,7 @@
 <script>
 // import $ from "jquery";/* 引入JQUERY，此处不赘述，用于调用$.get函数。 */
 var echarts = require("echarts");/* 引入echarts模块，此处不赘述 */
-import geoJson from '../assets/world.json'
+import geoJson from '../assets/world.json?v=1'
 export default {
   data() {
     return {
@@ -18,12 +18,12 @@ export default {
     };
   },
   mounted() {
+    // location.reload()
     this.getNodes();
-
   },
   methods: {
     drawChina() {
-      // $.get('../assets/world.json', function (geoJson) {/* 请求世界地图的本地json数据 */
+      /*      $.get('../assets/world.json', function (geoJson) {/!* 请求世界地图的本地json数据 *!/*/
       let fixPlaces = ['格陵兰', 'Greenland'];
       // 欧洲视图 转为 中欧视图（中国在左，欧洲在右）
       let features = geoJson.features;
@@ -34,10 +34,10 @@ export default {
         if (fixPlaces.includes(feature.properties.name)) {
           continue;
         }
-      /*  if (feature.properties.cp) {
+        /*  if (feature.properties.cp) {
           feature.properties.cp[0] = feature.properties.cp[0] >= -30 ? feature.properties.cp[0] - 180 : feature.properties.cp[0] + 180;
         }*/
-     /*   if (feature.properties.center) {
+        /*   if (feature.properties.center) {
           feature.properties.center[0] = feature.properties.center[0] >= -30 ? feature.properties.center[0] - 180 : feature.properties.center[0] + 180;
         }*/
         for (let j = 0, length = coordinates.length; j < length; ++j) {
@@ -46,9 +46,11 @@ export default {
             if (coordinate[k].length > 2) {
               for (let m = 0, length = coordinate[k].length; m < length; ++m) {
                 coordinate[k][m][0] = coordinate[k][m][0] >= -30 ? coordinate[k][m][0] - 180 : coordinate[k][m][0] + 180;
+                coordinate[k][m][0] += 50;
               }
             } else {
               coordinate[k][0] = coordinate[k][0] >= -30 ? coordinate[k][0] - 180 : coordinate[k][0] + 180;
+              coordinate[k][0] += 50;
             }
           }
         }
@@ -56,7 +58,6 @@ export default {
       this.myChart = echarts.init(document.getElementById('myEchart'));/* 初始画布 */
       echarts.registerMap('world', geoJson);/* 注册world地图 */
       this.myChart.setOption({/* 设置myChart配置项 */
-
         tooltip: {
           trigger: 'item',
           formatter: '{b}'
@@ -79,7 +80,7 @@ export default {
             areaColor: '#3a535e',
             color: 'red',
             borderColor: '#36e7ee',
-            borderWidth:1.5,
+            borderWidth: 1.5,
           },
           //高亮状态
           emphasis: {
@@ -95,7 +96,7 @@ export default {
           coordinateSystem: 'geo',
           data: this.scatter,
           showEffectOn: 'render',
-           rippleEffect: {
+          rippleEffect: {
             //涟漪特效相关配置
             brushType: 'stroke', //波纹的绘制方式，可选 'stroke' 和 'fill'
           },
@@ -106,7 +107,7 @@ export default {
               formatter: '{b}',
               position: 'right',
               show: true,
-              fontSize:'17px',
+              fontSize: '17px',
               color: '#100f0f',
               fontWeight: 'bold'
             },
@@ -122,27 +123,25 @@ export default {
           },*/
           zlevel: 1,
         },
-      })
-      this.myChart.on('click', (params) => {
-        if (params.componentType === 'series' && params.seriesType === 'effectScatter') {
-          let city = params.data.name;
-          city = city.split("(")[0];
-          for (let i = 0; i < this.nodeList.length; i++) {
-            if (city === this.nodeList[i].nodeLocation) {
-              sessionStorage.setItem("nodename", this.nodeList[i].nodeName);
-              sessionStorage.setItem("ip", this.nodeList[i].nodeIp);
-              sessionStorage.setItem("nodetype", this.nodeList[i].nodeType);
-              this.$store.state.nodename = this.nodeList[i].nodeName
-              this.$store.state.nodeip = this.nodeList[i].nodeIp
-              this.$store.state.nodetype = this.nodeList[i].nodeType
-              break;
+      }),
+          this.myChart.on('click', (params) => {
+            if (params.componentType === 'series' && params.seriesType === 'effectScatter') {
+              let city = params.data.name;
+              city = city.split("(")[0];
+              for (let i = 0; i < this.nodeList.length; i++) {
+                if (city === this.nodeList[i].nodeLocation) {
+                  sessionStorage.setItem("nodename", this.nodeList[i].nodeName);
+                  sessionStorage.setItem("ip", this.nodeList[i].nodeIp);
+                  sessionStorage.setItem("nodetype", this.nodeList[i].nodeType);
+                  this.$store.state.nodename = this.nodeList[i].nodeName
+                  this.$store.state.nodeip = this.nodeList[i].nodeIp
+                  this.$store.state.nodetype = this.nodeList[i].nodeType
+                  break;
+                }
+              }
+              this.$router.push("/machineinfo")
             }
-
-          }
-
-          this.$router.push("/machineinfo")
-        }
-      });
+          })
     },
     getNodes() {
       this.$axios
@@ -164,9 +163,9 @@ export default {
               let t1 = [];
 
               if(this.nodeList[i].nodeLon>-30){
-                t1.push(this.nodeList[i].nodeLon-180);
+                t1.push(this.nodeList[i].nodeLon-180+50);
               }else
-                t1.push(this.nodeList[i].nodeLon+180);
+                t1.push(this.nodeList[i].nodeLon+180+50);
           /*    coordinate[k][0] = coordinate[k][0] >= -30 ? coordinate[k][0] - 180 : coordinate[k][0] + 180;
 
               */
@@ -178,11 +177,9 @@ export default {
               let t2 = {};
               t2["color"] = this.getNodeColor(this.nodeList[i].nodeType)
               t["itemStyle"] = t2;
-
               this.scatter.push(t);
             }
-
-            this.drawChina()
+              this.drawChina()
           })
           .catch((err) => {
             console.log("errors", err);
