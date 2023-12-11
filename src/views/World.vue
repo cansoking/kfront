@@ -18,8 +18,8 @@ export default {
     };
   },
   mounted() {
+    // location.reload()
     this.getNodes();
-
   },
   methods: {
     drawChina() {
@@ -46,10 +46,13 @@ export default {
             if (coordinate[k].length > 2) {
               for (let m = 0, length = coordinate[k].length; m < length; ++m) {
                 coordinate[k][m][0] = coordinate[k][m][0] >= -30 ? coordinate[k][m][0] - 180 : coordinate[k][m][0] + 180;
+                coordinate[k][m][0] += 50;
               }
             } else {
               coordinate[k][0] = coordinate[k][0] >= -30 ? coordinate[k][0] - 180 : coordinate[k][0] + 180;
+              coordinate[k][0] += 50;
             }
+
           }
         }
       }
@@ -164,9 +167,9 @@ export default {
               let t1 = [];
 
               if(this.nodeList[i].nodeLon>-30){
-                t1.push(this.nodeList[i].nodeLon-180);
+                t1.push(this.nodeList[i].nodeLon-180+50);
               }else
-                t1.push(this.nodeList[i].nodeLon+180);
+                t1.push(this.nodeList[i].nodeLon+180+50);
           /*    coordinate[k][0] = coordinate[k][0] >= -30 ? coordinate[k][0] - 180 : coordinate[k][0] + 180;
 
               */
@@ -181,7 +184,6 @@ export default {
 
               this.scatter.push(t);
             }
-
             this.drawChina()
           })
           .catch((err) => {
