@@ -18,8 +18,7 @@
           placeholder="请选择宿主机"
           @change="suzhuchange"
         >
-          <el-option label="39.98.124.97" value="39.98.124.97/"></el-option>
-          <el-option label="172.26.82.161" value="172.26.82.161"></el-option>
+          <el-option label="39.98.124.97" value="192.168.122.1/"></el-option>
           <el-option label="192.168.194.164" value="192.168.194.164"></el-option>
         </el-select>
       </el-col>
@@ -568,12 +567,12 @@ export default {
       ],
       node_options: [
         {
-          label: "云节点172.26.82.161",
-          value: "172.26.82.161",
+          label: "云节点39.98.124.97",
+          value: "192.168.122.1",
         },
         {
           label: "端节点192.168.194.164",
-          value: "192.168.194.16",
+          value: "192.168.194.164",
         },
       ],
       ostype_options: [
