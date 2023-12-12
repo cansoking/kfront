@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
 import axios from 'axios'
+import '../node_modules/lib-flexible'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as echarts from "echarts"
 import chinaJSON from './assets/china.json'

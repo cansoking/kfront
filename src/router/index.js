@@ -17,6 +17,21 @@ const routes = [
     },
     component: () => import('../views/ManagementView.vue'),
     children: [
+      {//中国地图
+        path:'/chinaMap',
+        name:'chinaMap',
+        component:() => import('../views/TerminalMap.vue')
+      },
+      {//北工大界面，服务器详情
+        path:'/detail',
+        name:'detail',
+        component:() => import('../views/TerminalDetail.vue')
+      },
+      {//北工大界面，任务列表
+        path:'/messionList',
+        name:'messionList',
+        component:() => import('../views/TerminalList.vue')
+      },
       {
         path: '/dockerimage',
         name: 'dockerimage',

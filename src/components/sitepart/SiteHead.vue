@@ -146,6 +146,6 @@ export default {
   padding: 15px 15px;
   border-bottom: 1px solid #d8e3e7;
   background-color: #303641;
-  height: 40px;
+  height: 80px;
 }
 </style>

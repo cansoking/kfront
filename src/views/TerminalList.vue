@@ -1,0 +1,140 @@
+<template>
+  <body class="listBody">
+    <!-- 头部的盒子 -->
+    <header class="listHeader">
+      <h1>异构网络资源管理分系统</h1>
+    </header>
+    <!-- 页面主题部分 -->
+    <section class="mainbox2">
+      <div class="column">
+        <!-- 第二列 -->
+
+        <!-- 列表标题 -->
+        <BaseTitle data="任务列表" class="listTitle" />
+
+        <!-- 添加任务按钮 -->
+        <BaseButton data="新建测试任务" class="addButton" :click="addMession" />
+
+        <!-- 表单 -->
+        <div class="addForm" v-show="showForm">
+          <AddRecord :close="closeForm" />
+        </div>
+
+        <!-- 列表 -->
+        <div class="tb">
+          <TerminalTable />
+        </div>
+      </div>
+    </section>
+  </body>
+</template>
+  
+  
+  
+  
+  
+  <script>
+import BaseTitle from "../components/TerminalList/BaseTitle.vue";
+import TerminalTable from "../components/TerminalList/TerminalTable.vue";
+import BaseButton from "../components/TerminalList/BaseButton.vue";
+import AddRecord from "../components/TerminalList/AddRecord.vue";
+
+export default {
+  components: {
+    BaseTitle,
+    TerminalTable,
+    BaseButton,
+    AddRecord,
+  },
+  data() {
+    return {
+      //表单是否展示
+      showForm: false,
+    };
+  },
+  methods: {
+    //点击按钮显示表单
+    addMession() {
+        console.log("hahaha");
+      this.showForm = true;
+    },
+
+    //关闭表单
+    closeForm(data) {
+      this.showForm = data;
+    },
+  },
+};
+</script>
+  
+  
+  
+  
+  
+  
+  
+  
+  <style  lang="less">
+//css初始化
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+//设置背景
+.listBody {
+  background: url(../assets/images/bg.jpg) no-repeat top center;
+  background-size: cover;
+  line-height: 1.15;
+}
+//头部的盒子
+.listHeader {
+  // position: relative;
+  height: 100px;
+  background: url(../assets/images/head_bg.png) no-repeat;
+  background-size: 100% 100%;
+  h1 {
+    font-size: 38px;
+    color: #fff;
+    text-align: center;
+    line-height: 80px;
+  }
+}
+// 页面主体的盒子
+.mainbox2 {
+  .column {
+    position: relative;
+    height: 970px;
+    width: 87%px;
+    //列表标题的位置
+    .listTitle {
+      position: absolute;
+      top: 30px;
+      left: 50px;
+    }
+
+    .addButton {
+      position: absolute;
+      top: 30px;
+      right: 50px;
+    }
+
+    .tb {
+      position: absolute;
+      top: 70px;
+      left: 50px;
+      right: 50px;
+    }
+  }
+}
+
+//表单
+.addForm {
+  position: absolute;
+  top: 25%;
+  left: 35%;
+  border-radius: 15px;
+  z-index: 1; //让表单显示在上面
+}
+</style>

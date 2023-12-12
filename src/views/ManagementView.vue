@@ -31,7 +31,7 @@ export default {
 <style>
 .el-header {
   position: relative;
-  width: 87%;
+  width: 88%;
   left: 250px;
   height: 90px;
 }
@@ -52,6 +52,7 @@ export default {
   bottom: 0;
   overflow-y: scroll;
   background-color: rgba(244, 251, 253, 0.884);
+  padding: 0px;
 }
 
 .el-aside::-webkit-scrollbar {
