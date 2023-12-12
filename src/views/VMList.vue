@@ -615,8 +615,8 @@ export default {
       imagedrawer: false,
       // 命令执行结果flag
       res_state: "",
-      baseurl: "http://39.98.124.97:8080",
-      execurl: "http://39.98.124.97:8081",
+      baseurl: "http://"+this.$store.state.nodeip+":8080",
+      execurl: "http://"+this.$store.state.nodeip+":8081",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
@@ -647,11 +647,15 @@ export default {
       ],
       node_options: [
         {
-          label: "云节点39.98.124.97",
-          value: "192.168.122.1",
+          label: "云节点:39.98.124.97",
+          value: "192.168.194.178",
         },
         {
-          label: "端节点192.168.194.164",
+          label: "端节点1:192.168.194.45",
+          value: "192.168.194.45",
+        },
+        {
+          label: "端节点2:192.168.194.164",
           value: "192.168.194.164",
         },
       ],
@@ -1357,15 +1361,22 @@ export default {
                 "&nettype=" +
                 this.formData.nettype +
                 "&serverip=" +
-                this.$store.state.nodeip
+                this.formData.node
             )
-            .then((response) => {
-              this.$notify.success({
-                title: "创建成功",
-                message: "虚拟机 " + this.formData.name + " 创建成功！",
-                position: "bottom-right",
-                duration: 6000,
-              });
+            .then((res) => {
+              if (res.data.success === false) {
+                this.$notify.error({
+                  title: "创建虚拟机失败",
+                  message: res.data.msg,
+                  position: "bottom-right",
+                });
+              } else {
+                this.$notify.success({
+                  title: "创建虚拟机成功",
+                  message: "创建虚拟机"+this.formData.name+"成功",
+                  position: "bottom-right",
+                });
+              }
               this.getVMList();
             })
             .catch((err) => {
