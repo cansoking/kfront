@@ -7,7 +7,7 @@
           虚拟机列表
         </p></el-col
       >
-      <el-col :span="1" :offset="4">
+      <!-- <el-col :span="1" :offset="4">
         <div style="font-size: 16px; line-height: 36px">宿主机：</div>
       </el-col>
 
@@ -18,11 +18,14 @@
           placeholder="请选择宿主机"
           @change="suzhuchange"
         >
-          <el-option label="39.98.124.97" value="192.168.122.1/"></el-option>
-          <el-option label="192.168.194.164" value="192.168.194.164"></el-option>
+          <el-option label="39.98.124.97" value="39.98.124.97"></el-option>
+          <el-option
+            label="192.168.194.164"
+            value="192.168.194.164"
+          ></el-option>
         </el-select>
-      </el-col>
-      <el-col :span="3" :offset="0">
+      </el-col> -->
+      <el-col :span="3" :offset="9">
         <el-button
           @click="refreshIP"
           icon="el-icon-refresh"
@@ -74,25 +77,10 @@
       </el-table-column>
       <el-table-column width="100" sortable label="cpu个数" prop="cpuNum">
       </el-table-column>
-      <!-- <el-table-column
-        width="120"
-        sortable
-        label="cpu利用率"
-        prop="usecpu"
-      >
-      </el-table-column> -->
       <el-table-column width="140" sortable label="分配内存(GiB)" prop="maxMem">
       </el-table-column>
       <el-table-column width="180" sortable label="IP地址" prop="ipaddr">
       </el-table-column>
-      <!-- <el-table-column
-        width="120"
-        sortable
-        label="内存利用率"
-        prop="useMem"
-      >
-      </el-table-column> -->
-
       <el-table-column align="right">
         <template slot="header">
           <el-input
@@ -341,7 +329,7 @@
             v-model="commandForm.command"
             placeholder="请输入要执行的命令"
             type="textarea"
-            :rows="8"
+            :rows="4"
             clearable
           ></el-input>
         </el-form-item>
@@ -351,7 +339,7 @@
             v-model="commandForm.result"
             placeholder="命令执行的结果将会显示在这里"
             type="textarea"
-            :rows="8"
+            :rows="4"
             clearable
           ></el-input>
         </el-form-item>
@@ -420,46 +408,64 @@
     </el-dialog>
     <!-- 虚拟机镜像 -->
     <el-drawer
-      :title="'虚拟机镜像管理-' + vmimg_tmp_data.name"
       :visible.sync="imagedrawer"
       direction="ttb"
+      size="90%"
+      @open="imgdopen"
+      v-loading="fullloading"
     >
       <!-- 头部标题操作 -->
       <div slot="title">
         <el-row :gutter="0">
-          <el-col :span="3" :offset="0"
-            ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-              容器镜像列表
+          <el-col :span="5" :offset="0"
+            ><p style="font-size: 25px; font-weight: 600; margin-bottom: 0px">
+              {{ vmimg_tmp_data.name }}-容器镜像列表
             </p></el-col
           >
+          <el-col :span="3" :offset="0">
+            <el-select
+              style="width: 80%"
+              v-model="iamgename"
+              clearable
+              @visible-change="getimg"
+              placeholder="请选择要上传的镜像"
+            >
+              <el-option
+                v-for="item in img_list"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-col>
+
           <el-col :span="2" :offset="0">
             <el-button
-              @click="openUploadImage"
+              @click="uploadImgToVm"
               icon="el-icon-circle-plus-outline"
               size="medium"
               round
               plain
-              >上传镜像</el-button
+              >上传镜像到虚拟机</el-button
             >
           </el-col>
         </el-row>
       </div>
-      <div style="margin-left: 50px; margin-right: 50px;">
+      <div style="margin-left: 20px; margin-right: 20px">
         <!-- 表格区域 -->
         <el-table
           :data="
-            cidata
-              .slice((curpage - 1) * pagesize, curpage * pagesize)
-              .filter(
-                (data) =>
-                  !psearch ||
-                  data.image.toLowerCase().includes(psearch.toLowerCase())
-              )
+            cidata.filter(
+              (data) =>
+                !pcisearch ||
+                data.repository.toLowerCase().includes(pcisearch.toLowerCase())
+            )
           "
           style="width: 100%"
+          height="700"
           empty-text="暂无容器镜像"
           :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-          @selection-change="handleSelectionChange"
         >
           <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
           <el-table-column width="80" type="index" label="序号">
@@ -467,26 +473,34 @@
           <el-table-column
             width="500"
             sortable
-            label="镜像名称"
-            prop="imageName"
+            label="仓库/镜像名"
+            prop="repository"
           >
           </el-table-column>
-          <el-table-column width="300" sortable label="标签" prop="imageTag">
+          <el-table-column width="300" sortable label="标签" prop="tag">
           </el-table-column>
-          <el-table-column width="200" sortable label="镜像ID" prop="imageId">
+          <el-table-column width="200" sortable label="镜像ID" prop="imageid">
           </el-table-column>
-          <el-table-column width="200" sortable label="体积" prop="imageSize">
+          <el-table-column width="200" sortable label="创建时间" prop="created">
+          </el-table-column>
+          <el-table-column width="200" sortable label="体积" prop="size">
           </el-table-column>
           <el-table-column align="right">
             <template slot="header">
               <el-input
-                v-model="psearch"
+                v-model="pcisearch"
                 size="mini"
                 placeholder="输入名称搜索"
               />
             </template>
             <template slot-scope="scope">
               <div style="text-align: center">
+                <el-button
+                  plain
+                  type="success"
+                  @click="startimage(scope.$index, scope.row)"
+                  >启动镜像</el-button
+                >
                 <el-button
                   plain
                   type="danger"
@@ -497,27 +511,93 @@
             </template>
           </el-table-column>
         </el-table>
-        <!-- 分页栏 -->
-        <div v-if="cidata.length != 0" style="margin-top: 30px">
-          <el-pagination
-            :current-page.sync="curpage"
-            :page-sizes="[10, 20, 30, 40, 50]"
-            :page-size.sync="pagesize"
-            layout="sizes, total, prev, pager, next, jumper"
-            :total="totalci"
-            background
-          >
-          </el-pagination>
-        </div>
       </div>
     </el-drawer>
     <!-- 虚拟机容器 -->
     <el-drawer
-      :title="'虚拟机容器管理-' + vmpod_tmp_data.name"
       :visible.sync="poddrawer"
       direction="ttb"
+      size="90%"
+      @open="podopen"
+      v-loading="fullloading"
     >
-      <span>我来啦!</span>
+      <!-- 头部标题操作 -->
+      <div slot="title">
+        <el-row :gutter="0">
+          <el-col :span="5" :offset="0"
+            ><p style="font-size: 25px; font-weight: 600; margin-bottom: 0px">
+              {{ vmpod_tmp_data.name }}-容器列表
+            </p></el-col
+          >
+        </el-row>
+      </div>
+      <div style="margin-left: 20px; margin-right: 20px">
+        <!-- 表格区域 -->
+        <el-table
+          :data="
+            poddata.filter(
+              (data) =>
+                !ppodsearch ||
+                data.image.toLowerCase().includes(ppodsearch.toLowerCase())
+            )
+          "
+          style="width: 100%"
+          height="700"
+          empty-text="暂无容器"
+          :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+        >
+          <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
+          <el-table-column width="80" type="index" label="序号">
+          </el-table-column>
+          <el-table-column width="200" sortable label="容器ID" prop="conid">
+          </el-table-column>
+          <el-table-column width="300" sortable label="镜像" prop="image">
+          </el-table-column>
+          <el-table-column width="200" sortable label="命令" prop="command">
+          </el-table-column>
+          <el-table-column width="300" sortable label="创建时间" prop="created">
+          </el-table-column>
+          <el-table-column width="300" sortable label="状态" prop="status">
+          </el-table-column>
+          <!-- <el-table-column width="200" sortable label="端口" prop="ports">
+          </el-table-column> -->
+          <el-table-column width="200" sortable label="名字" prop="names">
+          </el-table-column>
+          <el-table-column align="right">
+            <template slot="header">
+              <el-input
+                v-model="ppodsearch"
+                size="mini"
+                placeholder="输入名称搜索"
+              />
+            </template>
+            <template slot-scope="scope">
+              <div style="text-align: center">
+                <el-button-group>
+                  <el-button
+                    plain
+                    type="success"
+                    @click="startpod(scope.$index, scope.row)"
+                    >启动</el-button
+                  >
+                  <el-button
+                    plain
+                    type="warning"
+                    @click="stoppod(scope.$index, scope.row)"
+                    >停止</el-button
+                  >
+                  <el-button
+                    plain
+                    type="danger"
+                    @click="deletepod(scope.$index, scope.row)"
+                    >删除</el-button
+                  >
+                </el-button-group>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-drawer>
   </div>
 </template>
@@ -526,8 +606,8 @@
 export default {
   name: "VMList",
   mounted() {
-    this.getVMList();
-   },
+    this.getVMList("http://" + this.$store.state.nodeip + ":8080");
+  },
   data() {
     return {
       // 抽屉显示控制
@@ -715,9 +795,418 @@ export default {
       vmimg_tmp_data: {},
       // 虚拟机镜像
       cidata: [],
+      pcisearch: "",
+      iamgename: "",
+      img_list: [],
+      fullloading: false,
+      // 虚拟机容器
+      poddata: [],
+      ppodsearch: "",
     };
   },
   methods: {
+    // 删除容器
+    deletepod(idx, row) {
+      this.$axios
+        .delete(
+          this.baseurl +
+            "/docker/deleteContainer?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&containerId=" +
+            row.conid
+        )
+        .then((res) => {
+          if (res.data.exitStatus == 0) {
+            this.$message({
+              message: "容器" + row.conid + "删除成功",
+              type: "success",
+            });
+            this.get_vm_pod();
+          } else {
+            this.$message({
+              message: res.data.errorOutput,
+              type: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+          this.$message({
+            message: "删除失败，请检查网络设置",
+            type: "error",
+          });
+        });
+    },
+    // 停止容器
+    stoppod(idx, row) {
+      this.$axios
+        .post(
+          this.baseurl +
+            "/docker/stopContainer?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&containerId=" +
+            row.conid
+        )
+        .then((res) => {
+          if (res.data.exitStatus == 0) {
+            this.$message({
+              message: "容器" + row.conid + "停止成功",
+              type: "success",
+            });
+            this.get_vm_pod();
+          } else {
+            this.$message({
+              message: res.data.errorOutput,
+              type: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+          this.$message({
+            message: "停止失败，请检查网络设置",
+            type: "error",
+          });
+        });
+    },
+    // 启动容器
+    startpod(idx, row) {
+      this.$axios
+        .post(
+          this.baseurl +
+            "/docker/startContainer?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&containerId=" +
+            row.conid
+        )
+        .then((res) => {
+          if (res.data.exitStatus == 0) {
+            this.$message({
+              message: "容器" + row.conid + "启动成功",
+              type: "success",
+            });
+            this.get_vm_pod();
+          } else {
+            this.$message({
+              message: res.data.errorOutput,
+              type: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+          this.$message({
+            message: "启动失败，请检查网络设置",
+            type: "error",
+          });
+        });
+    },
+    // 删除镜像
+    deleteimage(idx, row) {
+      this.$axios
+        .delete(
+          this.baseurl +
+            "/docker/deleteImage?vmName=" +
+            this.vmimg_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&imageName=" +
+            row.repository +
+            ":" +
+            row.tag
+        )
+        .then((res) => {
+          if (res.data.exitStatus == 0) {
+            this.$message({
+              message: "镜像" + row.repository + "删除成功",
+              type: "success",
+            });
+            this.get_vm_img();
+          } else {
+            this.$message({
+              message: res.data.errorOutput,
+              type: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+          this.$message({
+            message: "删除失败，请检查网络设置",
+            type: "error",
+          });
+        });
+    },
+    // 启动镜像
+    startimage(idx, row) {
+      this.$axios
+        .post(
+          this.baseurl +
+            "/docker/run?vmName=" +
+            this.vmimg_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&imageName=" +
+            row.repository +
+            ":" +
+            row.tag
+        )
+        .then((res) => {
+          if (res.data.exitStatus == 0) {
+            this.$message({
+              message: "镜像" + row.repository + "启动成功",
+              type: "success",
+            });
+            this.get_vm_img();
+          } else {
+            this.$message({
+              message: res.data.errorOutput,
+              type: "error",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+          this.$message({
+            message: "启动失败，请检查网络设置",
+            type: "error",
+          });
+        });
+    },
+    // 上传镜像到虚拟机
+    uploadImgToVm() {
+      if (this.iamgename === "") {
+        this.$message({
+          message: "请先选择要上传的镜像",
+          type: "error",
+        });
+      } else {
+        this.fullloading = true;
+        // 防止没有文件夹，先创建
+        this.$axios
+          .post(
+            this.baseurl +
+              "/docker/mkdir?vmName=" +
+              this.vmimg_tmp_data.name +
+              "&endIp=" +
+              this.$store.state.nodeip +
+              "&targetPath=/testimg"
+          )
+          .then((res) => {
+            if (res.data.exitStatus == 0) {
+              // 上传镜像到文件夹
+              this.$axios
+                .post(
+                  this.baseurl +
+                    "/docker/upload?vmName=" +
+                    this.vmimg_tmp_data.name +
+                    "&endIp=" +
+                    this.$store.state.nodeip +
+                    "&fileName=" +
+                    this.iamgename +
+                    "&targetPath=/testimg&sourceIp=39.98.124.97"
+                )
+                .then((res) => {
+                  if (res.data.exitStatus == 0) {
+                    this.$message({
+                      message: "上传成功，等待导入到Docker",
+                      type: "success",
+                    });
+                    // 导入镜像到Docker
+                    this.$axios
+                      .post(
+                        this.baseurl +
+                          "/docker/import?vmName=" +
+                          this.vmimg_tmp_data.name +
+                          "&endIp=" +
+                          this.$store.state.nodeip +
+                          "&targetPath=/testimg/&imageFileName=" +
+                          this.iamgename
+                      )
+                      .then((res) => {
+                        if (res.data.exitStatus == 0) {
+                          this.$message({
+                            message: "导入镜像" + this.iamgename + "成功",
+                            type: "success",
+                          });
+                          this.fullloading = false;
+                          this.get_vm_img();
+                        } else {
+                          if (
+                            res.data.errorOutput !=
+                            "Command execution timed out or the file is still uploading."
+                          ) {
+                            this.$message({
+                              message: res.data.errorOutput,
+                              type: "error",
+                            });
+                          } else {
+                            this.$message({
+                              message:
+                                "镜像" +
+                                this.iamgename +
+                                "导入进行中，请稍后查看",
+                              type: "success",
+                            });
+                            this.fullloading = false;
+                            this.get_vm_img();
+                          }
+                        }
+                      })
+                      .catch((err) => {
+                        console.log("errors", err);
+                        this.$message({
+                          message: "导入失败，请检查网络设置",
+                          type: "error",
+                        });
+                      });
+                  } else {
+                    this.$message({
+                      message: res.data.errorOutput,
+                      type: "error",
+                    });
+                  }
+                })
+                .catch((err) => {
+                  console.log("errors", err);
+                  this.$message({
+                    message: "上传失败，请检查网络设置",
+                    type: "error",
+                  });
+                });
+            } else {
+              this.$message({
+                message: "创建文件夹失败，请检查虚拟机目录",
+                type: "error",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("errors", err);
+            this.$message({
+              message: "创建文件夹失败，请检查网络问题",
+              type: "error",
+            });
+          });
+      }
+    },
+    // 获取镜像
+    getimg() {
+      this.img_list = [];
+      this.$axios
+        .get("http://39.98.124.97:8081/api/ssh/imgListByIP?ip=39.98.124.97")
+        .then((res) => {
+          let imgdata = res.data.output.split("\n");
+          imgdata.pop();
+          for (let i = 0; i < imgdata.length; i++) {
+            this.img_list.push({
+              label: imgdata[i],
+              value: imgdata[i],
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    // 镜像抽屉打开
+    imgdopen() {
+      this.cidata = [];
+      this.iamgename = "";
+      this.img_list = [];
+      this.get_vm_img();
+    },
+    // 镜像抽屉打开
+    podopen() {
+      this.poddata = [];
+      this.get_vm_pod();
+    },
+    // 获取虚拟机镜像数据
+    get_vm_pod() {
+      this.$axios
+        .get(
+          this.baseurl +
+            "/docker/containerList?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip
+        )
+        .then((res) => {
+          this.poddata = this.data_resolver_pod(JSON.parse(res.data[0]).output);
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    // 获取虚拟机镜像数据
+    get_vm_img() {
+      this.$axios
+        .get(
+          this.baseurl +
+            "/docker/imageList?vmName=" +
+            this.vmimg_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip
+        )
+        .then((res) => {
+          this.cidata = this.data_resolver_image(
+            JSON.parse(res.data[0]).output
+          );
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    // 解析pod数据
+    data_resolver_pod(sdata) {
+      let res = [];
+      let rows = sdata.split("\n");
+      let i = 1;
+      for (; i < rows.length - 1; i++) {
+        let cols = rows[i].split("   ");
+        let j = 0;
+        cols = cols.filter(function (item) {
+          return item !== "";
+        });
+        res.push({
+          conid: cols[0],
+          image: cols[1],
+          command: cols[2],
+          created: cols[3],
+          status: cols[4],
+          ports: "",
+          names: cols[5],
+        });
+      }
+      return res;
+    },
+    // 解析数据
+    data_resolver_image(sdata) {
+      let res = [];
+      let rows = sdata.split("\n");
+      let i = 1;
+      for (; i < rows.length - 1; i++) {
+        let cols = rows[i].split("   ");
+        let j = 0;
+        cols = cols.filter(function (item) {
+          return item !== "";
+        });
+        res.push({
+          repository: cols[0],
+          tag: cols[1],
+          imageid: cols[2],
+          created: cols[3],
+          size: cols[4],
+        });
+      }
+      return res;
+    },
     // 打开pod
     openpod(row) {
       this.poddrawer = true;
@@ -780,9 +1269,9 @@ export default {
       this.command_tmp_data = row;
     },
     // 获取虚拟机列表数据
-    getVMList() {
+    getVMList(ip) {
       this.$axios
-        .get(this.baseurl + "/getVMList")
+        .get(ip + "/getVMList")
         .then((res) => {
           this.vmdata = res.data;
           this.totalvm = res.data.length;
@@ -805,7 +1294,7 @@ export default {
 
     refreshIP() {
       this.$axios
-        .get(this.baseurl + "/VMInfo/updateip/" + this.serverip)
+        .get(this.baseurl + "/VMInfo/updateip/" + this.$store.state.nodeip)
         .then((response) => {
           const data = response.data;
           if (data.success) {
@@ -844,46 +1333,6 @@ export default {
           console.log("errors", err);
         });
     },
-
-    // 上传失败
-    errupload(err, file, fileList) {
-      this.$notify.error({
-        title: "创建失败",
-        message: JSON.parse(err.message).message,
-        position: "bottom-right",
-        duration: 6000,
-      });
-    },
-    // 成功上传文件
-    sucupload(response, file, fileList) {
-      if (response.success === true) {
-        this.$notify.success({
-          title: "创建成功",
-          message: "虚拟机 " + this.formData.name + " 创建成功！",
-          position: "bottom-right",
-          duration: 6000,
-        });
-        this.buildvmvisible = false;
-      } else {
-        this.$notify.error({
-          title: "创建失败",
-          message: response,
-          position: "bottom-right",
-          duration: 6000,
-        });
-      }
-    },
-    // 控制文件格式
-    // handleBeforeUpload(file) {
-    //   console.log(file);
-    //   var suffix = file.name.substring(file.name.lastIndexOf(".") + 1);
-    //   if (suffix != "iso" && suffix != "img" && suffix != "qcow2") {
-    //     this.$message.error("只能上传iso、img或qcow2格式的文件！");
-    //     return false;
-    //   }
-    //   return suffix;
-    // },
-
     // 添加虚拟机
     vmc_sumbit(formName) {
       // 校验表单
@@ -908,7 +1357,7 @@ export default {
                 "&nettype=" +
                 this.formData.nettype +
                 "&serverip=" +
-                this.formInline.region
+                this.$store.state.nodeip
             )
             .then((response) => {
               this.$notify.success({
@@ -1053,6 +1502,18 @@ export default {
             message: "已取消",
           });
         });
+    },
+  },
+  computed: {
+    tmp_nodename_w() {
+      return this.$store.state.nodename;
+    },
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.vmdata = [];
+      this.totalvm = this.vmdata.length;
+      this.getVMList("http://" + this.$store.state.nodeip + ":8080");
     },
   },
 };

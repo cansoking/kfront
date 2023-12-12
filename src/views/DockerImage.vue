@@ -7,7 +7,7 @@
           Docker镜像列表
         </p></el-col
       >
-      <el-col :span="4" :offset="8">
+      <el-col :span="4" :offset="6">
         <el-select
           v-model="endip"
           placeholder="请选择端IP"
@@ -40,16 +40,17 @@
         >
       </el-col>
 
-      <!-- <el-col :span="2" :offset="0">
+      <el-col :span="2" :offset="0">
         <el-button
           @click="openUploadImage"
           icon="el-icon-circle-plus-outline"
-          size="medium"
+          size="large"
           round
           plain
+          :disabled="$store.state.nodename != 'master1'"
           >上传镜像</el-button
         >
-      </el-col> -->
+      </el-col>
     </el-row>
     <!-- 表格区域 -->
     <el-table
@@ -119,19 +120,18 @@
       </el-pagination>
     </div>
     <!-- 上传镜像对话框 -->
-    <el-dialog title="上传镜像" :visible.sync="uploadimagevisible">
+    <el-dialog title="上传Docker镜像" :visible.sync="uploadimagevisible">
       <div style="text-align: center">
         <el-upload
           class="upload-demo"
           drag
           ref="upload"
-          :action="baseurl + '/containerd/uploadImage'"
-          :data="formData"
+          :action="baseurl + '/api/ssh/uploadImg'"
           :multiple="false"
           accept=".tar"
           :auto-upload="true"
           :limit="1"
-          name="tarFile"
+          name="imgfile"
           :before-upload="handleBeforeUpload"
           :on-success="sucupload"
           :on-error="errupload"
@@ -273,14 +273,21 @@ export default {
         .then((res) => {
           let nodeinfo = res.data.content;
           for (let i = 0; i < nodeinfo.length; i++) {
-            if (nodeinfo[i].nodeType === "边") {
-              this.end_options.push({
-                label:
-                  "端节点" +
-                  nodeinfo[i].nodeName[nodeinfo[i].nodeName.length - 1],
-                value: nodeinfo[i].nodeIp,
-              });
-            }
+            // if (nodeinfo[i].nodeType === "边") {
+            //   this.end_options.push({
+            //     label:
+            //       "端节点" +
+            //       nodeinfo[i].nodeName[nodeinfo[i].nodeName.length - 1],
+            //     value: nodeinfo[i].nodeIp,
+            //   });
+            // }
+            this.end_options.push({
+              label:
+                nodeinfo[i].nodeType +
+                "节点" +
+                nodeinfo[i].nodeName[nodeinfo[i].nodeName.length - 1],
+              value: nodeinfo[i].nodeIp,
+            });
           }
         })
         .catch((err) => {
@@ -358,7 +365,8 @@ export default {
     },
     // 成功上传文件
     sucupload(response, file, fileList) {
-      if (response[0] === "I") {
+      console.log(response);
+      if (response.exitStatus === 0) {
         this.$notify.success({
           title: "上传成功",
           message: "镜像上传成功",
