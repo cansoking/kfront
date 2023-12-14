@@ -615,8 +615,8 @@ export default {
       imagedrawer: false,
       // 命令执行结果flag
       res_state: "",
-      baseurl: "http://"+this.$store.state.nodeip+":8080",
-      execurl: "http://"+this.$store.state.nodeip+":8081",
+      baseurl: "http://" + this.$store.state.nodeip + ":8080",
+      execurl: "http://" + this.$store.state.nodeip + ":8081",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
@@ -949,39 +949,43 @@ export default {
     },
     // 启动镜像
     startimage(idx, row) {
-      this.$axios
-        .post(
-          this.baseurl +
-            "/docker/run?vmName=" +
-            this.vmimg_tmp_data.name +
-            "&endIp=" +
-            this.$store.state.nodeip +
-            "&imageName=" +
-            row.repository +
-            ":" +
-            row.tag
-        )
-        .then((res) => {
-          if (res.data.exitStatus == 0) {
+      this.$prompt("请输入启动命令", "启动提示", {
+        confirmButtonText: "启动",
+        cancelButtonText: "取消",
+        inputPlaceholder: "请输入启动命令",
+        inputValue: "docker run -d " + row.repository + ":" + row.tag
+      }).then(({ value }) => {
+        this.$axios
+          .post(
+            this.baseurl +
+              "/docker/run?vmName=" +
+              this.vmimg_tmp_data.name +
+              "&endIp=" +
+              this.$store.state.nodeip +
+              "&command=" + value
+          )
+          .then((res) => {
+            if (res.data.exitStatus == 0) {
+              this.$message({
+                message: "镜像" + row.repository + "启动成功",
+                type: "success",
+              });
+              this.get_vm_img();
+            } else {
+              this.$message({
+                message: res.data.errorOutput,
+                type: "error",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("errors", err);
             this.$message({
-              message: "镜像" + row.repository + "启动成功",
-              type: "success",
-            });
-            this.get_vm_img();
-          } else {
-            this.$message({
-              message: res.data.errorOutput,
+              message: "启动失败，请检查网络设置",
               type: "error",
             });
-          }
-        })
-        .catch((err) => {
-          console.log("errors", err);
-          this.$message({
-            message: "启动失败，请检查网络设置",
-            type: "error",
           });
-        });
+      });
     },
     // 上传镜像到虚拟机
     uploadImgToVm() {
@@ -1373,7 +1377,7 @@ export default {
               } else {
                 this.$notify.success({
                   title: "创建虚拟机成功",
-                  message: "创建虚拟机"+this.formData.name+"成功",
+                  message: "创建虚拟机" + this.formData.name + "成功",
                   position: "bottom-right",
                 });
               }
