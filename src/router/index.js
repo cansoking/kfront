@@ -72,16 +72,16 @@ const routes = [
         name: 'vmlist',
         component: () => import('../views/VMList.vue')
       },
-      {
-        path: '/vmlist1',
-        name: 'vmlist1',
-        component: () => import('../views/VMListRemote1.vue')
-      },
-      {
-        path: '/vmlist2',
-        name: 'vmlist2',
-        component: () => import('../views/VMListRemote2.vue')
-      },
+      // {
+      //   path: '/vmlist1',
+      //   name: 'vmlist1',
+      //   component: () => import('../views/VMListRemote1.vue')
+      // },
+      // {
+      //   path: '/vmlist2',
+      //   name: 'vmlist2',
+      //   component: () => import('../views/VMListRemote2.vue')
+      // },
       {
         path: '/vmcreate',
         name: 'vmcreate',
