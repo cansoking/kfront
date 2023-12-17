@@ -128,7 +128,6 @@ export default {
     this.getCurrentAlgorithm()
   },
   methods: {
-    currentAlgorithm,
     async fetchAllAlgorithms() {
       const result = await fetchAllAlgorithms().catch(e => e);
       if (!isSuccess(result)) {
@@ -187,13 +186,14 @@ export default {
         return this.$message.error(result.message || '请求失败');
       }
       this.$message.success('算法加载成功')
+      this.getCurrentAlgorithm()
     },
     async getCurrentAlgorithm() {
       const result = await currentAlgorithm().catch(e => e)
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
-      this.currentAlgorithmValue = result.data.name
+      this.currentAlgorithmValue = result.data?.name
     },
     async confirmRemove() {
       this.removeLoading = true
@@ -203,6 +203,7 @@ export default {
         return this.$message.error(result.message || '请求失败');
       }
       this.$message.success('算法卸载成功')
+      this.getCurrentAlgorithm()
     },
     download() {
     }
