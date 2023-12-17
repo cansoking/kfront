@@ -178,20 +178,68 @@
         >
       </el-menu-item> -->
       <!-- 云网融合资源编排调度 -->
-      <el-menu-item index="">
-        <i class="el-icon-copy-document"></i>
-        <a
-          style="text-decoration: none; color: #8d97ad"
-          slot="title"
-          href="http://81.70.164.10:9999"
-          target="_self"
-          >云网融合资源编排调度</a
-        >
-      </el-menu-item>
+      <el-submenu index="scheduler">
+        <template slot="title">
+          <i class="el-icon-coin"></i>
+          <span>云网融合资源编排调度</span>
+        </template>
+        <el-submenu index="task">
+          <template slot="title">
+            <i class="el-icon-copy-document"></i>
+            <span>任务管理</span>
+          </template>
+          <el-menu-item index="/taskTypeManage" route="taskTypeManage">
+            <i class="el-icon-set-up"></i>
+            <span slot="title">任务类型</span>
+          </el-menu-item>
+          <el-menu-item index="/taskManage" route="taskManage">
+            <i class="el-icon-c-scale-to-original"></i>
+            <span slot="title">任务</span>
+          </el-menu-item>
+        </el-submenu>
+        <el-submenu index="resource">
+          <template slot="title">
+            <i class="el-icon-copy-document"></i>
+            <span>资源管理</span>
+          </template>
+          <el-menu-item index="/resourceTypeManage" route="resourceTypeManage">
+            <i class="el-icon-set-up"></i>
+            <span slot="title">资源类型</span>
+          </el-menu-item>
+          <el-menu-item index="/resourceManage" route="resourceManage">
+            <i class="el-icon-c-scale-to-original"></i>
+            <span slot="title">资源</span>
+          </el-menu-item>
+        </el-submenu>
+        <el-submenu index="algorithm">
+          <template slot="title">
+            <i class="el-icon-copy-document"></i>
+            <span>算法管理</span>
+          </template>
+          <el-menu-item index="/algorithmFile" route="algorithmFile">
+            <i class="el-icon-c-scale-to-original"></i>
+            <span slot="title">算法文件管理</span>
+          </el-menu-item>
+          <el-menu-item index="/algorithmScheduler" route="algorithmScheduler">
+            <i class="el-icon-set-up"></i>
+            <span slot="title">调度运行</span>
+          </el-menu-item>
+        </el-submenu>
+        <el-submenu index="log">
+          <template slot="title">
+            <i class="el-icon-copy-document"></i>
+            <span>日志管理</span>
+          </template>
+          <el-menu-item index="/taskLog" route="taskLog">
+            <i class="el-icon-c-scale-to-original"></i>
+            <span slot="title">任务日志</span>
+          </el-menu-item>
+        </el-submenu>
+      </el-submenu>
     </el-menu>
   </div>
 </template>
-  
+
   <script>
 export default {
   name: "SiteAside",
@@ -205,7 +253,7 @@ export default {
   methods: {},
 };
 </script>
-  
+
 <style>
 .side-head {
   padding: 0px 0px;
