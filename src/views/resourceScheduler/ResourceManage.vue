@@ -1,46 +1,46 @@
 <template>
   <div style="padding: 12px">
-    <el-button @click="addTask" type="primary" icon="el-icon-plus">
-      新增任务
+    <el-button @click="addResource" type="primary" icon="el-icon-plus">
+      新增资源
     </el-button>
-    <el-button @click="addTaskByFile" type="primary">
-      文件上传任务
+    <el-button @click="addResourceByFile" type="primary">
+      文件上传资源
     </el-button>
     <div style="font-size: 16px;display: inline-block;margin-left: 12px">
-      选择任务类型：
+      选择资源类型：
     </div>
     <el-select
-        v-model="taskId"
+        v-model="resourceId"
         style="width: 180px"
-        @change="fetchTaskData"
+        @change="fetchResourceData"
         clearable
     >
       <el-option
-          v-for="item in taskTypeOptions"
+          v-for="item in resourceTypeOptions"
           :key="item.value"
           :label="item.label"
           :value="item.value">
       </el-option>
     </el-select>
     <el-table
-        :data="taskData"
+        :data="resourceData"
         v-loading="tableLoading"
     >
       <el-table-column
           prop="id"
-          label="任务ID"
+          label="资源ID"
           width="180"></el-table-column>
       <el-table-column
           prop="name"
-          label="任务名称"
+          label="资源名称"
       ></el-table-column>
       <el-table-column
           prop="description"
-          label="任务描述"
+          label="资源描述"
       ></el-table-column>
       <el-table-column
           prop="attributes_values"
-          label="任务属性"
+          label="资源属性"
       >
         <template slot-scope="scope">
           <div v-for="(value,key) in scope.row.attributes_values">
@@ -55,7 +55,7 @@
       >
         <template slot-scope="scope">
           <el-popconfirm
-              title="是否确认删除该任务？"
+              title="是否确认删除该资源？"
               @confirm="()=> confirmDelete(scope.row)"
           >
             <el-button slot="reference" type="danger" plain>删除</el-button>
@@ -66,7 +66,7 @@
 
     <el-drawer
         :visible.sync="open"
-        title="新增任务"
+        title="新增资源"
         size="40%"
         :show-close="false"
     >
@@ -81,31 +81,31 @@
           label-width="100px"
       >
         <el-form-item
-            :rules="{required: true,message: '缺少任务名称',}"
-            label="任务名称" prop="name">
+            :rules="{required: true,message: '缺少资源名称',}"
+            label="资源名称" prop="name">
           <el-input
               v-model="dynamicValidateForm.name"
           />
         </el-form-item>
         <el-form-item
-            :rules="{required: true,message: '缺少任务描述',}"
-            label="任务描述" prop="description">
+            :rules="{required: true,message: '缺少资源描述',}"
+            label="资源描述" prop="description">
           <el-input
               v-model="dynamicValidateForm.description"
           />
         </el-form-item>
         <el-form-item
             prop="type_id"
-            :rules="{required: true,message: '缺少任务属性类型',}"
-            label="任务类型"
+            :rules="{required: true,message: '缺少资源属性类型',}"
+            label="资源类型"
         >
           <el-select
               style="width: 100%"
               v-model="dynamicValidateForm.type_id"
-              placeholder="请选择任务属性类型"
+              placeholder="请选择资源属性类型"
           >
             <el-option
-                v-for="item in taskTypeOptions"
+                v-for="item in resourceTypeOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value">
@@ -113,7 +113,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-            v-for="(item, index) in taskTypeAttributes"
+            v-for="(item, index) in resourceTypeAttributes"
             :key="index"
             :label="item.info"
             :prop="['attributes_values', item.name].join('.')"
@@ -155,26 +155,26 @@
 
 <script>
 import {
-  createTask,
-  deleteTask,
+  createResource,
+  deleteResource,
   fetchAllDataType,
-  fetchAllTasks,
-  fetchAllTaskType, fetchTask
-} from "@/api/task";
+  fetchAllResources,
+  fetchAllResourceType, fetchResource
+} from "@/api/resource";
 import {isSuccess} from "@/utils";
 
 export default {
-  name: "TaskManage",
+  name: "ResourceManage",
   data() {
     return {
-      taskData: [],
-      taskTypeData: [],
+      resourceData: [],
+      resourceTypeData: [],
       dataType: [],
       tableLoading: false,
       submitLoading: false,
       open: false,
-      taskFile: null,
-      taskId: '',
+      resourceFile: null,
+      resourceId: '',
       dynamicValidateForm: {
         name: '',
         description: '',
@@ -184,17 +184,17 @@ export default {
     }
   },
   computed: {
-    taskTypeOptions() {
-      return this.taskTypeData.map(item => {
+    resourceTypeOptions() {
+      return this.resourceTypeData.map(item => {
         return {
-          label: item.task_type.name,
-          value: item.task_type.id
+          label: item.resource_type.name,
+          value: item.resource_type.id
         }
       })
     },
-    taskTypeAttributes() {
-      const taskType = this.taskTypeData.find(item => item.task_type.id === this.dynamicValidateForm.type_id)
-      return taskType?.attributes || []
+    resourceTypeAttributes() {
+      const resourceType = this.resourceTypeData.find(item => item.resource_type.id === this.dynamicValidateForm.type_id)
+      return resourceType?.attributes || []
     }
   },
   watch: {
@@ -212,54 +212,54 @@ export default {
   },
   mounted() {
     const query = this.$route.query || {}
-    this.getTaskTypeData();
-    if (query.task_type_id) {
-      this.taskId = Number(query.task_type_id)
-      this.fetchTaskData()
+    this.getResourceTypeData();
+    if (query.resource_type_id) {
+      this.resourceId = Number(query.resource_type_id)
+      this.fetchResourceData()
     } else {
-      this.getAllTaskData();
+      this.getAllResourceData();
     }
   },
   methods: {
     onClose() {
       this.open = false
     },
-    async fetchTaskData() {
-      if (!this.taskId) return this.getAllTaskData()
+    async fetchResourceData() {
+      if (!this.resourceId) return this.getAllResourceData()
       this.tableLoading = true;
-      const result = await fetchTask(this.taskId).catch(e => e);
+      const result = await fetchResource(this.resourceId).catch(e => e);
       this.tableLoading = false;
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
-      this.taskData = result.data
+      this.resourceData = result.data
     },
-    async getAllTaskData() {
+    async getAllResourceData() {
       this.tableLoading = true;
-      const result = await fetchAllTasks().catch(e => e);
+      const result = await fetchAllResources().catch(e => e);
       this.tableLoading = false;
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
-      this.taskData = result.data
+      this.resourceData = result.data
     },
-    addTask() {
+    addResource() {
       this.open = true;
-      this.getTaskTypeData()
+      this.getResourceTypeData()
     },
-    addTaskByFile() {
-      this.taskFile = true;
-      // this.getTaskTypeData()
+    addResourceByFile() {
+      this.resourceFile = true;
+      // this.getResourceTypeData()
     },
-    async getTaskTypeData() {
+    async getResourceTypeData() {
       this.tableLoading = true;
-      const result = await fetchAllTaskType().catch(e => e);
-      await this.getTaskDataType().catch(e => e);
+      const result = await fetchAllResourceType().catch(e => e);
+      await this.getResourceDataType().catch(e => e);
       this.tableLoading = false;
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
-      this.taskTypeData = result.data?.map(item => {
+      this.resourceTypeData = result.data?.map(item => {
         item.attributes = item.attributes.map(attribute => {
           const dataTypeItem = this.dataType.find(dataTypeItem => dataTypeItem.id === attribute.data_type)
           return {
@@ -270,7 +270,7 @@ export default {
         return item
       })
     },
-    async getTaskDataType() {
+    async getResourceDataType() {
       const result = await fetchAllDataType().catch(e => e);
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
@@ -278,12 +278,12 @@ export default {
       this.dataType = result.data
     },
     async confirmDelete({id}) {
-      const result = await deleteTask(id).catch(e => e);
+      const result = await deleteResource(id).catch(e => e);
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
       this.$message.success('删除成功')
-      this.getAllTaskData()
+      this.getAllResourceData()
     },
     async checkAttribute(value, dataType) {
       if (!value) return Promise.reject('必填');
@@ -315,7 +315,7 @@ export default {
           type_id,
           attributes_values
         }
-        const submitResult = await createTask(data).catch(e => e);
+        const submitResult = await createResource(data).catch(e => e);
         if (!isSuccess(submitResult)) {
           this.submitLoading = false;
           return this.$message.error(submitResult.message || '请求失败');
@@ -323,7 +323,7 @@ export default {
         this.submitLoading = false;
         this.open = false;
         this.$message.success('新增成功')
-        this.getAllTaskData()
+        this.getAllResourceData()
       })
     },
   }
