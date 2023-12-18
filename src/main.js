@@ -10,12 +10,6 @@ import * as echarts from "echarts"
 import chinaJSON from './assets/china.json'
 Vue.use(ElementUI)
 
-import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
-Vue.config.productionTip = false;
-
-Vue.use(Antd);
-
 Vue.prototype.$axios = axios
 Vue.prototype.$ecahrt = echarts
 Vue.config.productionTip = true

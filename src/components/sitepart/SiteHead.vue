@@ -143,9 +143,15 @@ export default {
 
 <style>
 .headarea {
-  padding: 15px 15px;
+  //padding: 15px 15px;
   border-bottom: 1px solid #d8e3e7;
   background-color: #303641;
-  height: 80px;
+  //display: flex;
+  //height: 80px;
+}
+.el-row {
+  display: flex;
+  align-items: center;
+  padding: 10px;
 }
 </style>

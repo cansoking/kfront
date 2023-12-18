@@ -13,7 +13,7 @@
     </el-container>
   </div>
 </template>
-  
+
   <script>
 import SiteAside from "../components/sitepart/SiteAside.vue";
 import SiteHeadVue from "../components/sitepart/SiteHead.vue";
@@ -27,11 +27,11 @@ export default {
   methods: {},
 };
 </script>
-  
+
 <style>
 .el-header {
   position: relative;
-  width: 88%;
+  width: calc(100% - 230px);
   left: 250px;
   height: 90px;
 }
@@ -69,5 +69,4 @@ export default {
   height: 0;
 }
 </style>
-  
-  
+
