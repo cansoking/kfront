@@ -6,10 +6,10 @@ export const fetchAllAlgorithms = () => {
         data: {}
     })
 }
-export const runAlgorithm = () => {
-    return get({
+export const runAlgorithm = (data) => {
+    return post({
         url: '/algorithm/run',
-        data: {}
+        data
     })
 }
 export const removeAlgorithm = () => {

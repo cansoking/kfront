@@ -57,6 +57,7 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-button :loading="runLoading" @click="handleRun" style="height: 36px" type="primary">调度运行</el-button>
     <div style="width: 45%">
       <div style="font-size: 16px;display: inline-block;margin-left: 12px">
         选择资源类型：
@@ -175,7 +176,7 @@
                 title="是否确认该任务的关联？"
                 @confirm="()=> unConnect(scope.row)"
             >
-              <el-button  slot="reference"  type="danger" plain>解除关联</el-button>
+              <el-button slot="reference" type="danger" plain>解除关联</el-button>
             </el-popconfirm>
           </template>
         </el-table-column>
@@ -195,6 +196,7 @@ import {
   fetchResource,
   fetchTasksByResource
 } from "@/api/resource";
+import {runAlgorithm} from "@/api/algorithm";
 
 export default {
   name: "AlgorithmScheduler",
@@ -206,6 +208,7 @@ export default {
       taskData: [],
       connectTaskData: [],
       connectTaskLoading: false,
+      runLoading: false,
       initResourceData: [],
       taskId: undefined,
       resourceId: undefined,
@@ -235,6 +238,25 @@ export default {
     this.getResourceTypeData();
   },
   methods: {
+    async handleRun() {
+      const param = JSON.stringify({
+        task_list: this.taskData,
+        resource_list: this.resourceData
+      })
+      this.runLoading = true;
+      const result = await runAlgorithm({param}).catch(e => e)
+      this.runLoading = false;
+      if (!isSuccess(result)) {
+        return this.$message.error(result.message || '请求失败')
+      }
+      if (result.data) {
+        this.$alert(result.data, '调度结果', {
+          confirmButtonText: '确定',
+          callback: () => {
+          }
+        });
+      }
+    },
     async getTaskTypeData() {
       this.tableLoading = true;
       const result = await fetchAllTaskType().catch(e => e);
