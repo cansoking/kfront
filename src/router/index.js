@@ -54,6 +54,11 @@ const routes = [
             //     component: () => import('../views/TerminalList.vue')
             // },
             {
+                path: '/respool',
+                name: 'respool',
+                component: () => import('../views/ResPoolView.vue')
+            },
+            {
                 path: '/dockerimage',
                 name: 'dockerimage',
                 component: () => import('../views/DockerImage.vue')

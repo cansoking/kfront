@@ -26,6 +26,11 @@
           <span>分布式资源管理</span>
         </template>
 
+        <el-menu-item index="/respool" route="respool">
+          <i class="el-icon-pie-chart"></i>
+          <span slot="title">资源汇聚</span>
+        </el-menu-item>
+
         <el-submenu index="machine">
           <template slot="title">
             <i class="el-icon-coin"></i>
