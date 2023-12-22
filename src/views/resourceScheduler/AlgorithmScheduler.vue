@@ -239,12 +239,12 @@ export default {
   },
   methods: {
     async handleRun() {
-      const param = JSON.stringify({
+      const param = {
         task_list: this.taskData,
         resource_list: this.resourceData
-      })
+      }
       this.runLoading = true;
-      const result = await runAlgorithm({param}).catch(e => e)
+      const result = await runAlgorithm(param).catch(e => e)
       this.runLoading = false;
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败')
