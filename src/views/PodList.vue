@@ -999,11 +999,16 @@ export default {
     // 远程搜索image名
     imageremote() {
       this.$axios
-        .post(this.baseurl + "/containerd/images/list", {
-          virtualMachineIp: "39.98.124.97",
-          userName: "root",
-          userPassword: "Upc123456@",
-        })
+          .post(
+              this.baseurl +
+              "/containerd/images/list?nodeName=" +
+              this.$store.state.nodename,
+              {
+                virtualMachineIp: "39.98.124.97",
+                userName: "root",
+                userPassword: "Upc123456@",
+              }
+          )
         .then((res) => {
           let rdata = this.data_resolver(res.data.result);
           // this.cidata = rdata;
