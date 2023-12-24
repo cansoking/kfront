@@ -607,6 +607,7 @@ export default {
   name: "VMList",
   mounted() {
     this.getVMList("http://" + this.$store.state.nodeip + ":8080");
+    this.baseurl="http://" + this.$store.state.nodeip + ":8080";
   },
   data() {
     return {
@@ -1269,7 +1270,7 @@ export default {
       this.serverip = item;
       this.baseurl = "http://" + this.serverip + ":8080";
       this.execurl = "http://" + this.serverip + ":8081";
-      this.getVMList();
+      this.getVMList(ip);
     },
     // 打开执行命令
     opencommand(row) {
@@ -1301,13 +1302,14 @@ export default {
     },
 
     refreshIP() {
+      console.log(this.baseurl)
       this.$axios
         .get(this.baseurl + "/VMInfo/updateip/" + this.$store.state.nodeip)
         .then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("更新成功！");
-            this.getVMList();
+            this.getVMList(this.baseurl);
           } else {
             this.$message.success("更新失败！");
           }
@@ -1325,6 +1327,7 @@ export default {
 
     //获取/root/images/下的虚拟机镜像
     nsremote() {
+    console.log(this.baseurl)
       this.$axios
         .get(this.baseurl + "/Images/imgList")
         .then((res) => {
@@ -1381,7 +1384,7 @@ export default {
                   position: "bottom-right",
                 });
               }
-              this.getVMList();
+              this.getVMList(this.baseurl);
             })
             .catch((err) => {
               this.$notify.error({
@@ -1403,48 +1406,52 @@ export default {
     },
 
     vmstart(row) {
+      console.log(this.baseurl)
       this.$axios
         .get(this.baseurl + "/initiate/" + row.name)
         .then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("启动成功！");
-            this.getVMList();
+            this.getVMList(this.baseurl);
           } else {
             this.$message.success("启动失败！");
           }
         });
     },
     vmsuspend(row) {
+      console.log(this.baseurl)
       this.$axios
         .get(this.baseurl + "/suspended/" + row.name)
         .then((response) => {
           const data = response.data;
           if (data.success) {
             this.$message.success("挂起成功！");
-            this.getVMList();
+            this.getVMList(this.baseurl);
           } else {
             this.$message.success("挂起失败！");
           }
         });
     },
     vmresume(row) {
+      console.log(this.baseurl)
       this.$axios.get(this.baseurl + "/resume/" + row.name).then((response) => {
         const data = response.data;
         if (data.success) {
           this.$message.success("还原成功！");
-          this.getVMList();
+          this.getVMList(this.baseurl);
         } else {
           this.$message.success("还原失败！");
         }
       });
     },
     vmreboot(row) {
+      console.log(this.baseurl)
       this.$axios.get(this.baseurl + "/reboot/" + row.name).then((response) => {
         const data = response.data;
         if (data.success) {
           this.$message.success("重启中...");
-          this.getVMList();
+          this.getVMList(this.baseurl);
         } else {
           this.$message.success("重启失败！");
         }
@@ -1457,7 +1464,7 @@ export default {
           const data = response.data;
           if (data.success) {
             this.$message.success("关机成功！");
-            this.getVMList();
+            this.getVMList(this.baseurl);
           } else {
             this.$message.success("关机失败！");
           }
@@ -1477,7 +1484,7 @@ export default {
               const data = response.data;
               if (data.success) {
                 this.$message.success("强行关机成功！");
-                this.getVMList();
+                this.getVMList(this.baseurl);
               } else {
                 this.$message.success("强行关机失败！");
               }
@@ -1504,7 +1511,7 @@ export default {
               const data = response.data;
               if (data.success) {
                 this.$message.success("删除成功！");
-                this.getVMList();
+                this.getVMList(this.baseurl);
               } else {
                 this.$message.success("删除失败！");
               }
