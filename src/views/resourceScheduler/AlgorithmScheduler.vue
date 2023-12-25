@@ -27,10 +27,11 @@
         <el-table-column
             prop="id"
             label="任务ID"
-            width="180"></el-table-column>
+            width="50"></el-table-column>
         <el-table-column
             prop="name"
             label="任务名称"
+            width="100"
         ></el-table-column>
         <el-table-column
             prop="description"
@@ -40,12 +41,52 @@
             prop="attributes_values"
             label="任务属性"
         >
+
           <template slot-scope="scope">
-            <div v-for="(value,key) in scope.row.attributes_values">
-              <span>{{ key }}：</span>
-              <span>{{ value }}</span>
+            <el-popover
+              placement="right"
+              width="400"
+              trigger="click"
+              >
+              <div style="max-height: 400px; overflow-y: auto;">
+                <el-table :data="scope.row.attributes_values_arr" >
+                  <el-table-column
+                      prop="key"
+                      label="属性"
+                  ></el-table-column>
+                  <el-table-column
+                      prop="value"
+                      label="值"
+                  ></el-table-column>
+                </el-table>
+              </div>
+               
+              <el-button slot="reference">查看详情</el-button>
+            </el-popover>
+          </template>
+        </el-table-column>
+        <el-table-column
+            prop="status"
+            label="任务状态"
+        >
+          <template slot-scope="scope">
+            <div v-if="scope.row.status === 1">
+              <el-tag type="info">任务发起</el-tag>
+            </div>
+            <div v-else-if="scope.row.status === 2">
+              <el-tag>正在执行</el-tag> 
+            </div>
+            <div v-else-if="scope.row.status === 3">
+              <el-tag type="warning">任务停止</el-tag> 
+            </div>
+            <div v-else-if="scope.row.status === 4">
+              <el-tag type="success">任务结束</el-tag>
+            </div>
+            <div v-else-if="scope.row.status === 5">
+              <el-tag type="danger">任务失败</el-tag> 
             </div>
           </template>
+
         </el-table-column>
         <el-table-column
             prop="action"
@@ -294,6 +335,19 @@ export default {
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+          console.log(JSON.parse(JSON.stringify(item.attributes_values_arr)))
+        }
+      })
+      console.log(result.data,'result.data');
       this.taskData = result.data
     },
     async fetchTaskData() {
@@ -303,7 +357,7 @@ export default {
       this.tableLoading = false;
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
-      }
+      }      
       this.taskData = result.data
     },
     async getAllResourceData() {
