@@ -46,14 +46,21 @@
             <el-popover
               placement="right"
               width="400"
-              trigger="click">
-                <div>{{ scope.row.attributes_values }}</div>
-                <!-- <el-table :data="scope.row.attributes_values">
-                  <div v-for="(value,key) in data">
-                  <el-table-column width="150" >{{ value }}</el-table-column>
-                  <el-table-column width="150" > {{ key }}</el-table-column>
-                  </div>
-                </el-table> -->
+              trigger="click"
+              >
+              <div style="max-height: 400px; overflow-y: auto;">
+                <el-table :data="scope.row.attributes_values_arr" >
+                  <el-table-column
+                      prop="key"
+                      label="属性"
+                  ></el-table-column>
+                  <el-table-column
+                      prop="value"
+                      label="值"
+                  ></el-table-column>
+                </el-table>
+              </div>
+               
               <el-button slot="reference">查看详情</el-button>
             </el-popover>
           </template>
@@ -328,6 +335,19 @@ export default {
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+          console.log(JSON.parse(JSON.stringify(item.attributes_values_arr)))
+        }
+      })
+      console.log(result.data,'result.data');
       this.taskData = result.data
     },
     async fetchTaskData() {
@@ -337,7 +357,7 @@ export default {
       this.tableLoading = false;
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
-      }
+      }      
       this.taskData = result.data
     },
     async getAllResourceData() {
