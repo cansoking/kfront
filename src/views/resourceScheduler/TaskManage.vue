@@ -50,6 +50,15 @@
         </template>
       </el-table-column>
       <el-table-column
+          prop="status"
+          label="任务状态"
+      >
+        <template slot-scope="scope">
+          <el-tag>标签一</el-tag>
+
+        </template>
+      </el-table-column>
+      <el-table-column
           prop="action"
           label="操作"
       >
