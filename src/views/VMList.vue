@@ -1535,6 +1535,8 @@ export default {
     tmp_nodename_w(nv, ov) {
       this.vmdata = [];
       this.totalvm = this.vmdata.length;
+      this.baseurl = "http://" + this.$store.state.nodeip + ":8080"
+      this.execurl = "http://" + this.$store.state.nodeip + ":8081"
       this.getVMList("http://" + this.$store.state.nodeip + ":8080");
     },
   },

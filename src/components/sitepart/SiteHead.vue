@@ -44,20 +44,29 @@
             content="回到主页"
             placement="bottom"
           >
-<!--            <a href="/static/pages/index.html#/world">
+            <!--            <a href="/static/pages/index.html#/world">
               <i
                 style="color: white; font-size: 35px; line-height: 50px"
                 class="el-icon-switch-button"
               ></i>
             </a>-->
 
-            <button @click="ret" class="el-icon-switch-button" style="border: none;background-color: #303641;color: white; font-size: 35px; line-height: 50px">
-<!--              <i
+            <button
+              @click="ret"
+              class="el-icon-switch-button"
+              style="
+                border: none;
+                background-color: #303641;
+                color: white;
+                font-size: 35px;
+                line-height: 50px;
+              "
+            >
+              <!--              <i
                   style="color: white; font-size: 35px; line-height: 50px"
                   class="el-icon-switch-button"
               ></i>-->
             </button>
-
           </el-tooltip>
         </el-col>
       </el-row>
@@ -92,9 +101,12 @@ export default {
           i = this.nodeinfo.length;
         }
       }
+      sessionStorage.setItem("nodename", this.$store.state.nodename);
+      sessionStorage.setItem("ip", this.$store.state.nodeip);
+      sessionStorage.setItem("nodetype", this.$store.state.nodetype);
     },
-    ret(){
-      this.$router.push('/world')
+    ret() {
+      this.$router.push("/world");
       location.reload();
     },
     noderemote() {
@@ -130,14 +142,14 @@ export default {
   },
   computed: {
     tmp_nodename_w() {
-      return this.$store.state.nodename
-    }
+      return this.$store.state.nodename;
+    },
   },
   watch: {
     tmp_nodename_w(nv, ov) {
-      this.value = nv
-    }
-  }
+      this.value = nv;
+    },
+  },
 };
 </script>
 
