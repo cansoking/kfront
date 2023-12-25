@@ -70,10 +70,8 @@
             label="任务状态"
         >
           <template slot-scope="scope">
-            <div v-if="scope.row.status === 1">
-              <el-tag type="info">任务发起</el-tag>
-            </div>
-            <div v-else-if="scope.row.status === 2">
+         
+            <div v-if="scope.row.status === 2">
               <el-tag>正在执行</el-tag> 
             </div>
             <div v-else-if="scope.row.status === 3">
@@ -84,6 +82,9 @@
             </div>
             <div v-else-if="scope.row.status === 5">
               <el-tag type="danger">任务失败</el-tag> 
+            </div>
+            <div v-else>
+              <el-tag type="info">任务发起</el-tag>
             </div>
           </template>
 
