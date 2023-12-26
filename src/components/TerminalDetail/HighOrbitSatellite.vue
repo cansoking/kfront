@@ -102,7 +102,8 @@
                         splitLine: {
                         show: false
                         },
-                        data:date,//数据来自date数组
+                        //暂时隐藏数据
+                        // data:date,//数据来自date数组
                         axisLine:{
                             lineStyle:{
                                 color:'#FFF'
@@ -133,7 +134,8 @@
                         name: 'Fake Data',
                         type: 'line',
                         showSymbol: false,
-                        data: data,
+                        //暂时隐藏数据
+                        // data: data,
                         itemStyle:{
                             color:'#e6194B'
                         }
@@ -165,12 +167,13 @@
                     data.push(randomData());
                     //date的push在randomData()中
                     myChart.setOption({//貌似其他设置不会改变
-                        xAxis:{data:date},
-                        series: [
-                        {
-                            data: data
-                        }
-                        ]
+                        //暂时隐藏数据
+                        // xAxis:{data:date},
+                        // series: [
+                        // {
+                        //     data: data
+                        // }
+                        // ]
                     });
                 }, 1000);
                 

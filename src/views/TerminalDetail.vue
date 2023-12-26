@@ -30,8 +30,8 @@
         <div class="no">
           <div class="no-hd">
             <ul>
-              <li>100</li>
-              <li>3</li>
+              <li>0</li>
+              <li>0</li>
             </ul>
           </div>
           <div class="no-bd">
