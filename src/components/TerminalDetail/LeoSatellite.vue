@@ -54,7 +54,9 @@
                         name:now.toString(),
                         value: [
                         string,
-                        Math.round(value)
+                        //把数值暂时全都改为0
+                        // Math.round(value)
+                        0
                         ]
                     };
                 }
@@ -102,8 +104,7 @@
                         splitLine: {
                         show: false
                         },
-                        //暂时隐藏数据
-                        // data:date,//数据来自date数组
+                        data:date,//数据来自date数组
                         axisLine:{
                             lineStyle:{
                                 color:'#FFF'
@@ -126,7 +127,7 @@
                             lineStyle:{
                                 color:'#FFF'
                             },
-                            show:false
+                            show:true
                         },
                     },
                     series: [
@@ -134,8 +135,7 @@
                         name: 'Fake Data',
                         type: 'line',
                         showSymbol: false,
-                        //暂时隐藏数据
-                        // data: data,
+                        data: data,
                         itemStyle:{
                             color:'#3cb44b'
                         }
@@ -167,13 +167,12 @@
                     data.push(randomData());
                     //date的push在randomData()中
                     myChart.setOption({//貌似其他设置不会改变
-                        //暂时隐藏数据
-                        // xAxis:{data:date},
-                        // series: [
-                        // {
-                        //     data: data
-                        // }
-                        // ]
+                        xAxis:{data:date},
+                        series: [
+                        {
+                            data: data
+                        }
+                        ]
                     });
                 }, 1000);
                 

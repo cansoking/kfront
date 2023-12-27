@@ -52,7 +52,10 @@ export default {
         date.push(string); //每当执行data.push()时，也会执行date.push()
         return {
           name: now.toString(),
-          value: [string, Math.round(value)],
+          value: [string, 
+          //把数值暂时全都改为0
+          // Math.round(value)
+          0],
         };
       }
 
@@ -100,8 +103,7 @@ export default {
           splitLine: {
             show: false,
           },
-          //暂时隐藏数据
-          // data: date, //数据来自date数组
+          data: date, //数据来自date数组
           axisLine: {
             lineStyle: {
               color: "#FFF",
@@ -124,7 +126,7 @@ export default {
             lineStyle: {
               color: "#FFF",
             },
-            show: false,
+            show: true,
           },
         },
         series: [
@@ -132,8 +134,7 @@ export default {
             name: "Fake Data",
             type: "line",
             showSymbol: false,
-            //暂时隐藏数据
-            // data: data,
+            data: data,
             itemStyle: {
               color: "#ffe119",
             },
@@ -166,13 +167,12 @@ export default {
         //date的push在randomData()中
         myChart.setOption({
           //貌似其他设置不会改变
-          //暂时隐藏数据
-          // xAxis: { data: date },
-          // series: [
-          //   {
-          //     data: data,
-          //   },
-          // ],
+          xAxis: { data: date },
+          series: [
+            {
+              data: data,
+            },
+          ],
         });
       }, 1000);
 
