@@ -41,7 +41,7 @@
           <el-tooltip
             class="item"
             effect="dark"
-            content="回到主页"
+            content="注销登录"
             placement="bottom"
           >
             <!--            <a href="/static/pages/index.html#/world">
@@ -106,8 +106,9 @@ export default {
       sessionStorage.setItem("nodetype", this.$store.state.nodetype);
     },
     ret() {
-      this.$router.push("/world");
-      location.reload();
+      sessionStorage.clear();
+      // this.$router.replace("/login");
+      window.location.href = "/login";
     },
     noderemote() {
       this.nodeoption = [];
