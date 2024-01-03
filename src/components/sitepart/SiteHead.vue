@@ -98,12 +98,14 @@ export default {
       for (let i = 0; i < this.nodeinfo.length; i++) {
         if (this.nodeinfo[i].nodeName === item) {
           this.$store.state.nodeip = this.nodeinfo[i].nodeIp;
+          this.$store.state.nodebody = this.nodeinfo[i];
           i = this.nodeinfo.length;
         }
       }
       sessionStorage.setItem("nodename", this.$store.state.nodename);
       sessionStorage.setItem("ip", this.$store.state.nodeip);
       sessionStorage.setItem("nodetype", this.$store.state.nodetype);
+      sessionStorage.setItem("nodebody", JSON.stringify(this.$store.state.nodebody));
     },
     ret() {
       sessionStorage.clear();
@@ -139,6 +141,7 @@ export default {
     this.$store.state.nodename = window.sessionStorage.getItem("nodename");
     this.$store.state.nodeip = window.sessionStorage.getItem("ip");
     this.$store.state.nodetype = window.sessionStorage.getItem("nodetype");
+    this.$store.state.nodebody = JSON.parse(window.sessionStorage.getItem("nodebody"));
     this.value = this.$store.state.nodename;
   },
   computed: {
