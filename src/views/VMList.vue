@@ -1147,7 +1147,7 @@ export default {
             this.$store.state.nodeip
         )
         .then((res) => {
-          this.poddata = this.data_resolver_pod(JSON.parse(res.data[0]).output);
+          this.poddata = this.data_resolver_pod(res.data);
         })
         .catch((err) => {
           console.log("errors", err);
@@ -1175,10 +1175,9 @@ export default {
     // 解析pod数据
     data_resolver_pod(sdata) {
       let res = [];
-      let rows = sdata.split("\n");
       let i = 1;
-      for (; i < rows.length - 1; i++) {
-        let cols = rows[i].split("   ");
+      for (; i < sdata.length; i++) {
+        let cols = sdata[i].split("   ");
         let j = 0;
         cols = cols.filter(function (item) {
           return item !== "";
