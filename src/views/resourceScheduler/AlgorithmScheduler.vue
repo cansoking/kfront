@@ -152,7 +152,7 @@
             label="操作"
         >
           <template slot-scope="scope">
-            <el-button @click="() => modifyConnectTask(scope.row)" type="link">关联资源</el-button>
+            <el-button @click="() => modifyConnectTask(scope.row)" type="link">任务列表</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -345,10 +345,8 @@ export default {
               value: item.attributes_values[key]
             }
           })
-          console.log(JSON.parse(JSON.stringify(item.attributes_values_arr)))
         }
       })
-      console.log(result.data,'result.data');
       this.taskData = result.data
     },
     async fetchTaskData() {
@@ -406,13 +404,11 @@ export default {
       this.selectedTaskId = id
     },
     async modifyConnectTask({id}) {
-      // console.log(id)
       this.modifyConnectTaskId = id
       this.connectOpen = true
       this.connectTaskLoading = true
       const result = await fetchTasksByResource(id).catch(e => e)
       this.connectTaskLoading = false
-      // console.log(result)
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败')
       }
