@@ -123,10 +123,10 @@
             <i class="el-icon-c-scale-to-original"></i>
             <span slot="title">Node指标</span>
           </el-menu-item>
-          <el-menu-item index="/minfo" route="minfo">
+          <!-- <el-menu-item index="/minfo" route="minfo">
             <i class="el-icon-c-scale-to-original"></i>
             <span slot="title">物理机指标</span>
-          </el-menu-item>
+          </el-menu-item> -->
           <el-menu-item index="/vminfo" route="vminfo">
             <i class="el-icon-c-scale-to-original"></i>
             <span slot="title">虚拟机指标</span>
