@@ -33,6 +33,16 @@ export const fetchTask = (task_type_id)=>{
     })
 }
 
+export const fetchTaskByConditions = (task_type_id, task_status) => {
+    return get({
+        url: '/task/fetchTaskByConditions',
+        data: {
+            task_type_id,
+            task_status,
+        }
+    })
+}
+
 export const fetchAllTasks = ()=>{
     return get({
         url: '/task/fetchAllTasks',

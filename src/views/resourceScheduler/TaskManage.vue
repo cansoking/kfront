@@ -150,6 +150,29 @@
         </el-form-item>
       </el-form>
     </el-drawer>
+
+    <el-dialog
+      title="上传"
+      :visible.sync="uploadDialog"
+      width="30%"
+      :before-close="handleClose">
+      <el-upload
+        class="upload-demo"
+        ref="upload"
+        action="http://81.70.164.10:8750/task/createMultiTaskByFile"
+        :on-success="handleSuccess"
+        :on-error="handleError"
+        :file="taskFile"
+        :auto-upload="false">
+        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+        <div slot="tip" class="el-upload__tip"> 上传json文件</div>
+      </el-upload>
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="uploadDialog = false">关 闭</el-button>
+      </span>
+      </el-dialog>
   </div>
 </template>
 
@@ -173,6 +196,7 @@ export default {
       tableLoading: false,
       submitLoading: false,
       open: false,
+      uploadDialog: false,
       taskFile: null,
       taskId: '',
       dynamicValidateForm: {
@@ -248,9 +272,32 @@ export default {
       this.getTaskTypeData()
     },
     addTaskByFile() {
-      this.taskFile = true;
+      this.uploadDialog = true;
       // this.getTaskTypeData()
     },
+    submitUpload() {
+        this.$refs.upload.submit();
+    },
+    handleSuccess(response) {
+      // 文件上传成功后的回调函数
+      // response 包含服务器返回的数据
+      console.log(response)
+      if (response.code != 200) {
+        this.$alert(response.message, '上传错误', {
+          confirmButtonText: '关闭',
+        });
+      } else {
+        this.$alert(response.data, '添加成功', {
+          confirmButtonText: '关闭',
+        });
+      }
+    },
+    handleError() {
+      this.$alert('上传错误', {
+          confirmButtonText: '关闭',
+        });
+    },
+
     async getTaskTypeData() {
       this.tableLoading = true;
       const result = await fetchAllTaskType().catch(e => e);

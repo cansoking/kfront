@@ -7,13 +7,28 @@
       <el-select
           v-model="taskId"
           style="width: 180px"
-          @change="fetchTaskData"
-          clearable
-          filterable
+          @change="fetchTaskDataByConditions"
           optionFilterProp="label"
+          clearable
       >
         <el-option
             v-for="item in taskTypeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+        </el-option>
+      </el-select>
+      <div style="font-size: 16px;display: inline-block;margin-left: 12px">
+        选择任务状态：
+      </div>
+      <el-select
+          v-model="taskStatus"
+          style="width: 180px"
+          @change="fetchTaskDataByConditions"
+          clearable
+      >
+        <el-option
+            v-for="item in taskStatusOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value">
@@ -152,7 +167,7 @@
             label="操作"
         >
           <template slot-scope="scope">
-            <el-button @click="() => modifyConnectTask(scope.row)" type="link">关联资源</el-button>
+            <el-button @click="() => modifyConnectTask(scope.row)" type="link">任务列表</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -228,7 +243,7 @@
 </template>
 <script>
 
-import {addTaskToResource, fetchAllTasks, fetchAllTaskType, fetchTask} from "@/api/task";
+import {addTaskToResource, fetchAllTasks, fetchAllTaskType, fetchTask,  fetchTaskByConditions} from "@/api/task";
 import {isSuccess} from "@/utils";
 import {cloneDeep, isEmpty} from 'lodash'
 import {
@@ -253,6 +268,7 @@ export default {
       runLoading: false,
       initResourceData: [],
       taskId: undefined,
+      taskStatus: undefined,
       resourceId: undefined,
       selectedResourceId: undefined,
       selectedTaskId: undefined,
@@ -260,6 +276,13 @@ export default {
       connectOpen: false,
       modifyConnectTaskId: undefined,
       taskTypeOptions: [],
+      taskStatusOptions: [
+        {"value":1, "label":"任务发起"},
+        {"value":2, "label":"正在执行"},
+        {"value":3, "label":"任务停止"},
+        {"value":4, "label":"任务结束"},
+        {"value":5, "label":"任务失败"}
+      ],
       resourceTypeOptions: []
     }
   },
@@ -274,9 +297,9 @@ export default {
     }
   },
   mounted() {
-    this.fetchTaskData();
+    // this.fetchTaskData();
     this.getTaskTypeData()
-    this.getAllResourceData();
+    // this.getAllResourceData();
     this.getResourceTypeData();
   },
   methods: {
@@ -345,20 +368,53 @@ export default {
               value: item.attributes_values[key]
             }
           })
-          console.log(JSON.parse(JSON.stringify(item.attributes_values_arr)))
         }
       })
-      console.log(result.data,'result.data');
       this.taskData = result.data
     },
     async fetchTaskData() {
-      if (!this.taskId) return this.getAllTaskData()
+      // if (!this.taskId) return this.getAllTaskData()
       this.tableLoading = true;
       const result = await fetchTask(this.taskId).catch(e => e);
       this.tableLoading = false;
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }      
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+        }
+      })
+      this.taskData = result.data
+    },
+    async fetchTaskDataByConditions() {
+      if (!this.taskId) {
+        this.taskData = [];
+        return;
+      }
+      this.tableLoading = true;
+      const result = await fetchTaskByConditions(this.taskId, this.taskStatus).catch(e => e);
+      this.tableLoading = false;
+      if (!isSuccess(result)) {
+        return this.$message.error(result.message || '请求失败');
+      }      
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+        }
+      })
       this.taskData = result.data
     },
     async getAllResourceData() {
@@ -406,13 +462,11 @@ export default {
       this.selectedTaskId = id
     },
     async modifyConnectTask({id}) {
-      // console.log(id)
       this.modifyConnectTaskId = id
       this.connectOpen = true
       this.connectTaskLoading = true
       const result = await fetchTasksByResource(id).catch(e => e)
       this.connectTaskLoading = false
-      // console.log(result)
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败')
       }
@@ -434,6 +488,8 @@ export default {
 </script>
 
 
-<style scoped>
-
+<style>
+.el-message-box__message {
+  white-space: pre-line; 
+}
 </style>
