@@ -152,20 +152,20 @@
     </el-drawer>
 
     <el-dialog
-      title="提示"
+      title="上传"
       :visible.sync="uploadDialog"
       width="30%"
       :before-close="handleClose">
       <el-upload
         class="upload-demo"
         ref="upload"
-        action="http://127.0.0.1:8750/task/createMultiTaskByFile"
+        action="http://81.70.164.10:8750/task/createMultiTaskByFile"
         :on-success="handleSuccess"
         :on-error="handleError"
         :file="taskFile"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+<el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
         <div slot="tip" class="el-upload__tip"> 上传json文件</div>
       </el-upload>
       

@@ -161,7 +161,7 @@
       <el-upload
         class="upload-demo"
         ref="upload"
-        action="http://127.0.0.1:8750/resource/createMultiResourceByFile"
+        action="http://81.70.164.10:8750/resource/createMultiResourceByFile"
         :on-success="handleSuccess"
         :on-error="handleError"
         :file="taskFile"
