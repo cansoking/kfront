@@ -19,19 +19,33 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
-axios.defaults.baseURL="http://localhost:8080"
+axios.defaults.baseURL = "http://localhost:8080"
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(res => res.meta.requireAuth)) { // 验证是否需要选择节点
-    var nodename = window.sessionStorage.getItem('nodename');
-    console.log(nodename)
-    // nodename = "master1"
-    if (nodename) { // 查询本地存储信息
-      next();
+    console.log(to.name);
+    let islogin = window.sessionStorage.getItem('islogin');
+    console.log(islogin);
+    if (islogin) {
+      if (to.name === 'world') {
+        next()
+      } else {
+        let nodename = window.sessionStorage.getItem('nodename');
+        console.log(nodename);
+        if (nodename) { // 查询本地存储信息
+          console.log('node ac');
+          next();
+        } else {
+          console.log('node no ac');
+          next('/world');
+        }
+      }
     } else {
-      next('/world');
+      console.log('login no ac');
+      next('/login');
     }
   } else {
+    console.log("no ac");
     next();
   }
 })

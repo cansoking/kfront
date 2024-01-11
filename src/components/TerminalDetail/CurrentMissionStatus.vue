@@ -18,7 +18,8 @@
                 
                 var myChart = echarts.init(container);//运用了插槽，从父组件传来的模板
 
-                let data = [11, 22, 7];//初始数据
+                // let data = [11, 22, 7];//初始数据
+                let data = [0,0, 0];//初始数据
                 
                 
                 myChart.setOption( {
@@ -129,23 +130,23 @@
                 let resizeObserver = new ResizeObserver(()=>myChart?.resize());
                 resizeObserver.observe(container);
 
-
-
-                setInterval(function () {
-                    for(var i=0;i<3;i++){
-                        if(data[i]<100){
-                            data[i] = data[i]+1;
-                        }
-                    }
-                    //date的push在randomData()中
-                    myChart.setOption({//貌似其他设置不会改变
-                        series: [
-                        {
-                            data: data
-                        }
-                        ]
-                    });
-                }, 1000);
+                //暂时隐藏数据
+                //数据每秒加1
+                // setInterval(function () {
+                //     for(var i=0;i<3;i++){
+                //         if(data[i]<100){
+                //             data[i] = data[i]+1;
+                //         }
+                //     }
+                //     //date的push在randomData()中
+                //     myChart.setOption({//貌似其他设置不会改变
+                //         series: [
+                //         {
+                //             data: data
+                //         }
+                //         ]
+                //     });
+                // }, 1000);
             })
         }
     }

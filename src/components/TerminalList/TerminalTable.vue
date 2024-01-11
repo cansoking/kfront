@@ -35,53 +35,54 @@ import router from '@/router'
 
 // const router = useRouter();
 
-const tableData = [
-  {
-    sid:'00000001',
-    mid:'00000001',
-    sendingEnd:'192.168.1.5',
-    receiveEnd:'192.168.2.5',
-    curState:"传输中",
-    totalPackageNum:'100',
-    finishPackageNum:'55',
-    startTime:'15:00',
-    finishTime:'-'
-  },
-  {
-    sid:'00000001',
-    mid:'00000002',
-    sendingEnd:'192.168.20.4',
-    receiveEnd:'192.168.23.5',
-    curState:"已完成",
-    totalPackageNum:'100',
-    finishPackageNum:'100',
-    startTime:'14:59',
-    finishTime:'15:10',
-  },
-  {
-    sid:'00000001',
-    mid:'00000003',
-    sendingEnd:'192.168.1.5',
-    receiveEnd:'192.168.2.5',
-    curState:"已取消",
-    totalPackageNum:'200',
-    finishPackageNum:'33',
-    startTime:'13:00',
-    finishTime:'-'
-  },
-  {
-    sid:'00000001',
-    mid:'00000004',
-    sendingEnd:'192.168.100.5',
-    receiveEnd:'192.168.200.6',
-    curState:"暂停中",
-    totalPackageNum:'60',
-    finishPackageNum:'33',
-    startTime:'11:00',
-    finishTime:'-'
-  },
+//数据
+// const tableData = [
+//   {
+//     sid:'00000001',
+//     mid:'00000001',
+//     sendingEnd:'192.168.1.5',
+//     receiveEnd:'192.168.2.5',
+//     curState:"传输中",
+//     totalPackageNum:'100',
+//     finishPackageNum:'55',
+//     startTime:'15:00',
+//     finishTime:'-'
+//   },
+//   {
+//     sid:'00000001',
+//     mid:'00000002',
+//     sendingEnd:'192.168.20.4',
+//     receiveEnd:'192.168.23.5',
+//     curState:"已完成",
+//     totalPackageNum:'100',
+//     finishPackageNum:'100',
+//     startTime:'14:59',
+//     finishTime:'15:10',
+//   },
+//   {
+//     sid:'00000001',
+//     mid:'00000003',
+//     sendingEnd:'192.168.1.5',
+//     receiveEnd:'192.168.2.5',
+//     curState:"已取消",
+//     totalPackageNum:'200',
+//     finishPackageNum:'33',
+//     startTime:'13:00',
+//     finishTime:'-'
+//   },
+//   {
+//     sid:'00000001',
+//     mid:'00000004',
+//     sendingEnd:'192.168.100.5',
+//     receiveEnd:'192.168.200.6',
+//     curState:"暂停中",
+//     totalPackageNum:'60',
+//     finishPackageNum:'33',
+//     startTime:'11:00',
+//     finishTime:'-'
+//   },
   
-]
+// ]
 
 const goToDetail = ()=>{
   router.push('/detail');

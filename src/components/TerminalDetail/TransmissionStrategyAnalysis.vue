@@ -121,50 +121,52 @@ export default {
         ],
         // Declare several bar series, each will be mapped
         // to a column of dataset.source by default.
-        series: [
-          {
-            type: "bar",
-            name: "原始编码包",
-            data: [10],
-            xAxisIndex: 0,
-            yAxisIndex: 0,
-          },
-          {
-            type: "bar",
-            name: "固定编码包",
-            data: [20],
-            xAxisIndex: 0,
-            yAxisIndex: 0,
-          },
-          {
-            type: "bar",
-            name: "自定义编码包",
-            data: [10],
-            xAxisIndex: 0,
-            yAxisIndex: 0,
-          },
-          {
-            type: "bar",
-            name: "单路径传输",
-            data: [22],
-            xAxisIndex: 1,
-            yAxisIndex: 1,
-          },
-          {
-            type: "bar",
-            name: "多路径传输",
-            data: [11],
-            xAxisIndex: 1,
-            yAxisIndex: 1,
-          },
-          {
-            type: "bar",
-            name: "智能切换传输",
-            data: [3],
-            xAxisIndex: 1,
-            yAxisIndex: 1,
-          },
-        ],
+        
+        //暂时隐藏数据
+        // series: [
+        //   {
+        //     type: "bar",
+        //     name: "原始编码包",
+        //     data: [10],
+        //     xAxisIndex: 0,
+        //     yAxisIndex: 0,
+        //   },
+        //   {
+        //     type: "bar",
+        //     name: "固定编码包",
+        //     data: [20],
+        //     xAxisIndex: 0,
+        //     yAxisIndex: 0,
+        //   },
+        //   {
+        //     type: "bar",
+        //     name: "自定义编码包",
+        //     data: [10],
+        //     xAxisIndex: 0,
+        //     yAxisIndex: 0,
+        //   },
+        //   {
+        //     type: "bar",
+        //     name: "单路径传输",
+        //     data: [22],
+        //     xAxisIndex: 1,
+        //     yAxisIndex: 1,
+        //   },
+        //   {
+        //     type: "bar",
+        //     name: "多路径传输",
+        //     data: [11],
+        //     xAxisIndex: 1,
+        //     yAxisIndex: 1,
+        //   },
+        //   {
+        //     type: "bar",
+        //     name: "智能切换传输",
+        //     data: [3],
+        //     xAxisIndex: 1,
+        //     yAxisIndex: 1,
+        //   },
+        // ],
       });
 
       //让图表随浏览器大小变换而变换

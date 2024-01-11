@@ -41,23 +41,32 @@
           <el-tooltip
             class="item"
             effect="dark"
-            content="回到主页"
+            content="注销登录"
             placement="bottom"
           >
-<!--            <a href="/static/pages/index.html#/world">
+            <!--            <a href="/static/pages/index.html#/world">
               <i
                 style="color: white; font-size: 35px; line-height: 50px"
                 class="el-icon-switch-button"
               ></i>
             </a>-->
 
-            <button @click="ret" class="el-icon-switch-button" style="border: none;background-color: #303641;color: white; font-size: 35px; line-height: 50px">
-<!--              <i
+            <button
+              @click="ret"
+              class="el-icon-switch-button"
+              style="
+                border: none;
+                background-color: #303641;
+                color: white;
+                font-size: 35px;
+                line-height: 50px;
+              "
+            >
+              <!--              <i
                   style="color: white; font-size: 35px; line-height: 50px"
                   class="el-icon-switch-button"
               ></i>-->
             </button>
-
           </el-tooltip>
         </el-col>
       </el-row>
@@ -89,13 +98,19 @@ export default {
       for (let i = 0; i < this.nodeinfo.length; i++) {
         if (this.nodeinfo[i].nodeName === item) {
           this.$store.state.nodeip = this.nodeinfo[i].nodeIp;
+          this.$store.state.nodebody = this.nodeinfo[i];
           i = this.nodeinfo.length;
         }
       }
+      sessionStorage.setItem("nodename", this.$store.state.nodename);
+      sessionStorage.setItem("ip", this.$store.state.nodeip);
+      sessionStorage.setItem("nodetype", this.$store.state.nodetype);
+      sessionStorage.setItem("nodebody", JSON.stringify(this.$store.state.nodebody));
     },
-    ret(){
-      this.$router.push('/world')
-      location.reload();
+    ret() {
+      sessionStorage.clear();
+      // this.$router.replace("/login");
+      window.location.href = "/login";
     },
     noderemote() {
       this.nodeoption = [];
@@ -126,18 +141,19 @@ export default {
     this.$store.state.nodename = window.sessionStorage.getItem("nodename");
     this.$store.state.nodeip = window.sessionStorage.getItem("ip");
     this.$store.state.nodetype = window.sessionStorage.getItem("nodetype");
+    this.$store.state.nodebody = JSON.parse(window.sessionStorage.getItem("nodebody"));
     this.value = this.$store.state.nodename;
   },
   computed: {
     tmp_nodename_w() {
-      return this.$store.state.nodename
-    }
+      return this.$store.state.nodename;
+    },
   },
   watch: {
     tmp_nodename_w(nv, ov) {
-      this.value = nv
-    }
-  }
+      this.value = nv;
+    },
+  },
 };
 </script>
 

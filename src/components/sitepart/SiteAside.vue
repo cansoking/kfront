@@ -158,10 +158,10 @@
           <i class="el-icon-coin"></i>
           <span>异构卫星网络</span>
         </template>
-        <el-menu-item index="/worldMap" route="worldMap">
+        <!-- <el-menu-item index="/worldMap" route="worldMap">
           <i class="el-icon-pie-chart"></i>
           <span slot="title">世界地图</span>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-menu-item index="/detail" route="detail">
           <i class="el-icon-pie-chart"></i>
           <span slot="title">服务器详情</span>
