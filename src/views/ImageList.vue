@@ -116,11 +116,13 @@ import { del } from "vue";
 export default {
   name: "ImageList",
   mounted() {
+    this.formData.nodeName = this.$store.state.nodename;
     this.getVMList();
   },
   data() {
     return {
       baseurl: "http://39.98.124.97:8080",
+      // baseurl: "http://127.0.0.1:8080",
       cidata: [],
       psearch: "",
       curpage: 1,
@@ -134,9 +136,10 @@ export default {
         imageId: "",
       },
       formData: {
-        virtualMachineIp: "39.98.124.97",
-        userName: "root",
-        userPassword: "Upc123456@",
+        // virtualMachineIp: "39.98.124.97",
+        // userName: "root",
+        // userPassword: "Upc123456@",
+        nodeName: this.tmp_nodename_w,
       },
     };
   },
@@ -153,10 +156,13 @@ export default {
       this.reqData.imageId = row.imageid;
       console.log("row:" + row);
       this.$axios
-        .post(this.baseurl + "/containerd/deleteImage", {
-          imageInfo: row,
-          vmInfo: this.formData,
-        })
+        .post(
+          this.baseurl +
+            "/containerd/deleteImage?nodeName=" +
+            this.$store.state.nodename +
+            "&imageId=" +
+            row.imageId
+        )
         .then((res) => {
           console.log(res);
           if (res.data[0] === "I") {
@@ -185,7 +191,7 @@ export default {
     errupload(err, file, fileList) {
       this.$notify.error({
         title: "上传失败",
-        message: JSON.parse(err.message).message,
+        message: err,
         position: "bottom-right",
         duration: 6000,
       });
@@ -274,14 +280,15 @@ export default {
   },
   computed: {
     tmp_nodename_w() {
-      return this.$store.state.nodename
-    }
+      return this.$store.state.nodename;
+    },
   },
   watch: {
     tmp_nodename_w(nv, ov) {
-      this.getVMList()
-    }
-  }
+      this.formData.nodeName = this.$store.state.nodename;
+      this.getVMList();
+    },
+  },
 };
 </script>
   

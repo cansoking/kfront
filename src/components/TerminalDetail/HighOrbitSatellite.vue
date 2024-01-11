@@ -28,15 +28,6 @@
     import {onBeforeMount, onMounted} from 'vue'
     export default{ 
         setup(){
-            //让图表随浏览器大小变化而变化，貌似没用，所以注释了
-            // onBeforeMount(()=>{
-            //     window.addEventListener('resize',resizeChart)
-            // })
-
-            // function resizeChart(){
-            //     myChart?.resize();
-            // }
-            
             onMounted(()=>{
                 let container = document.getElementById("HighOrbitSatellite");//获取容器
                 // var myChart = echarts.init(document.getElementById('main'));
@@ -54,7 +45,9 @@
                         name:now.toString(),
                         value: [
                         string,
-                        Math.round(value)
+                        //把数值暂时全都改为0
+                        // Math.round(value)
+                        0
                         ]
                     };
                 }
@@ -66,7 +59,7 @@
                 // let oneDay = 24 * 3600 * 1000;//1天
                 let oneSecond = 1000;//1秒
                 let value = Math.random() * 1000;
-                for (var i = 0; i < 1000; i++) {//先往data数组中加1000个数据
+                for (var i = 0; i < 1000; i++) {//先往data数组中加1000个数据                
                     data.push(randomData());
                 }
                 
@@ -125,7 +118,7 @@
                             lineStyle:{
                                 color:'#FFF'
                             },
-                            show:false
+                            show:true
                         },
                     },
                     series: [
@@ -165,6 +158,7 @@
                     data.push(randomData());
                     //date的push在randomData()中
                     myChart.setOption({//貌似其他设置不会改变
+                        
                         xAxis:{data:date},
                         series: [
                         {

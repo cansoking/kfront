@@ -7,7 +7,6 @@
           虚拟机指标列表
         </p></el-col
       >
-
     </el-row>
     <!-- 表格区域 -->
     <el-table
@@ -24,54 +23,61 @@
       empty-text="暂无虚拟机指标，请检查是否有虚拟机正在运行"
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
-    <el-table-column type="expand">
-      <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
-
-
-          <el-form-item label="虚拟机指标"> </el-form-item>
-          <el-table
-              size="small"
-              :data="vmdata"
-              style="width: 90%"
-          >
-            <el-table-column type="index"> </el-table-column>
-            <el-table-column prop="name" label="虚拟机名称" width="200"></el-table-column>
-            <el-table-column prop="cpuNum" label="cpu个数" ></el-table-column>
-            <el-table-column prop="usecpu" label="cpu占用率(%)" ></el-table-column>
-            <el-table-column prop="maxMem" label="最大内存(GiB)"></el-table-column>
-            <el-table-column prop="usemem" label="内存占用率(%)"></el-table-column>
-          </el-table>
-        </el-form>
-      </template>
-    </el-table-column>
-    <el-table-column
-      label="序号"
-      type="index"
-    >
-    </el-table-column>
-    <el-table-column
-      width="200"
-      sortable
-      label="虚拟机名称"
-      prop="name"
-    >
-    </el-table-column>
-    <el-table-column width="200" sortable label="状态" prop="state">
+      <!-- <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="虚拟机指标"> </el-form-item>
+            <el-table size="small" :data="vmdata" style="width: 90%">
+              <el-table-column type="index"> </el-table-column>
+              <el-table-column
+                prop="name"
+                label="虚拟机名称"
+                width="200"
+              ></el-table-column>
+              <el-table-column prop="cpuNum" label="cpu个数"></el-table-column>
+              <el-table-column
+                prop="usecpu"
+                label="cpu占用率(%)"
+              ></el-table-column>
+              <el-table-column
+                prop="maxMem"
+                label="最大内存(GiB)"
+              ></el-table-column>
+              <el-table-column
+                prop="usemem"
+                label="内存占用率(%)"
+              ></el-table-column>
+            </el-table>
+          </el-form>
+        </template>
+      </el-table-column> -->
+      <el-table-column label="序号" type="index"> </el-table-column>
+      <el-table-column width="200" sortable label="虚拟机名称" prop="name">
+      </el-table-column>
+      <el-table-column width="200" sortable label="状态" prop="state">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
             >挂起</el-tag
           >
-          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'">运行</el-tag>
+          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'"
+            >运行</el-tag
+          >
           <el-tag v-else type="danger">关机</el-tag>
         </template>
       </el-table-column>
-
+      <el-table-column
+        prop="name"
+        label="虚拟机名称"
+        width="200"
+      ></el-table-column>
+      <el-table-column prop="cpuNum" label="cpu个数"></el-table-column>
+      <el-table-column prop="usecpu" label="cpu占用率(%)"></el-table-column>
+      <el-table-column prop="maxMem" label="最大内存(GiB)"></el-table-column>
+      <el-table-column prop="usemem" label="内存占用率(%)"></el-table-column>
       <el-table-column align="right">
         <template slot="header">
           <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
         </template>
-
       </el-table-column>
     </el-table>
     <!-- 分页栏 -->
@@ -86,7 +92,6 @@
       >
       </el-pagination>
     </div>
-
   </div>
 </template>
     
@@ -98,7 +103,8 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://39.98.124.97:8080",
+      // baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://" + this.$store.state.nodeip + ":8080",
       vmdata: [],
       psearch: "",
       curpage: 1,
@@ -115,18 +121,15 @@ export default {
           trigger: "blur",
         },
       },
-      
     };
   },
   methods: {
-
-
     // 获取虚拟机指标列表数据
     getPodIndexList() {
       this.$axios
         .get(this.baseurl + "/getVMIndexList")
         .then((res) => {
-        console.log(res);
+          console.log(res);
           this.vmdata = res.data;
           this.totalvm = res.data.length;
         })
@@ -142,6 +145,17 @@ export default {
     // 重置表单
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+  },
+  computed: {
+    tmp_nodename_w() {
+      return this.$store.state.nodename;
+    },
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.baseurl = "http://" + this.$store.state.nodeip + ":8080";
+      this.getPodIndexList();
     },
   },
 };

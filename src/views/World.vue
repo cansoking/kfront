@@ -133,9 +133,11 @@ export default {
                   sessionStorage.setItem("nodename", this.nodeList[i].nodeName);
                   sessionStorage.setItem("ip", this.nodeList[i].nodeIp);
                   sessionStorage.setItem("nodetype", this.nodeList[i].nodeType);
+                  sessionStorage.setItem("nodebody", JSON.stringify(this.nodeList[i]));
                   this.$store.state.nodename = this.nodeList[i].nodeName
                   this.$store.state.nodeip = this.nodeList[i].nodeIp
                   this.$store.state.nodetype = this.nodeList[i].nodeType
+                  this.$store.state.nodebody = this.nodeList[i]
                   break;
                 }
               }

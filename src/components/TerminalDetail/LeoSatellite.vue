@@ -54,7 +54,9 @@
                         name:now.toString(),
                         value: [
                         string,
-                        Math.round(value)
+                        //把数值暂时全都改为0
+                        // Math.round(value)
+                        0
                         ]
                     };
                 }
@@ -125,7 +127,7 @@
                             lineStyle:{
                                 color:'#FFF'
                             },
-                            show:false
+                            show:true
                         },
                     },
                     series: [

@@ -52,7 +52,10 @@ export default {
         date.push(string); //每当执行data.push()时，也会执行date.push()
         return {
           name: now.toString(),
-          value: [string, Math.round(value)],
+          value: [string, 
+          //把数值暂时全都改为0
+          // Math.round(value)
+          0],
         };
       }
 
@@ -123,7 +126,7 @@ export default {
             lineStyle: {
               color: "#FFF",
             },
-            show: false,
+            show: true,
           },
         },
         series: [
