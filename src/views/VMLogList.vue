@@ -37,7 +37,7 @@
       <el-col :span="1">
         <el-button round plain type="primary" @click="getVMLog">查询</el-button>
       </el-col>
-      <el-col :span="4" :offset="3"
+      <el-col :span="5"
       ><p style="font-size: 20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
         日志保存时间:{{savedays}}天
       </p></el-col
@@ -146,6 +146,7 @@ export default {
       this.logvisible = true;
       this.logcontent = row.vmContent;
     },
+
     getVMLog() {
       this.starttime = moment(this.starttime).format("YYYY-MM-DD HH:mm:ss");
       this.endtime = moment(this.endtime).format("YYYY-MM-DD HH:mm:ss");

@@ -1536,6 +1536,7 @@ export default {
       this.totalvm = this.vmdata.length;
       this.baseurl = "http://" + this.$store.state.nodeip + ":8080"
       this.execurl = "http://" + this.$store.state.nodeip + ":8081"
+      // this.baseurl = this.$store.state.nodeip
       this.getVMList("http://" + this.$store.state.nodeip + ":8080");
     },
   },

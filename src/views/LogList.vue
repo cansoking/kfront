@@ -60,9 +60,14 @@
           >查询</el-button
         >
       </el-col>
-      <el-col span="3.5"><p style="font-size:20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
+      <el-col span="3"><p style="font-size:20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
         日志保存时间:{{savedays}}天
       </p></el-col
+      >
+      <el-col :span="2"
+      >
+        <el-button round plain type="primary" @click="downloadFile">下载任务日志</el-button>
+      </el-col
       >
     </el-row>
     <!-- 表格区域 -->
@@ -220,6 +225,34 @@ export default {
           console.log("errors", err);
         });
     },
+    downloadFile() {
+      // 通过 fetch 请求后端接口下载文件
+      fetch('http://39.98.124.97:8080/downloadLog', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+          .then((response) => {
+            console.log(response)
+            // 将响应转换为 blob 对象
+            return response.blob();
+          })
+          .then((blob) => {
+            // 创建一个链接并下载文件
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'TaskLog.txt'); // 设置下载文件名
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+          })
+          .catch((error) => {
+            console.error('下载文件时出错:', error);
+          });
+    },
+
     handleDelete(index, row) {
       this.$confirm(`您确定删除吗?`, "提示", {
         confirmButtonText: "确定",
