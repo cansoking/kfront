@@ -110,7 +110,7 @@ export default {
     ret() {
       sessionStorage.clear();
       // this.$router.replace("/login");
-      window.location.href = "/login";
+      window.location.href = "/static/pages/index.html#/login";
     },
     noderemote() {
       this.nodeoption = [];
