@@ -670,7 +670,7 @@ export default {
               });
               sessionStorage.setItem("islogin", true);
               // sessionStorage.setItem("nodename", 'master1');
-              this.$router.push("/world")
+              this.$router.replace("/world")
             } else {
               this.$message({
                 message: res.data.msg,

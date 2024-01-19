@@ -18,6 +18,11 @@ export default {
     };
   },
   mounted() {
+    const is_refresh = localStorage.getItem("refresh")
+    if(is_refresh === "true") {
+      location.reload()
+      localStorage.setItem("refresh", "false")
+    }
     // location.reload()
     this.getNodes();
   },
