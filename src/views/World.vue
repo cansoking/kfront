@@ -156,6 +156,11 @@ export default {
                 break;
               }
             }
+            if(this.$store.state.nodename.includes("云节点")){
+              this.$store.state.nodename = this.$store.state.nodename.replace("云节点","master");
+            }else if(this.$store.state.nodename.includes("边节点")){
+              this.$store.state.nodename = this.$store.state.nodename.replace("边节点","worker");
+            }
             this.$router.push("/machineinfo");
           }
         });
