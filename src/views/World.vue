@@ -166,7 +166,7 @@ export default {
             }else if(this.$store.state.nodename.includes("边节点")){
               this.$store.state.nodename = this.$store.state.nodename.replace("边节点","worker");
             }
-            this.$router.push("/machineinfo");
+            this.$router.replace("/machineinfo");
           }
         });
     },
