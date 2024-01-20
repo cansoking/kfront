@@ -74,7 +74,7 @@ export default {
         this.$store.state.nodetype = "边";
       }
       for (let i = 0; i < this.nodeinfo.length; i++) {
-        if (this.nodeinfo[i].nodeName === item) {
+        if (this.nodeinfo[i].nodeName.replace("云节点", "master").replace("边节点", "worker") === item) {
           this.$store.state.nodeip = this.nodeinfo[i].nodeIp;
           this.$store.state.nodebody = this.nodeinfo[i];
           i = this.nodeinfo.length;
@@ -100,11 +100,8 @@ export default {
           let nodeinfo = res.data.content;
           for (let i = 0; i < nodeinfo.length; i++) {
             this.nodeoption.push({
-              label:
-                nodeinfo[i].nodeType +
-                "节点" +
-                nodeinfo[i].nodeName[nodeinfo[i].nodeName.length - 1],
-              value: nodeinfo[i].nodeName,
+              label: nodeinfo[i].nodeName,
+              value: nodeinfo[i].nodeName.replace("云节点", "master").replace("边节点", "worker"),
             });
           }
           this.nodeinfo = nodeinfo;
@@ -121,6 +118,11 @@ export default {
     this.$store.state.nodeip = window.sessionStorage.getItem("ip");
     this.$store.state.nodetype = window.sessionStorage.getItem("nodetype");
     this.$store.state.nodebody = JSON.parse(window.sessionStorage.getItem("nodebody"));
+    if (this.$store.state.nodename.includes("云节点")) {
+      this.$store.state.nodename = this.$store.state.nodename.replace("云节点", "master");
+    } else if (this.$store.state.nodename.includes("边节点")) {
+      this.$store.state.nodename = this.$store.state.nodename.replace("边节点", "worker");
+    }
     this.value = this.$store.state.nodename;
   },
   computed: {

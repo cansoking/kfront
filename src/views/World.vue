@@ -19,7 +19,7 @@ export default {
   },
   mounted() {
     const is_refresh = localStorage.getItem("refresh")
-    if(is_refresh === "true") {
+    if (is_refresh === "true") {
       location.reload()
       localStorage.setItem("refresh", "false")
     }
@@ -161,10 +161,10 @@ export default {
                 break;
               }
             }
-            if(this.$store.state.nodename.includes("云节点")){
-              this.$store.state.nodename = this.$store.state.nodename.replace("云节点","master");
-            }else if(this.$store.state.nodename.includes("边节点")){
-              this.$store.state.nodename = this.$store.state.nodename.replace("边节点","worker");
+            if (this.$store.state.nodename.includes("云节点")) {
+              this.$store.state.nodename = this.$store.state.nodename.replace("云节点", "master");
+            } else if (this.$store.state.nodename.includes("边节点")) {
+              this.$store.state.nodename = this.$store.state.nodename.replace("边节点", "worker");
             }
             this.$router.replace("/machineinfo");
           }
@@ -183,6 +183,11 @@ export default {
           this.$store.state.nodeip = this.nodeList[0].nodeIp;
           this.$store.state.nodetype = this.nodeList[0].nodeType;
           this.$store.state.nodebody = this.nodeList[0];
+          if (this.$store.state.nodename.includes("云节点")) {
+            this.$store.state.nodename = this.$store.state.nodename.replace("云节点", "master");
+          } else if (this.$store.state.nodename.includes("边节点")) {
+            this.$store.state.nodename = this.$store.state.nodename.replace("边节点", "worker");
+          }
           console.log(res.data.content);
           for (let i = 0; i < this.nodeList.length; i++) {
             let t = {};

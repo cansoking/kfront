@@ -361,6 +361,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/deployment/list")
         .then((res) => {
+          console.log(this.$store.state.nodename);
           this.dpdata = JSON.parse(res.data.result).items;
           this.dpdata = this.dpdata.filter(
             (data) =>

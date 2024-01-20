@@ -637,7 +637,7 @@ export default {
       this.$router.push("/vmlist");
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.nodeName === this.curnode) {
+      if (row.nodeName.replace("云节点", "master").replace("边节点", "worker") === this.curnode) {
         return "success-row";
       }
       return "";
