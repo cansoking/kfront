@@ -38,7 +38,7 @@
         >
       </el-col>
       <el-col :span="4" :offset="3"
-      ><p style="font-size: 20px; color: #08c0b9;font-weight: 600;margin-top: 5px; margin-bottom: 40px">
+      ><p style="font-size: 20px; color: #08c0b9;font-weight: 600;">
         日志保存时间:{{savedays}}天
       </p></el-col
       >
