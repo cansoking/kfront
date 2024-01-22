@@ -321,7 +321,7 @@ export default {
           }).then(
             (res) => {
               console.log(res);
-              if (res.data.success !== true) {
+              if (res.data[0] !== 'D') {
                 this.$notify.error({
                   title: "创建失败",
                   message: res.data,

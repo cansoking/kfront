@@ -241,7 +241,7 @@
       >
         <el-table-column width="100" type="index" label="序号">
         </el-table-column>
-        <el-table-column sortable prop="nodeName" label="节点名称" width="200">
+        <el-table-column sortable prop="alias" label="节点名称" width="200">
         </el-table-column>
         <el-table-column sortable prop="nodeIp" label="节点IP" width="200">
         </el-table-column>

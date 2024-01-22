@@ -148,6 +148,9 @@ export default {
         {
           value: "容器管理",
           label: "容器管理",
+        },{
+          value: "集群管理",
+          label: "集群管理",
         },
         {
           value: "虚拟机管理",
@@ -160,6 +163,14 @@ export default {
         {
           value: "镜像管理",
           label: "镜像管理",
+        },
+        {
+          value: "部署管理",
+          label: "部署管理",
+        },
+        {
+          value: "用户管理",
+          label: "用户管理",
         },
         {
           value: "存储管理",

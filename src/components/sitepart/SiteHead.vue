@@ -100,7 +100,7 @@ export default {
           let nodeinfo = res.data.content;
           for (let i = 0; i < nodeinfo.length; i++) {
             this.nodeoption.push({
-              label: nodeinfo[i].nodeName,
+              label: nodeinfo[i].alias,
               value: nodeinfo[i].nodeName.replace("云节点", "master").replace("边节点", "worker"),
             });
           }
