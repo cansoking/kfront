@@ -321,7 +321,7 @@ export default {
           }).then(
             (res) => {
               console.log(res);
-              if (res.data.success !== true) {
+              if (res.data[0] !== 'D') {
                 this.$notify.error({
                   title: "创建失败",
                   message: res.data,
@@ -361,6 +361,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/deployment/list")
         .then((res) => {
+          console.log(this.$store.state.nodename);
           this.dpdata = JSON.parse(res.data.result).items;
           this.dpdata = this.dpdata.filter(
             (data) =>

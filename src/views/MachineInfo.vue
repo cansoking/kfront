@@ -1,9 +1,237 @@
 <template>
   <transition name="fade">
     <div class="machinearea">
-      <div style="font-size: 30px; font-weight: 600; margin-bottom: 20px">
-        节点信息
-      </div>
+      <el-row :gutter="20">
+        <el-col :span="12" :offset="0">
+          <div style="font-size: 30px; font-weight: 600; margin-bottom: 20px">
+            节点信息
+          </div>
+        </el-col>
+        <el-col :span="5" :offset="16">
+          <el-button
+            @click="openAddNode"
+            icon="el-icon-circle-plus-outline"
+            size="medium"
+            round
+            plain
+            >新增节点
+          </el-button>
+        </el-col>
+      </el-row>
+
+      <el-dialog title="添加节点" :visible.sync="addNodevisible">
+        <el-form
+          label-position="top"
+          label-width="80px"
+          :model="node_form"
+          :status-icon="true"
+          :rules="node_rules"
+          ref="node_form"
+        >
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点名称" prop="nodeName">
+                <el-input
+                  v-model="node_form.nodeName"
+                  placeholder="请输入节点名称"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点IP" prop="nodeIp">
+                <el-input
+                  v-model="node_form.nodeIp"
+                  placeholder="请输入节点IP"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点位置" prop="nodeLocation">
+                <el-input
+                  v-model="node_form.nodeLocation"
+                  placeholder="请输入节点所在城市"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点类型" prop="nodeType">
+                <el-select
+                  style="width: 100%"
+                  v-model="node_form.nodeType"
+                  clearable
+                  placeholder="请选择节点类型"
+                >
+                  <el-option
+                    v-for="item in node_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点主机用户名" prop="nodeUserName">
+                <el-input
+                  v-model="node_form.nodeUserName"
+                  placeholder="请输入节点主机用户名"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点主机密码" prop="nodeUserPasswd">
+                <el-input
+                  v-model="node_form.nodeUserPasswd"
+                  placeholder="请输入节点主机用户名"
+                  show-password
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点位置经度" prop="nodeLon">
+                <el-input
+                  v-model="node_form.nodeLon"
+                  placeholder="请输入节位置经度"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点位纬度" prop="nodeLat">
+                <el-input
+                  v-model="node_form.nodeLat"
+                  placeholder="请输入节点位置纬度"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <div
+            class="cp-sbm-area"
+            style="display: flex; justify-content: right; margin-top: 50px"
+          >
+            <el-button round @click="resetForm('node_form')">重置</el-button>
+            <el-button round type="primary" @click="node_sumbit('node_form')"
+              >确认
+            </el-button>
+          </div>
+        </el-form>
+      </el-dialog>
+
+      <el-dialog title="修改节点信息" :visible.sync="editnodevisible">
+        <el-form
+          label-position="top"
+          label-width="80px"
+          :model="editnode_form"
+          :status-icon="true"
+          :rules="node_rules"
+          ref="editnode_form"
+        >
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点名称" prop="nodeName">
+                <el-input
+                  v-model="editnode_form.nodeName"
+                  placeholder="请输入节点名称"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点IP" prop="nodeIp">
+                <el-input
+                  v-model="editnode_form.nodeIp"
+                  placeholder="请输入节点IP"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点位置" prop="nodeLocation">
+                <el-input
+                  v-model="editnode_form.nodeLocation"
+                  placeholder="请输入节点所在城市"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点类型" prop="nodeType">
+                <el-select
+                  style="width: 100%"
+                  v-model="editnode_form.nodeType"
+                  clearable
+                  placeholder="请选择节点类型"
+                >
+                  <el-option
+                    v-for="item in node_options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点主机用户名" prop="nodeUserName">
+                <el-input
+                  v-model="editnode_form.nodeUserName"
+                  placeholder="请输入节点主机用户名"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点主机密码" prop="nodeUserPasswd">
+                <el-input
+                  v-model="editnode_form.nodeUserPasswd"
+                  placeholder="请输入节点主机用户名"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点位置经度" prop="nodeLon">
+                <el-input
+                  v-model="editnode_form.nodeLon"
+                  placeholder="请输入节位置经度"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点位纬度" prop="nodeLat">
+                <el-input
+                  v-model="editnode_form.nodeLat"
+                  placeholder="请输入节点位置纬度"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
+          <div
+            class="cp-sbm-area"
+            style="display: flex; justify-content: right; margin-top: 50px"
+          >
+            <el-button round @click="resetForm('editnode_form')"
+              >重置</el-button
+            >
+            <el-button
+              round
+              type="primary"
+              @click="editnode_sumbit('editnode_form')"
+              >确认
+            </el-button>
+          </div>
+        </el-form>
+      </el-dialog>
+
       <el-table
         :data="nodeinfo"
         style="width: 100%"
@@ -13,7 +241,7 @@
       >
         <el-table-column width="100" type="index" label="序号">
         </el-table-column>
-        <el-table-column sortable prop="nodeName" label="节点名称" width="200">
+        <el-table-column sortable prop="alias" label="节点名称" width="200">
         </el-table-column>
         <el-table-column sortable prop="nodeIp" label="节点IP" width="200">
         </el-table-column>
@@ -33,16 +261,27 @@
         </el-table-column>
         <el-table-column sortable prop="nodeType" label="节点类型" width="180">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.nodeType === '云'" type="success" effect="dark"
+            <el-tag
+              v-if="scope.row.nodeType === '云'"
+              type="success"
+              effect="dark"
               >云节点</el-tag
             >
-            <el-tag v-else-if="scope.row.nodeType === '边'" type="primary" effect="dark"
+            <el-tag
+              v-else-if="scope.row.nodeType === '边'"
+              type="primary"
+              effect="dark"
               >边节点</el-tag
             >
-            <el-tag v-else-if="scope.row.nodeType === '端'" type="warning" effect="dark"
+            <el-tag
+              v-else-if="scope.row.nodeType === '端'"
+              type="warning"
+              effect="dark"
               >端节点</el-tag
             >
-            <el-tag v-else type="info" effect="dark">{{ scope.row.nodeType }}节点</el-tag>
+            <el-tag v-else type="info" effect="dark"
+              >{{ scope.row.nodeType }}节点</el-tag
+            >
           </template>
         </el-table-column>
         <el-table-column
@@ -58,6 +297,20 @@
             <el-tag v-else type="danger">未连接</el-tag>
           </template>
         </el-table-column>
+        <el-table-column fixed="right" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button
+            >
+            <el-button size="mini" type="warning" @click="edit(scope.row)"
+              >修改</el-button
+            >
+          </template>
+        </el-table-column>
+
         <el-table-column label="内容" align="center">
           <template slot-scope="scope">
             <el-button-group>
@@ -200,10 +453,70 @@ export default {
     return {
       psearch: "",
       nodeinfo: [],
+      editnodevisible: false,
+      node_form: {
+        nodeName: "",
+        nodeIp: "",
+        nodeLocation: "",
+        nodeType: "",
+        nodeUserName: "",
+        nodeUserPasswd: "",
+        nodeLon: "",
+        nodeLat: "",
+      },
+      editnode_form: {
+        id: "",
+        nodeName: "",
+        nodeIp: "",
+        nodeLocation: "",
+        nodeType: "",
+        nodeUserName: "",
+        nodeUserPasswd: "",
+        nodeLon: "",
+        nodeLat: "",
+      },
+      node_options: [
+        {
+          label: "端",
+          value: "端",
+        },
+        {
+          label: "边",
+          value: "边",
+        },
+        {
+          label: "云",
+          value: "云",
+        },
+      ],
+      addNodevisible: false,
       dialogTableVisible: false,
       baseurl: "http://39.98.124.97:8080",
       // baseurl: "http://127.0.0.1:8080",
-
+      node_rules: {
+        nodeName: [
+          { required: true, message: "请输入节点名", trigger: "blur" },
+        ],
+        nodeIp: [{ required: true, message: "请输入节点IP", trigger: "blur" }],
+        nodeLocation: [
+          { required: true, message: "请输入节点所在城市", trigger: "blur" },
+        ],
+        nodeUserName: [
+          { required: true, message: "请输入节点主机用户名", trigger: "blur" },
+        ],
+        nodeUserPasswd: [
+          { required: true, message: "请输入节点主机密码", trigger: "blur" },
+        ],
+        nodeLon: [
+          { required: true, message: "请输入节点位置经度", trigger: "blur" },
+        ],
+        nodeLat: [
+          { required: true, message: "请输入节点位置纬度", trigger: "blur" },
+        ],
+        nodeType: [
+          { required: true, message: "选择节点类型", trigger: "change" },
+        ],
+      },
       cpuInfo: {
         cpuNum: "",
         total: "",
@@ -263,6 +576,56 @@ export default {
 
   methods: {
     // 跳转容器页
+
+    edit(row) {
+      this.editnode_form.id = row.id;
+      this.editnode_form.nodeName = row.nodeName;
+      this.editnode_form.nodeIp = row.nodeIp;
+      this.editnode_form.nodeLocation = row.nodeLocation;
+      this.editnode_form.nodeType = row.nodeType;
+      this.editnode_form.nodeUserName = row.nodeUserName;
+      this.editnode_form.nodeUserPasswd = row.nodeUserPasswd;
+      this.editnode_form.nodeLon = row.nodeLon;
+      this.editnode_form.nodeLat = row.nodeLat;
+      this.editnodevisible = true;
+    },
+    editnode_sumbit(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$axios({
+            method: "post",
+            url: this.baseurl + "/node/update", //换成实际地址
+            data: this.editnode_form,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(
+            (res) => {
+              if (res.status === 200) {
+                this.$message.success("修改成功！");
+                this.getnodeinfo();
+              } else {
+                this.$message.success("修改失败！");
+              }
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "修改失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
+          );
+          this.editnodevisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
     topod(row) {
       this.$store.state.nodename = row.nodeName;
       this.$store.state.nodeip = row.nodeIp;
@@ -274,10 +637,76 @@ export default {
       this.$router.push("/vmlist");
     },
     tableRowClassName({ row, rowIndex }) {
-      if (row.nodeName === this.curnode) {
+      if (row.nodeName.replace("云节点", "master").replace("边节点", "worker") === this.curnode) {
         return "success-row";
       }
       return "";
+    },
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
+    node_sumbit(formName) {
+      // 校验表单
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          // 提交表单，创建容器
+          this.$axios({
+            method: "post",
+            url: this.baseurl + "/node/addNodeList1", //换成实际地址
+            data: this.node_form,
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }).then(
+            (res) => {
+              if (res.status === 200) {
+                this.$message.success("添加成功！");
+                this.getnodeinfo();
+              } else {
+                this.$message.success("添加失败！");
+              }
+            },
+            (err) => {
+              console.log(err);
+              this.$notify.error({
+                title: "创建失败",
+                message: "请检查网络连接设置",
+                position: "bottom-right",
+              });
+            }
+          );
+          this.addNodevisible = false;
+        } else {
+          console.log("表单验证不通过");
+          return false;
+        }
+      });
+    },
+    handleDelete(index, row) {
+      this.$confirm(`您确定删除吗?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.$axios
+            .delete(this.baseurl + "/node/deleteNodeList1/" + row.id)
+            .then((response) => {
+              if (response.status === 200) {
+                this.$message.success("删除成功！");
+                this.getnodeinfo();
+              } else {
+                this.$message.success("删除失败！");
+              }
+            });
+        })
+        .catch(() => {
+          // 取消操作
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
     // 获取节点信息
     getnodeinfo() {
@@ -289,6 +718,9 @@ export default {
         .catch((err) => {
           console.log("errors", err);
         });
+    },
+    openAddNode() {
+      this.addNodevisible = true;
     },
     // 获取指定物理机数据
     getMachineInfoByIp(ip) {

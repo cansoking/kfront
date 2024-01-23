@@ -8,27 +8,14 @@
             v-model="search"
             placeholder="请输入搜索内容..."
           ></el-input> -->
-          <span style="font-size: 30px; font-weight: 600; color: #ffffff"
-            >基于虚拟化的资源管理演示验证原型系统</span
-          >
+          <span style="font-size: 30px; font-weight: 600; color: #ffffff">基于虚拟化的资源管理演示验证原型系统</span>
         </el-col>
         <el-col :offset="7" :span="6">
           <div style="color: #ffffff; font-size: 20px; line-height: 40px">
             当前节点：
-            <el-select
-              v-model="value"
-              placeholder="请选择"
-              :loading="isloading"
-              loading-text="正在拉取数据"
-              @visible-change="noderemote"
-              @change="nodechange"
-            >
-              <el-option
-                v-for="item in nodeoption"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              >
+            <el-select v-model="value" placeholder="请选择" :loading="isloading" loading-text="正在拉取数据"
+              @visible-change="noderemote" @change="nodechange">
+              <el-option v-for="item in nodeoption" :key="item.value" :label="item.label" :value="item.value">
                 <span style="float: left">{{ item.label }}</span>
                 <span style="float: right; color: #8492a6; font-size: 13px">{{
                   item.value
@@ -38,12 +25,7 @@
           </div>
         </el-col>
         <el-col :span="1" :offset="0">
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="注销登录"
-            placement="bottom"
-          >
+          <el-tooltip class="item" effect="dark" content="注销登录" placement="bottom">
             <!--            <a href="/static/pages/index.html#/world">
               <i
                 style="color: white; font-size: 35px; line-height: 50px"
@@ -51,17 +33,13 @@
               ></i>
             </a>-->
 
-            <button
-              @click="ret"
-              class="el-icon-switch-button"
-              style="
+            <button @click="ret" class="el-icon-switch-button" style="
                 border: none;
                 background-color: #303641;
                 color: white;
                 font-size: 35px;
                 line-height: 50px;
-              "
-            >
+              ">
               <!--              <i
                   style="color: white; font-size: 35px; line-height: 50px"
                   class="el-icon-switch-button"
@@ -96,7 +74,7 @@ export default {
         this.$store.state.nodetype = "边";
       }
       for (let i = 0; i < this.nodeinfo.length; i++) {
-        if (this.nodeinfo[i].nodeName === item) {
+        if (this.nodeinfo[i].nodeName.replace("云节点", "master").replace("边节点", "worker") === item) {
           this.$store.state.nodeip = this.nodeinfo[i].nodeIp;
           this.$store.state.nodebody = this.nodeinfo[i];
           i = this.nodeinfo.length;
@@ -109,8 +87,9 @@ export default {
     },
     ret() {
       sessionStorage.clear();
+      localStorage.setItem("refresh", "true")
       // this.$router.replace("/login");
-      window.location.href = "/login";
+      window.location.href = "/static/pages/index.html#/login";
     },
     noderemote() {
       this.nodeoption = [];
@@ -121,11 +100,8 @@ export default {
           let nodeinfo = res.data.content;
           for (let i = 0; i < nodeinfo.length; i++) {
             this.nodeoption.push({
-              label:
-                nodeinfo[i].nodeType +
-                "节点" +
-                nodeinfo[i].nodeName[nodeinfo[i].nodeName.length - 1],
-              value: nodeinfo[i].nodeName,
+              label: nodeinfo[i].alias,
+              value: nodeinfo[i].nodeName.replace("云节点", "master").replace("边节点", "worker"),
             });
           }
           this.nodeinfo = nodeinfo;
@@ -142,6 +118,11 @@ export default {
     this.$store.state.nodeip = window.sessionStorage.getItem("ip");
     this.$store.state.nodetype = window.sessionStorage.getItem("nodetype");
     this.$store.state.nodebody = JSON.parse(window.sessionStorage.getItem("nodebody"));
+    if (this.$store.state.nodename.includes("云节点")) {
+      this.$store.state.nodename = this.$store.state.nodename.replace("云节点", "master");
+    } else if (this.$store.state.nodename.includes("边节点")) {
+      this.$store.state.nodename = this.$store.state.nodename.replace("边节点", "worker");
+    }
     this.value = this.$store.state.nodename;
   },
   computed: {
@@ -165,6 +146,7 @@ export default {
   //display: flex;
   //height: 80px;
 }
+
 .el-row {
   display: flex;
   align-items: center;

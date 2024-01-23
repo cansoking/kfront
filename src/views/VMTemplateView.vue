@@ -837,7 +837,6 @@ export default {
       this.buildvmtem_form.nettype = row.nettype;
       this.buildvmtemvisible = true;
     },
-
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
