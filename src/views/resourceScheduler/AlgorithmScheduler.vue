@@ -537,6 +537,8 @@ export default {
 
 <style>
 .el-message-box__message {
-  white-space: pre-line; 
+  white-space: pre-line;
+  height: 400px; 
+  overflow-y: auto;
 }
 </style>
