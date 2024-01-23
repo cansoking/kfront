@@ -6,6 +6,9 @@
     <el-button @click="addResourceByFile" type="primary">
       文件上传资源
     </el-button>
+    <el-button @click="onClickDelete" type="primary">
+      批量删除
+    </el-button>
     <div style="font-size: 16px;display: inline-block;margin-left: 12px">
       选择资源类型：
     </div>
@@ -23,9 +26,15 @@
       </el-option>
     </el-select>
     <el-table
+        ref="multipleTable"
         :data="resourceData"
         v-loading="tableLoading"
+        @selection-change="handleSelectionChange"
     >
+    <el-table-column
+      type="selection"
+      width="55">
+    </el-table-column>
       <el-table-column
           prop="id"
           label="资源ID"
@@ -42,12 +51,28 @@
           prop="attributes_values"
           label="资源属性"
       >
-        <template slot-scope="scope">
-          <div v-for="(value,key) in scope.row.attributes_values">
-            <span>{{ key }}：</span>
-            <span>{{ value }}</span>
-          </div>
-        </template>
+      <template slot-scope="scope">
+            <el-popover
+              placement="right"
+              width="400"
+              trigger="click"
+              >
+              <div style="max-height: 400px; overflow-y: auto;">
+                <el-table :data="scope.row.attributes_values_arr" >
+                  <el-table-column
+                      prop="key"
+                      label="属性"
+                  ></el-table-column>
+                  <el-table-column
+                      prop="value"
+                      label="值"
+                  ></el-table-column>
+                </el-table>
+              </div>
+               
+              <el-button slot="reference">查看详情</el-button>
+            </el-popover>
+          </template>
       </el-table-column>
       <el-table-column
           prop="action"
@@ -163,7 +188,6 @@
         ref="upload"
         action="http://81.70.164.10:8750/resource/createMultiResourceByFile"
         :on-success="handleSuccess"
-        :on-error="handleError"
         :file="taskFile"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -185,7 +209,8 @@ import {
   deleteResource,
   fetchAllDataType,
   fetchAllResources,
-  fetchAllResourceType, fetchResource
+  fetchAllResourceType, fetchResource,
+  resourceManageBatchDelete
 } from "@/api/resource";
 import {isSuccess} from "@/utils";
 
@@ -207,7 +232,8 @@ export default {
         description: '',
         type_id: undefined,
         attributes_values: {},
-      }
+      },
+      multipleSelection:[],
     }
   },
   computed: {
@@ -248,6 +274,25 @@ export default {
     }
   },
   methods: {
+    handleSelectionChange(val) {
+      console.log(val,'val');
+        this.multipleSelection = val;
+    },
+      onClickDelete(){
+        if(this.multipleSelection.length === 0){
+          return this.$message.error('必须要勾选一个才可以删除');
+        }
+        let resource_ids = this.multipleSelection.map(item => item.id);
+        resourceManageBatchDelete({
+          resource_ids,
+        }).then(res => {
+          if(res.code === 200){
+            this.fetchResourceData();
+          }else{
+            return this.$message.error(result.message || '请求失败');
+          }
+        })
+      },
     onClose() {
       this.open = false
     },
@@ -259,6 +304,17 @@ export default {
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+        }
+      })
       this.resourceData = result.data
     },
     async getAllResourceData() {
@@ -268,6 +324,17 @@ export default {
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+        }
+      })
       this.resourceData = result.data
     },
     addResource() {
@@ -294,11 +361,6 @@ export default {
           confirmButtonText: '关闭',
         });
       }
-    },
-    handleError() {
-      this.$alert('上传错误', {
-          confirmButtonText: '关闭',
-        });
     },
     async getResourceTypeData() {
       this.tableLoading = true;
