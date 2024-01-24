@@ -100,3 +100,11 @@ export const addTaskToResource = (data)=>{
         data
     })
 }
+
+
+export const taskManageBatchDelete = (data)=>{
+    return post({
+        url: '/task/deleteTasksByIds',
+        data
+    })
+}
