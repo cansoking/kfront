@@ -97,3 +97,10 @@ export const deleteTaskFromResource = (data)=>{
         data
     })
 }
+
+export const resourceManageBatchDelete = (data)=>{
+    return post({
+        url: '/resource/deleteResourcesByIds',
+        data
+    })
+}

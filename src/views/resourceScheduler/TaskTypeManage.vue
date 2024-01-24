@@ -26,7 +26,14 @@
             label="关联的任务属性"
         >
           <template slot-scope="scope">
-            <span v-for="(item, itemIndex) in scope.row.attributes">{{ itemIndex }}：{{ item.info }} <br/></span>
+            <el-popover
+              placement="right"
+              width="400"
+              trigger="click"
+              >
+              <span v-for="(item, itemIndex) in scope.row.attributes">{{ itemIndex }}：{{ item.info }} <br/></span>
+              <el-button slot="reference">查看详情</el-button>
+            </el-popover>
           </template>
         </el-table-column>
         <el-table-column
@@ -216,6 +223,7 @@ export default {
         description: '',
         attributes: [],
       },
+      multipleSelection:[],
     }
   },
   computed: {

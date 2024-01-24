@@ -6,6 +6,9 @@
     <el-button @click="addTaskByFile" type="primary">
       文件上传任务
     </el-button>
+    <el-button @click="onClickDelete" type="primary">
+      批量删除
+    </el-button>
     <div style="font-size: 16px;display: inline-block;margin-left: 12px">
       选择任务类型：
     </div>
@@ -23,9 +26,15 @@
       </el-option>
     </el-select>
     <el-table
+        ref="multipleTable"
         :data="taskData"
         v-loading="tableLoading"
+        @selection-change="handleSelectionChange"
     >
+    <el-table-column
+      type="selection"
+      width="55">
+    </el-table-column>
       <el-table-column
           prop="id"
           label="任务ID"
@@ -42,12 +51,28 @@
           prop="attributes_values"
           label="任务属性"
       >
-        <template slot-scope="scope">
-          <div v-for="(value,key) in scope.row.attributes_values">
-            <span>{{ key }}：</span>
-            <span>{{ value }}</span>
-          </div>
-        </template>
+      <template slot-scope="scope">
+            <el-popover
+              placement="right"
+              width="400"
+              trigger="click"
+              >
+              <div style="max-height: 400px; overflow-y: auto;">
+                <el-table :data="scope.row.attributes_values_arr" >
+                  <el-table-column
+                      prop="key"
+                      label="属性"
+                  ></el-table-column>
+                  <el-table-column
+                      prop="value"
+                      label="值"
+                  ></el-table-column>
+                </el-table>
+              </div>
+               
+              <el-button slot="reference">查看详情</el-button>
+            </el-popover>
+          </template>
       </el-table-column>
       <el-table-column
           prop="action"
@@ -161,7 +186,6 @@
         ref="upload"
         action="http://81.70.164.10:8750/task/createMultiTaskByFile"
         :on-success="handleSuccess"
-        :on-error="handleError"
         :file="taskFile"
         :auto-upload="false">
         <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
@@ -182,7 +206,8 @@ import {
   deleteTask,
   fetchAllDataType,
   fetchAllTasks,
-  fetchAllTaskType, fetchTask
+  fetchAllTaskType, fetchTask,
+  taskManageBatchDelete
 } from "@/api/task";
 import {isSuccess} from "@/utils";
 
@@ -204,7 +229,8 @@ export default {
         description: '',
         type_id: undefined,
         attributes_values: {},
-      }
+      },
+      multipleSelection:[],
     }
   },
   computed: {
@@ -245,6 +271,25 @@ export default {
     }
   },
   methods: {
+    handleSelectionChange(val) {
+      console.log(val,'val');
+        this.multipleSelection = val;
+      },
+      onClickDelete(){
+        if(this.multipleSelection.length === 0){
+          return this.$message.error('必须要勾选一个才可以删除');
+        }
+        let task_ids = this.multipleSelection.map(item => item.id);
+        taskManageBatchDelete({
+          task_ids,
+        }).then(res => {
+          if(res.code === 200){
+            this.fetchTaskData();
+          }else{
+            return this.$message.error(result.message || '请求失败');
+          }
+        })
+      },
     onClose() {
       this.open = false
     },
@@ -256,6 +301,17 @@ export default {
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+        }
+      })
       this.taskData = result.data
     },
     async getAllTaskData() {
@@ -265,6 +321,17 @@ export default {
       if (!isSuccess(result)) {
         return this.$message.error(result.message || '请求失败');
       }
+      result.data.forEach(item => {
+        if(item.attributes_values && Object.keys(item.attributes_values).length > 0){
+          // 遍历这个对象key value 生成新数组
+          item.attributes_values_arr = Object.keys(item.attributes_values).map(key => {
+            return {
+              key,
+              value: item.attributes_values[key]
+            }
+          })
+        }
+      })
       this.taskData = result.data
     },
     addTask() {
@@ -291,11 +358,6 @@ export default {
           confirmButtonText: '关闭',
         });
       }
-    },
-    handleError() {
-      this.$alert('上传错误', {
-          confirmButtonText: '关闭',
-        });
     },
 
     async getTaskTypeData() {

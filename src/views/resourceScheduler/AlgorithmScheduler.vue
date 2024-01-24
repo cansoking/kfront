@@ -115,6 +115,7 @@
       </el-table>
     </div>
     <el-button :loading="runLoading" @click="handleRun" style="height: 36px" type="primary">调度运行</el-button>
+    
     <div style="width: 45%">
       <div style="font-size: 16px;display: inline-block;margin-left: 12px">
         选择资源类型：
@@ -132,6 +133,24 @@
             :key="item.value"
             :label="item.label"
             :value="item.value">
+        </el-option>
+      </el-select>
+      <div style="font-size: 16px;display: inline-block;margin-left: 12px">
+        选择算法：
+      </div>
+      <el-select
+          v-model="algorithm"
+          style="width: 180px"
+          @change="fetchAlgorithm"
+          clearable
+          filterable
+          optionFilterProp="label"
+      >
+        <el-option
+            v-for="item in algorithmData"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
         </el-option>
       </el-select>
       <el-table
@@ -253,7 +272,7 @@ import {
   fetchResource,
   fetchTasksByResource
 } from "@/api/resource";
-import {runAlgorithm} from "@/api/algorithm";
+import {runAlgorithm,fetchAllAlgorithms,reloadAlgorithm} from "@/api/algorithm";
 
 export default {
   name: "AlgorithmScheduler",
@@ -270,6 +289,8 @@ export default {
       taskId: undefined,
       taskStatus: undefined,
       resourceId: undefined,
+      algorithm: undefined,
+      algorithmData: [],
       selectedResourceId: undefined,
       selectedTaskId: undefined,
       open: false,
@@ -301,9 +322,19 @@ export default {
     this.getTaskTypeData()
     // this.getAllResourceData();
     this.getResourceTypeData();
+    fetchAllAlgorithms().then(res => {
+      if(res.code === 200){
+        this.algorithmData = res.data;
+      }else{
+        return this.$message.error(res.message || '请求失败')
+      }
+    })
   },
   methods: {
     async handleRun() {
+      if(this.algorithm === undefined || !this.algorithm){
+        return this.$message.error('请选择算法')
+      }
       const param = {
         task_list: this.taskData,
         resource_list: this.resourceData
@@ -437,6 +468,22 @@ export default {
       }
       this.resourceData = result.data
     },
+    async fetchAlgorithm() {
+      if(!this.algorithm){
+        this.algorithm = undefined;
+        console.log(this.algorithm,'algorithm')
+        return
+      }
+      reloadAlgorithm({
+        id: this.algorithm,
+      }).then(res => {
+        if(res.code === 200){
+          this.$message.success('加载成功')
+        }else{
+          this.$message.error(res.message || '请求失败');
+        }
+      })
+    },
     getResourceData(data) {
       if (isEmpty(data)) {
         this.resourceData = this.initResourceData.value
@@ -490,6 +537,8 @@ export default {
 
 <style>
 .el-message-box__message {
-  white-space: pre-line; 
+  white-space: pre-line;
+  height: 400px; 
+  overflow-y: auto;
 }
 </style>
