@@ -142,7 +142,7 @@ export default {
       })
         .then(() => {
           this.$axios
-            .delete(this.baseurl + "/Images/deleteImg?name=" + row.name)
+            .delete(this.baseurl + "/Images/deleteImg/" + row.name)
             .then((response) => {
               const data = response.data;
               if (data.success) {
