@@ -1165,7 +1165,7 @@ export default {
         )
         .then((res) => {
           this.cidata = this.data_resolver_image(
-            JSON.parse(res.data[0]).output
+            res.data
           );
         })
         .catch((err) => {
@@ -1197,9 +1197,9 @@ export default {
     // 解析数据
     data_resolver_image(sdata) {
       let res = [];
-      let rows = sdata.split("\n");
+      let rows = sdata
       let i = 1;
-      for (; i < rows.length - 1; i++) {
+      for (; i < rows.length; i++) {
         let cols = rows[i].split("   ");
         let j = 0;
         cols = cols.filter(function (item) {
