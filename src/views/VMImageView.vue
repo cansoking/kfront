@@ -142,7 +142,7 @@ export default {
       })
         .then(() => {
           this.$axios
-            .delete(this.baseurl + "/Images/deleteImg/" + row.name)
+            .delete(this.baseurl + "/Images/deleteImg?name=" + row.name)
             .then((response) => {
               const data = response.data;
               if (data.success) {
@@ -167,7 +167,7 @@ export default {
       return suffix;
     },
     sucupload(response, file, fileList) {
-      if (response === "ok") {
+      if (response.success) {
         this.$notify.success({
           title: "添加成功",
           message: "镜像添加成功！",

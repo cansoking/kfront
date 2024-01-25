@@ -506,7 +506,7 @@ export default {
         (res) => {
           this.$notify.success({
             title: "操作通知",
-            message: "应用 xxx" + name + "创建成功",
+            message: "应用创建成功",
             position: "bottom-right",
           });
           setTimeout(() => {

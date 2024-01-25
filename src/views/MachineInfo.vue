@@ -8,67 +8,36 @@
           </div>
         </el-col>
         <el-col :span="5" :offset="16">
-          <el-button
-            @click="openAddNode"
-            icon="el-icon-circle-plus-outline"
-            size="medium"
-            round
-            plain
-            >新增节点
+          <el-button @click="openAddNode" icon="el-icon-circle-plus-outline" size="medium" round plain>新增节点
           </el-button>
         </el-col>
       </el-row>
 
       <el-dialog title="添加节点" :visible.sync="addNodevisible">
-        <el-form
-          label-position="top"
-          label-width="80px"
-          :model="node_form"
-          :status-icon="true"
-          :rules="node_rules"
-          ref="node_form"
-        >
+        <el-form label-position="top" label-width="80px" :model="node_form" :status-icon="true" :rules="node_rules"
+          ref="node_form">
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点名称" prop="nodeName">
-                <el-input
-                  v-model="node_form.nodeName"
-                  placeholder="请输入节点名称"
-                ></el-input>
+                <el-input v-model="node_form.nodeName" placeholder="请输入节点名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
-              <el-form-item label="节点IP" prop="nodeIp">
-                <el-input
-                  v-model="node_form.nodeIp"
-                  placeholder="请输入节点IP"
-                ></el-input>
+              <el-form-item label="节点标识" prop="alias">
+                <el-input v-model="node_form.alias" placeholder="请输入节点标识"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点位置" prop="nodeLocation">
-                <el-input
-                  v-model="node_form.nodeLocation"
-                  placeholder="请输入节点所在城市"
-                ></el-input>
+                <el-input v-model="node_form.nodeLocation" placeholder="请输入节点所在城市"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
               <el-form-item label="节点类型" prop="nodeType">
-                <el-select
-                  style="width: 100%"
-                  v-model="node_form.nodeType"
-                  clearable
-                  placeholder="请选择节点类型"
-                >
-                  <el-option
-                    v-for="item in node_options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
+                <el-select style="width: 100%" v-model="node_form.nodeType" clearable placeholder="请选择节点类型">
+                  <el-option v-for="item in node_options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -77,102 +46,67 @@
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点主机用户名" prop="nodeUserName">
-                <el-input
-                  v-model="node_form.nodeUserName"
-                  placeholder="请输入节点主机用户名"
-                ></el-input>
+                <el-input v-model="node_form.nodeUserName" placeholder="请输入节点主机用户名"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
               <el-form-item label="节点主机密码" prop="nodeUserPasswd">
-                <el-input
-                  v-model="node_form.nodeUserPasswd"
-                  placeholder="请输入节点主机用户名"
-                  show-password
-                ></el-input>
+                <el-input v-model="node_form.nodeUserPasswd" placeholder="请输入节点主机用户名" show-password></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点位置经度" prop="nodeLon">
-                <el-input
-                  v-model="node_form.nodeLon"
-                  placeholder="请输入节位置经度"
-                ></el-input>
+                <el-input v-model="node_form.nodeLon" placeholder="请输入节位置经度"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
               <el-form-item label="节点位纬度" prop="nodeLat">
-                <el-input
-                  v-model="node_form.nodeLat"
-                  placeholder="请输入节点位置纬度"
-                ></el-input>
+                <el-input v-model="node_form.nodeLat" placeholder="请输入节点位置纬度"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <div
-            class="cp-sbm-area"
-            style="display: flex; justify-content: right; margin-top: 50px"
-          >
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点IP" prop="nodeIp">
+                <el-input v-model="node_form.nodeIp" placeholder="请输入节点IP"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <div class="cp-sbm-area" style="display: flex; justify-content: right; margin-top: 50px">
             <el-button round @click="resetForm('node_form')">重置</el-button>
-            <el-button round type="primary" @click="node_sumbit('node_form')"
-              >确认
+            <el-button round type="primary" @click="node_sumbit('node_form')">确认
             </el-button>
           </div>
         </el-form>
       </el-dialog>
 
       <el-dialog title="修改节点信息" :visible.sync="editnodevisible">
-        <el-form
-          label-position="top"
-          label-width="80px"
-          :model="editnode_form"
-          :status-icon="true"
-          :rules="node_rules"
-          ref="editnode_form"
-        >
+        <el-form label-position="top" label-width="80px" :model="editnode_form" :status-icon="true" :rules="node_rules"
+          ref="editnode_form">
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点名称" prop="nodeName">
-                <el-input
-                  v-model="editnode_form.nodeName"
-                  placeholder="请输入节点名称"
-                ></el-input>
+                <el-input v-model="editnode_form.nodeName" placeholder="请输入节点名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
-              <el-form-item label="节点IP" prop="nodeIp">
-                <el-input
-                  v-model="editnode_form.nodeIp"
-                  placeholder="请输入节点IP"
-                ></el-input>
+              <el-form-item label="节点标识" prop="alias">
+                <el-input v-model="editnode_form.alias" placeholder="请输入节点标识"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点位置" prop="nodeLocation">
-                <el-input
-                  v-model="editnode_form.nodeLocation"
-                  placeholder="请输入节点所在城市"
-                ></el-input>
+                <el-input v-model="editnode_form.nodeLocation" placeholder="请输入节点所在城市"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
               <el-form-item label="节点类型" prop="nodeType">
-                <el-select
-                  style="width: 100%"
-                  v-model="editnode_form.nodeType"
-                  clearable
-                  placeholder="请选择节点类型"
-                >
-                  <el-option
-                    v-for="item in node_options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
+                <el-select style="width: 100%" v-model="editnode_form.nodeType" clearable placeholder="请选择节点类型">
+                  <el-option v-for="item in node_options" :key="item.value" :label="item.label" :value="item.value">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -181,153 +115,81 @@
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点主机用户名" prop="nodeUserName">
-                <el-input
-                  v-model="editnode_form.nodeUserName"
-                  placeholder="请输入节点主机用户名"
-                ></el-input>
+                <el-input v-model="editnode_form.nodeUserName" placeholder="请输入节点主机用户名"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
               <el-form-item label="节点主机密码" prop="nodeUserPasswd">
-                <el-input
-                  v-model="editnode_form.nodeUserPasswd"
-                  placeholder="请输入节点主机用户名"
-                ></el-input>
+                <el-input v-model="editnode_form.nodeUserPasswd" placeholder="请输入节点主机用户名"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row :gutter="20">
             <el-col :span="12" :offset="0">
               <el-form-item label="节点位置经度" prop="nodeLon">
-                <el-input
-                  v-model="editnode_form.nodeLon"
-                  placeholder="请输入节位置经度"
-                ></el-input>
+                <el-input v-model="editnode_form.nodeLon" placeholder="请输入节位置经度"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
               <el-form-item label="节点位纬度" prop="nodeLat">
-                <el-input
-                  v-model="editnode_form.nodeLat"
-                  placeholder="请输入节点位置纬度"
-                ></el-input>
+                <el-input v-model="editnode_form.nodeLat" placeholder="请输入节点位置纬度"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" :offset="0">
+              <el-form-item label="节点IP" prop="nodeIp">
+                <el-input v-model="editnode_form.nodeIp" placeholder="请输入节点IP"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
 
-          <div
-            class="cp-sbm-area"
-            style="display: flex; justify-content: right; margin-top: 50px"
-          >
-            <el-button round @click="resetForm('editnode_form')"
-              >重置</el-button
-            >
-            <el-button
-              round
-              type="primary"
-              @click="editnode_sumbit('editnode_form')"
-              >确认
+          <div class="cp-sbm-area" style="display: flex; justify-content: right; margin-top: 50px">
+            <el-button round @click="resetForm('editnode_form')">重置</el-button>
+            <el-button round type="primary" @click="editnode_sumbit('editnode_form')">确认
             </el-button>
           </div>
         </el-form>
       </el-dialog>
 
-      <el-table
-        :data="nodeinfo"
-        style="width: 100%"
-        empty-text="暂无节点信息"
-        :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-        :row-class-name="tableRowClassName"
-      >
+      <el-table :data="nodeinfo" style="width: 100%" empty-text="暂无节点信息"
+        :header-cell-style="{ background: '#00b8a9', color: '#fff' }" :row-class-name="tableRowClassName">
         <el-table-column width="100" type="index" label="序号">
         </el-table-column>
         <el-table-column sortable prop="alias" label="节点名称" width="200">
         </el-table-column>
         <el-table-column sortable prop="nodeIp" label="节点IP" width="200">
         </el-table-column>
-        <el-table-column
-          sortable
-          prop="nodeStatus"
-          label="节点状态"
-          width="200"
-        >
+        <el-table-column sortable prop="nodeStatus" label="节点状态" width="200">
         </el-table-column>
-        <el-table-column
-          sortable
-          prop="nodeLocation"
-          label="节点位置"
-          width="200"
-        >
+        <el-table-column sortable prop="nodeLocation" label="节点位置" width="200">
         </el-table-column>
         <el-table-column sortable prop="nodeType" label="节点类型" width="180">
           <template slot-scope="scope">
-            <el-tag
-              v-if="scope.row.nodeType === '云'"
-              type="success"
-              effect="dark"
-              >云节点</el-tag
-            >
-            <el-tag
-              v-else-if="scope.row.nodeType === '边'"
-              type="primary"
-              effect="dark"
-              >边节点</el-tag
-            >
-            <el-tag
-              v-else-if="scope.row.nodeType === '端'"
-              type="warning"
-              effect="dark"
-              >端节点</el-tag
-            >
-            <el-tag v-else type="info" effect="dark"
-              >{{ scope.row.nodeType }}节点</el-tag
-            >
+            <el-tag v-if="scope.row.nodeType === '云'" type="success" effect="dark">云节点</el-tag>
+            <el-tag v-else-if="scope.row.nodeType === '边'" type="primary" effect="dark">边节点</el-tag>
+            <el-tag v-else-if="scope.row.nodeType === '端'" type="warning" effect="dark">端节点</el-tag>
+            <el-tag v-else type="info" effect="dark">{{ scope.row.nodeType }}节点</el-tag>
           </template>
         </el-table-column>
-        <el-table-column
-          width="100"
-          sortable
-          prop="nodeConnectivity"
-          label="是否连接"
-        >
+        <el-table-column width="100" sortable prop="nodeConnectivity" label="是否连接">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.nodeConnectivity === 1" type="success"
-              >已连接</el-tag
-            >
+            <el-tag v-if="scope.row.nodeConnectivity === 1" type="success">已连接</el-tag>
             <el-tag v-else type="danger">未连接</el-tag>
           </template>
         </el-table-column>
         <el-table-column fixed="right" label="操作">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              type="danger"
-              @click="handleDelete(scope.$index, scope.row)"
-              >删除</el-button
-            >
-            <el-button size="mini" type="warning" @click="edit(scope.row)"
-              >修改</el-button
-            >
+            <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            <el-button size="mini" type="warning" @click="edit(scope.row)">修改</el-button>
           </template>
         </el-table-column>
 
         <el-table-column label="内容" align="center">
           <template slot-scope="scope">
             <el-button-group>
-              <el-button
-                size="mini"
-                plain
-                type="default"
-                @click="topod(scope.row)"
-                >容器管理</el-button
-              >
-              <el-button
-                size="mini"
-                plain
-                type="default"
-                @click="tovm(scope.row)"
-                >虚拟机管理</el-button
-              >
+              <el-button size="mini" plain type="default" @click="topod(scope.row)">容器管理</el-button>
+              <el-button size="mini" plain type="default" @click="tovm(scope.row)">虚拟机管理</el-button>
             </el-button-group>
           </template>
         </el-table-column>
@@ -370,15 +232,9 @@
       <el-card class="info-card" v-show="showInfo">
         <h2>JVM信息：</h2>
         <el-table :data="[jvmInfo]">
-          <el-table-column
-            prop="total"
-            label="JVM已分配内存(MB)"
-          ></el-table-column>
+          <el-table-column prop="total" label="JVM已分配内存(MB)"></el-table-column>
           <el-table-column prop="max" label="JVM最大内存(MB)"></el-table-column>
-          <el-table-column
-            prop="free"
-            label="JVM空闲内存(MB)"
-          ></el-table-column>
+          <el-table-column prop="free" label="JVM空闲内存(MB)"></el-table-column>
           <el-table-column prop="version" label="JDK版本"></el-table-column>
           <el-table-column prop="home" label="JDK路径"></el-table-column>
         </el-table>
@@ -406,10 +262,7 @@
       <el-card class="info-card" v-show="showInfo">
         <h2>系统信息：</h2>
         <el-table :data="[systeminfo]">
-          <el-table-column
-            prop="computerName"
-            label="服务器名称"
-          ></el-table-column>
+          <el-table-column prop="computerName" label="服务器名称"></el-table-column>
           <el-table-column prop="computerIp" label="服务器Ip"></el-table-column>
           <el-table-column prop="userDir" label="项目路径"></el-table-column>
           <el-table-column prop="osName" label="操作系统"></el-table-column>
@@ -423,10 +276,7 @@
         <h2>文件系统信息：</h2>
         <el-table :data="sysFiles">
           <el-table-column prop="dirName" label="挂载地址"></el-table-column>
-          <el-table-column
-            prop="sysTypeName"
-            label="文件系统类型"
-          ></el-table-column>
+          <el-table-column prop="sysTypeName" label="文件系统类型"></el-table-column>
           <el-table-column prop="typeName" label="类型名称"></el-table-column>
           <el-table-column prop="total" label="总量"></el-table-column>
           <el-table-column prop="free" label="空闲量"></el-table-column>
@@ -463,6 +313,7 @@ export default {
         nodeUserPasswd: "",
         nodeLon: "",
         nodeLat: "",
+        alias: ""
       },
       editnode_form: {
         id: "",
@@ -474,6 +325,7 @@ export default {
         nodeUserPasswd: "",
         nodeLon: "",
         nodeLat: "",
+        alias: ""
       },
       node_options: [
         {
@@ -496,6 +348,9 @@ export default {
       node_rules: {
         nodeName: [
           { required: true, message: "请输入节点名", trigger: "blur" },
+        ],
+        alias: [
+          { required: true, message: "请输入节点标识", trigger: "blur" },
         ],
         nodeIp: [{ required: true, message: "请输入节点IP", trigger: "blur" }],
         nodeLocation: [
@@ -587,6 +442,7 @@ export default {
       this.editnode_form.nodeUserPasswd = row.nodeUserPasswd;
       this.editnode_form.nodeLon = row.nodeLon;
       this.editnode_form.nodeLat = row.nodeLat;
+      this.editnode_form.alias = row.alias;
       this.editnodevisible = true;
     },
     editnode_sumbit(formName) {
@@ -925,14 +781,17 @@ export default {
   padding: 20px;
   margin-top: 15px;
 }
+
 .info-card {
   animation: fadeInUp 0.5s ease-in-out;
 }
+
 @keyframes fadeInUp {
   0% {
     opacity: 0;
     transform: translateY(20px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -949,16 +808,20 @@ export default {
   color: #fff;
   cursor: default;
 }
+
 .el-pagination.is-background .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   background-color: #08c0b9;
   color: #fff;
 }
+
 /*带背景的分页按钮背景色end*/
 
 /*不带背景的分页按钮背景色begin*/
@@ -966,11 +829,14 @@ export default {
   color: #08c0b9;
   cursor: default;
 }
+
 .el-pagination .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 /*不带背景的分页按钮背景色end*/
 </style>

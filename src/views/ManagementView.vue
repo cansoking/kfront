@@ -1,20 +1,22 @@
 <template>
   <div>
     <el-container>
-      <el-aside style="background-color: #393e46" width="270px"
-        ><site-aside></site-aside
-      ></el-aside>
+      <el-aside style="background-color: #393e46" width="270px"><site-aside></site-aside></el-aside>
       <el-container>
         <el-header><site-head-vue></site-head-vue></el-header>
         <el-main>
           <router-view></router-view>
+          <footer
+            style="height: 60px; display: flex; justify-content: center; align-items: center; font-size: 15px;">
+            <p>&copy;清华大学</p>
+          </footer>
         </el-main>
       </el-container>
     </el-container>
   </div>
 </template>
 
-  <script>
+<script>
 import SiteAside from "../components/sitepart/SiteAside.vue";
 import SiteHeadVue from "../components/sitepart/SiteHead.vue";
 export default {
@@ -23,7 +25,7 @@ export default {
   data() {
     return {};
   },
-  mounted() {},
+  mounted() { },
   methods: {},
 };
 </script>
@@ -64,6 +66,7 @@ export default {
 ::-webkit-scrollbar {
   width: 0 !important;
 }
+
 ::-webkit-scrollbar {
   width: 0 !important;
   height: 0;

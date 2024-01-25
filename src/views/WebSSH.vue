@@ -101,18 +101,11 @@ export default {
   name: "WebSSH",
   data() {
     return {
-      nodes: [
-        { name: 'Master 1', ip: '39.98.124.97' },
-        { name: 'Worker 1', ip: '39.101.136.242' },
-        { name: 'Worker 2', ip: '39.98.109.31' },
-        { name: 'Worker 3', ip: '39.99.252.93' },
-        { name: 'Worker 4', ip: '192.168.157.214' },
-        { name: 'Worker 5', ip: '192.168.157.215' },
-        { name: 'Worker 6', ip: '192.168.157.216' },
-        { name: 'Worker 7', ip: '192.168.157.217' },
-      ],
+      nodes: [],
+      baseurl: "http://39.98.124.97:8080",
       terminal: null,
       wsshClient: new WSSHClient(),
+      nodeinfo: [],
       options: {
         operate: 'connect',
         host: '39.98.124.97', // IP
@@ -135,7 +128,12 @@ export default {
           cancelButtonText: '取消',
           type: 'warning',
         }).then(() => {
-          this.options.host = newHost;
+          const selectedNodeInfo = this.nodeinfo.find(node => node.nodeIp === newHost);
+          if (selectedNodeInfo) {
+            this.options.host = newHost;
+            this.options.username = selectedNodeInfo.nodeUserName;
+            this.options.password = selectedNodeInfo.nodeUserPasswd;
+          }
           this.wsshClient.close();
           this.terminalReady = false;
           if (this.terminal) {
@@ -153,10 +151,26 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.selectedNode = this.options.host;
+      this.getnodeinfo();
       this.openTerminal(this.options);
     });
   },
   methods: {
+    getnodeinfo() {
+      this.$axios
+          .get(this.baseurl + "/node/getNodeList1")
+          .then((res) => {
+            this.nodeinfo = res.data.content;
+            this.nodes = this.nodeinfo.map(node => ({
+              name: node.nodeName,
+              ip: node.nodeIp
+            }));
+          })
+          .catch((err) => {
+            console.log("errors", err);
+          });
+    },
+
     openTerminal(options) {
       this.terminal = new Terminal({
         rendererType: "canvas",
@@ -175,6 +189,8 @@ export default {
           cursor: "help"
         }
       });
+
+
 
       const fitAddon = new FitAddon();
       this.terminal.loadAddon(fitAddon);
@@ -210,6 +226,7 @@ export default {
         host: options.host,
       });
     },
+
   },
 };
 </script>
