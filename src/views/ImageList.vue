@@ -36,7 +36,7 @@
           .filter(
             (data) =>
               !psearch ||
-              data.image.toLowerCase().includes(psearch.toLowerCase())
+              data.imageName.toLowerCase().includes(psearch.toLowerCase())
           )
       "
       style="width: 100%"
