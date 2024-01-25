@@ -33,6 +33,15 @@ export const fetchResource = (resource_type_id)=>{
     })
 }
 
+export const fetchResourceByIds = (resource_type_id)=>{
+    return get({
+        url: '/resource/fetchResourcesByIds',
+        data: {
+            resource_type_ids:resource_type_id
+        }
+    })
+}
+
 export const fetchAllResources = ()=>{
     return get({
         url: '/resource/fetchAllResources',
