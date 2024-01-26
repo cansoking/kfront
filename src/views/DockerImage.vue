@@ -2,26 +2,15 @@
   <div class="vmarea" v-loading="proloading">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-      <el-col :span="10" :offset="0"
-        ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+      <el-col :span="10" :offset="0">
+        <p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
           Docker镜像列表
-        </p></el-col
-      >
+        </p>
+      </el-col>
       <el-col :span="4" :offset="6">
-        <el-select
-          v-model="endip"
-          placeholder="请选择端IP"
-          :loading="isloading"
-          loading-text="正在拉取数据"
-          @visible-change="searchend"
-          clearable
-        >
-          <el-option
-            v-for="item in end_options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
+        <el-select v-model="endip" placeholder="请选择端IP" :loading="isloading" loading-text="正在拉取数据"
+          @visible-change="searchend" clearable>
+          <el-option v-for="item in end_options" :key="item.value" :label="item.label" :value="item.value">
             <span style="float: left">{{ item.label }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{
               item.value
@@ -30,45 +19,24 @@
         </el-select>
       </el-col>
       <el-col :span="2" :offset="0">
-        <el-button
-          @click="fenfa_img"
-          icon="el-icon-s-promotion"
-          size="large"
-          round
-          plain
-          >分发镜像</el-button
-        >
+        <el-button @click="fenfa_img" icon="el-icon-s-promotion" size="large" round plain>分发镜像</el-button>
       </el-col>
 
       <el-col :span="2" :offset="0">
-        <el-button
-          @click="openUploadImage"
-          icon="el-icon-circle-plus-outline"
-          size="large"
-          round
-          plain
-          :disabled="$store.state.nodename != 'master1'"
-          >上传镜像</el-button
-        >
+        <el-button @click="openUploadImage" icon="el-icon-circle-plus-outline" size="large" round plain
+          :disabled="$store.state.nodename != 'master1'">上传镜像</el-button>
       </el-col>
     </el-row>
     <!-- 表格区域 -->
-    <el-table
-      :data="
-        cidata
-          .slice((curpage - 1) * pagesize, curpage * pagesize)
-          .filter(
-            (data) =>
-              !psearch ||
-              data.name.toLowerCase().includes(psearch.toLowerCase())
-          )
-      "
-      style="width: 100%"
-      empty-text="暂无Docker镜像"
-      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-      @selection-change="handleSelectionChange"
-      ref="multipleTable"
-    >
+    <el-table :data="cidata
+        .slice((curpage - 1) * pagesize, curpage * pagesize)
+        .filter(
+          (data) =>
+            !psearch ||
+            data.name.toLowerCase().includes(psearch.toLowerCase())
+        )
+      " style="width: 100%" empty-text="暂无Docker镜像" :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+      @selection-change="handleSelectionChange" ref="multipleTable">
       <el-table-column type="selection" width="55"> </el-table-column>
       <el-table-column width="80" type="index" label="序号"> </el-table-column>
       <el-table-column width="500" sortable label="镜像名称" prop="name">
@@ -83,11 +51,8 @@
       </el-table-column>
       <el-table-column width="600" label="分发进度" prop="percentage">
         <template slot-scope="scope">
-          <el-progress
-            v-if="scope.row.percentage != -1"
-            :percentage="scope.row.percentage"
-            :status="scope.row.percentage === 100 ? 'success' : ''"
-          ></el-progress>
+          <el-progress v-if="scope.row.percentage != -1" :percentage="scope.row.percentage"
+            :status="scope.row.percentage === 100 ? 'success' : ''"></el-progress>
           <el-tag v-else type="info" size="normal">未进行分发</el-tag>
         </template>
       </el-table-column>
@@ -97,46 +62,23 @@
         </template>
         <template slot-scope="scope">
           <div style="text-align: center">
-            <el-button
-              plain
-              type="danger"
-              @click="deleteimage(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            <el-button plain type="danger" @click="deleteimage(scope.$index, scope.row)">删除</el-button>
           </div>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页栏 -->
     <div v-if="cidata.length != 0" style="margin-top: 30px">
-      <el-pagination
-        :current-page.sync="curpage"
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size.sync="pagesize"
-        layout="sizes, total, prev, pager, next, jumper"
-        :total="totalci"
-        background
-      >
+      <el-pagination :current-page.sync="curpage" :page-sizes="[10, 20, 30, 40, 50]" :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper" :total="totalci" background>
       </el-pagination>
     </div>
     <!-- 上传镜像对话框 -->
     <el-dialog title="上传Docker镜像" :visible.sync="uploadimagevisible">
       <div style="text-align: center">
-        <el-upload
-          class="upload-demo"
-          drag
-          ref="upload"
-          :action="baseurl + '/api/ssh/uploadImg'"
-          :multiple="false"
-          accept=".tar"
-          :auto-upload="true"
-          :limit="1"
-          name="imgfile"
-          :before-upload="handleBeforeUpload"
-          :on-success="sucupload"
-          :on-error="errupload"
-          style="width: 100%"
-        >
+        <el-upload class="upload-demo" drag ref="upload" :action="baseurl + '/api/ssh/uploadImg'" :multiple="false"
+          accept=".tar" :auto-upload="true" :limit="1" name="imgfile" :before-upload="handleBeforeUpload"
+          :on-success="sucupload" :on-error="errupload" style="width: 100%">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">*只能上传.tar文件</div>
@@ -146,7 +88,7 @@
   </div>
 </template>
     
-    <script>
+<script>
 export default {
   name: "DockerImage",
   mounted() {
@@ -198,12 +140,12 @@ export default {
         this.$axios
           .get(
             this.baseurl +
-              "/api/ssh/dispenseImgByIP?sourceip=" +
-              this.$store.state.nodeip +
-              "&fileName=" +
-              tmp_docker.name +
-              "&endip=" +
-              this.endip
+            "/api/ssh/dispenseImgByIP?sourceip=" +
+            this.$store.state.nodeip +
+            "&fileName=" +
+            tmp_docker.name +
+            "&endip=" +
+            this.endip
           )
           .then((res) => {
             this.proloading = false;
@@ -233,12 +175,12 @@ export default {
       this.$axios
         .get(
           this.baseurl +
-            "/api/ssh/getProgress?sourceip=" +
-            this.$store.state.nodeip +
-            "&fileName=" +
-            tmp_docker.name +
-            "&endip=" +
-            this.endip
+          "/api/ssh/getProgress?sourceip=" +
+          this.$store.state.nodeip +
+          "&fileName=" +
+          tmp_docker.name +
+          "&endip=" +
+          this.endip
         )
         .then((res) => {
           if (res.data.exitStatus === 0) {
@@ -309,48 +251,59 @@ export default {
     },
     // 删除镜像
     deleteimage(idx, row) {
+      this.$confirm('此操作将永久删除该Docker镜像, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios
+          .get(
+            this.baseurl +
+            "/api/ssh//deleteImgByIP?ip=" +
+            this.$store.state.nodeip +
+            "&fileName=" +
+            row.name
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.data.exitStatus === 0) {
+              this.$notify.success({
+                title: "删除成功",
+                message: "docker镜像删除成功",
+                position: "bottom-right",
+                duration: 6000,
+              });
+              this.getVMList();
+            } else {
+              this.$notify.error({
+                title: "删除失败",
+                message: res.data.errorOutput,
+                position: "bottom-right",
+                duration: 6000,
+              });
+              this.getVMList();
+            }
+          })
+          .catch((err) => {
+            console.log("errors", err);
+            this.$notify.error({
+              title: "删除失败",
+              message: "请检查网络设置",
+              position: "bottom-right",
+              duration: 6000,
+            });
+          });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
       //   this.reqData.virtualMachineIp = this.formData.virtualMachineIp;
       //   this.reqData.userName = this.formData.userName;
       //   this.reqData.userPassword = this.formData.userPassword;
       //   this.reqData.imageId = row.imageid;
       //   console.log("row:" + row);
-      this.$axios
-        .get(
-          this.baseurl +
-            "/api/ssh//deleteImgByIP?ip=" +
-            this.$store.state.nodeip +
-            "&fileName=" +
-            row.name
-        )
-        .then((res) => {
-          console.log(res);
-          if (res.data.exitStatus === 0) {
-            this.$notify.success({
-              title: "删除成功",
-              message: "docker镜像删除成功",
-              position: "bottom-right",
-              duration: 6000,
-            });
-            this.getVMList();
-          } else {
-            this.$notify.error({
-              title: "删除失败",
-              message: res.data.errorOutput,
-              position: "bottom-right",
-              duration: 6000,
-            });
-            this.getVMList();
-          }
-        })
-        .catch((err) => {
-          console.log("errors", err);
-          this.$notify.error({
-            title: "删除失败",
-            message: "请检查网络设置",
-            position: "bottom-right",
-            duration: 6000,
-          });
-        });
     },
     // 上传失败
     errupload(err, file, fileList) {
@@ -463,11 +416,12 @@ export default {
 };
 </script>
     
-    <style>
+<style>
 .el-upload {
   width: 100%;
   height: 400px;
 }
+
 .el-upload .el-upload-dragger {
   width: 100%;
   height: 400px;
@@ -486,20 +440,25 @@ export default {
   background-color: #08c0b9;
   color: #fff;
 }
+
 .el-pagination.is-background .el-pager li.active {
   color: #fff;
   cursor: default;
 }
+
 .el-pagination.is-background .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
   background-color: #08c0b9;
   color: #fff;
 }
+
 /*带背景的分页按钮背景色end*/
 
 /*不带背景的分页按钮背景色begin*/
@@ -507,11 +466,14 @@ export default {
   color: #08c0b9;
   cursor: default;
 }
+
 .el-pagination .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 /*不带背景的分页按钮背景色end*/
 </style>

@@ -2,56 +2,33 @@
   <div class="vmarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-      <el-col :span="10" :offset="0"
-        ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+      <el-col :span="10" :offset="0">
+        <p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
           部署列表
-        </p></el-col
-      >
+        </p>
+      </el-col>
       <el-col :span="2" :offset="10">
-        <el-button
-          @click="openUploadDeployment"
-          icon="el-icon-circle-plus-outline"
-          size="medium"
-          round
-          plain
-          >上传部署</el-button
-        >
+        <el-button @click="openUploadDeployment" icon="el-icon-circle-plus-outline" size="medium" round
+          plain>上传部署</el-button>
       </el-col>
       <el-col :span="2">
-        <el-button
-          @click="openCreateDeployment"
-          icon="el-icon-circle-plus-outline"
-          size="medium"
-          round
-          plain
-          >添加部署</el-button
-        >
+        <el-button @click="openCreateDeployment" icon="el-icon-circle-plus-outline" size="medium" round
+          plain>添加部署</el-button>
       </el-col>
     </el-row>
     <!-- 表格区域 -->
-    <el-table
-      :data="
-        dpdata
-          .slice((curpage - 1) * pagesize, curpage * pagesize)
-          .filter(
-            (data) =>
-              !psearch ||
-              data.metadata.name.toLowerCase().includes(psearch.toLowerCase())
-          )
-      "
-      style="width: 100%"
-      empty-text="暂无部署"
-      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-    >
+    <el-table :data="dpdata
+        .slice((curpage - 1) * pagesize, curpage * pagesize)
+        .filter(
+          (data) =>
+            !psearch ||
+            data.metadata.name.toLowerCase().includes(psearch.toLowerCase())
+        )
+      " style="width: 100%" empty-text="暂无部署" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
       <el-table-column type="index" label="序号"> </el-table-column>
       <el-table-column width="250" sortable label="名称" prop="metadata.name">
       </el-table-column>
-      <el-table-column
-        width="200"
-        sortable
-        label="命名空间"
-        prop="metadata.namespace"
-      >
+      <el-table-column width="200" sortable label="命名空间" prop="metadata.namespace">
       </el-table-column>
       <el-table-column width="500" sortable label="标签" prop="metadata.labels">
         <template slot-scope="scope">
@@ -70,18 +47,12 @@
           }}/{{ scope.row.status.replicas }}
         </template>
       </el-table-column>
-      <el-table-column
-        width="200"
-        sortable
-        label="创建时间"
-        prop="metadata.creationTimestamp"
-      >
+      <el-table-column width="200" sortable label="创建时间" prop="metadata.creationTimestamp">
         <template slot-scope="scope">
           <div>
             <span>{{
               formatDate(scope.row.metadata.creationTimestamp, "YYYY-MM-DD")
-            }}</span
-            ><br />
+            }}</span><br />
             <span>{{
               formatDate(scope.row.metadata.creationTimestamp, "HH:mm:ss")
             }}</span>
@@ -95,24 +66,9 @@
         <template slot-scope="scope">
           <div style="text-align: center">
             <el-button-group>
-              <el-button
-                plain
-                type="success"
-                @click="startDeployment(scope.row.metadata.name)"
-                >启动</el-button
-              >
-              <el-button
-                plain
-                type="warning"
-                @click="stopDeployment(scope.row.metadata.name)"
-                >暂停</el-button
-              >
-              <el-button
-                plain
-                type="danger"
-                @click="delDeployment(scope.row.metadata.name)"
-                >删除</el-button
-              >
+              <el-button plain type="success" @click="startDeployment(scope.row.metadata.name)">启动</el-button>
+              <el-button plain type="warning" @click="stopDeployment(scope.row.metadata.name)">暂停</el-button>
+              <el-button plain type="danger" @click="delDeployment(scope.row.metadata.name)">删除</el-button>
             </el-button-group>
           </div>
         </template>
@@ -120,48 +76,23 @@
     </el-table>
     <!-- 分页栏 -->
     <div v-if="dpdata.length != 0" style="margin-top: 30px">
-      <el-pagination
-        :current-page.sync="curpage"
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size.sync="pagesize"
-        layout="sizes, total, prev, pager, next, jumper"
-        :total="totaldp"
-        background
-      >
+      <el-pagination :current-page.sync="curpage" :page-sizes="[10, 20, 30, 40, 50]" :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper" :total="totaldp" background>
       </el-pagination>
     </div>
     <!-- 上传部署对话框 -->
     <el-dialog title="上传部署" :visible.sync="uploaddeploymentvisible">
       <div style="text-align: center">
-        <el-upload
-          class="upload-demo"
-          drag
-          ref="upload"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-          :auto-upload="false"
-          accept=".yaml"
-          :limit="1"
-          :on-change="handleChange"
-          :http-request="uploadFile"
-          :file-list="fileList"
-          :on-exceed="handleExceed"
-          :before-upload="handleBeforeUpload"
-          :on-success="sucupload"
-          :on-error="errupload"
-          style="width: 100%"
-        >
+        <el-upload class="upload-demo" drag ref="upload"
+          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" :auto-upload="false" accept=".yaml"
+          :limit="1" :on-change="handleChange" :http-request="uploadFile" :file-list="fileList" :on-exceed="handleExceed"
+          :before-upload="handleBeforeUpload" :on-success="sucupload" :on-error="errupload" style="width: 100%">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">*只能上传.yaml文件</div>
         </el-upload>
         <div style="padding-top: 50px">
-          <el-button
-            class="ml-3"
-            round
-            plain
-            type="primary"
-            @click="submitUpload"
-          >
+          <el-button class="ml-3" round plain type="primary" @click="submitUpload">
             上传到服务器
           </el-button>
         </div>
@@ -169,55 +100,27 @@
     </el-dialog>
     <!-- 添加应用对话框 -->
     <el-dialog title="添加应用" :visible.sync="createDeploymentvisible">
-      <el-form
-        label-position="top"
-        label-width="80px"
-        :model="deployment_form"
-        :status-icon="true"
-        :rules="deployment_rules"
-        ref="deployment_form"
-      >
+      <el-form label-position="top" label-width="80px" :model="deployment_form" :status-icon="true"
+        :rules="deployment_rules" ref="deployment_form">
         <el-form-item label="应用名称" prop="deploymentName">
-          <el-input
-            v-model="deployment_form.deploymentName"
-            placeholder="请输入应用名称（首字母需为小写字母）"
-          ></el-input>
+          <el-input v-model="deployment_form.deploymentName" placeholder="请输入应用名称（首字母需为小写字母）"></el-input>
         </el-form-item>
         <el-form-item label="镜像名称" prop="image">
-          <el-input
-            v-model="deployment_form.image"
-            placeholder="请输入镜像名称"
-          ></el-input>
+          <el-input v-model="deployment_form.image" placeholder="请输入镜像名称"></el-input>
         </el-form-item>
         <el-form-item label="容器端口号" prop="containerPort">
-          <el-input
-            v-model="deployment_form.containerPort"
-            placeholder="请输入容器端口号"
-          ></el-input>
+          <el-input v-model="deployment_form.containerPort" placeholder="请输入容器端口号"></el-input>
         </el-form-item>
         <el-form-item label="服务端口号" prop="servicePort">
-          <el-input
-            v-model="deployment_form.servicePort"
-            placeholder="请输入服务端口号"
-          ></el-input>
+          <el-input v-model="deployment_form.servicePort" placeholder="请输入服务端口号"></el-input>
         </el-form-item>
         <el-form-item label="节点端口号" prop="nodePort">
-          <el-input
-            v-model="deployment_form.nodePort"
-            placeholder="请输入节点端口号（端口号>30000）"
-          ></el-input>
+          <el-input v-model="deployment_form.nodePort" placeholder="请输入节点端口号（端口号>30000）"></el-input>
         </el-form-item>
         <el-form-item size="large">
           <div class="cp-sbm-area">
-            <el-button round @click="resetForm('deployment_form')"
-              >清空输入</el-button
-            >
-            <el-button
-              round
-              type="primary"
-              @click="deployment_sumbit('deployment_form')"
-              >立即创建</el-button
-            >
+            <el-button round @click="resetForm('deployment_form')">清空输入</el-button>
+            <el-button round type="primary" @click="deployment_sumbit('deployment_form')">立即创建</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -225,7 +128,7 @@
   </div>
 </template>
   
-  <script >
+<script >
 import { del } from "vue";
 
 export default {
@@ -378,34 +281,45 @@ export default {
     },
     delDeployment(name) {
       console.log(name);
-      this.$axios({
-        method: "post",
-        url:
-          this.baseurl + "/deployment/deleteDeployment?deploymentName=" + name,
-        data: {
-          deploymentName: name,
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then(
-        (res) => {
-          this.$notify.success({
-            title: "操作通知",
-            message: "应用 " + name + "删除成功",
-            position: "bottom-right",
-          });
-          this.getDeploymentList();
-        },
-        (err) => {
-          console.log(err);
-          this.$notify.error({
-            title: "删除失败",
-            message: "请检查网络连接设置",
-            position: "bottom-right",
-          });
-        }
-      );
+      this.$confirm('此操作将永久删除该部署, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios({
+          method: "post",
+          url:
+            this.baseurl + "/deployment/deleteDeployment?deploymentName=" + name,
+          data: {
+            deploymentName: name,
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then(
+          (res) => {
+            this.$notify.success({
+              title: "操作通知",
+              message: "应用 " + name + "删除成功",
+              position: "bottom-right",
+            });
+            this.getDeploymentList();
+          },
+          (err) => {
+            console.log(err);
+            this.$notify.error({
+              title: "删除失败",
+              message: "请检查网络连接设置",
+              position: "bottom-right",
+            });
+          }
+        );
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
     stopDeployment(name) {
       console.log(name);
@@ -537,7 +451,7 @@ export default {
 };
 </script>
   
-  <style>
+<style>
 .vmarea {
   background-color: #fff;
   border-radius: 5px;
@@ -550,20 +464,25 @@ export default {
   background-color: #08c0b9;
   color: #fff;
 }
+
 .el-pagination.is-background .el-pager li.active {
   color: #fff;
   cursor: default;
 }
+
 .el-pagination.is-background .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
   background-color: #08c0b9;
   color: #fff;
 }
+
 /*带背景的分页按钮背景色end*/
 
 /*不带背景的分页按钮背景色begin*/
@@ -571,11 +490,14 @@ export default {
   color: #08c0b9;
   cursor: default;
 }
+
 .el-pagination .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 /*不带背景的分页按钮背景色end*/
 </style>

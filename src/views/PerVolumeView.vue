@@ -2,81 +2,39 @@
   <div class="vmarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-      <el-col :span="10" :offset="0"
-        ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+      <el-col :span="10" :offset="0">
+        <p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
           持久卷列表
-        </p></el-col
-      >
+        </p>
+      </el-col>
       <el-col :span="2" :offset="12">
-        <el-button
-          @click="openCreateVirStore"
-          icon="el-icon-circle-plus-outline"
-          size="medium"
-          round
-          plain
-          >创建持久卷</el-button
-        >
+        <el-button @click="openCreateVirStore" icon="el-icon-circle-plus-outline" size="medium" round
+          plain>创建持久卷</el-button>
       </el-col>
     </el-row>
     <!-- 表格区域 -->
-    <el-table
-      :data="
-        vsdata
-          .slice((curpage - 1) * pagesize, curpage * pagesize)
-          .filter(
-            (data) =>
-              !psearch ||
-              data.metadata.name.toLowerCase().includes(psearch.toLowerCase())
-          )
-      "
-      style="width: 100%"
-      empty-text="暂无持久卷"
-      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-    >
+    <el-table :data="vsdata
+        .slice((curpage - 1) * pagesize, curpage * pagesize)
+        .filter(
+          (data) =>
+            !psearch ||
+            data.metadata.name.toLowerCase().includes(psearch.toLowerCase())
+        )
+      " style="width: 100%" empty-text="暂无持久卷" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
       <el-table-column label="序号" type="index"> </el-table-column>
-      <el-table-column
-        width="200"
-        sortable
-        label="持久卷名"
-        prop="metadata.name"
-      >
+      <el-table-column width="200" sortable label="持久卷名" prop="metadata.name">
       </el-table-column>
-      <el-table-column
-        width="100"
-        sortable
-        label="容量"
-        prop="spec.capacity.storage"
-      >
+      <el-table-column width="100" sortable label="容量" prop="spec.capacity.storage">
       </el-table-column>
-      <el-table-column
-        width="200"
-        sortable
-        label="访问模式"
-        prop="spec.accessModes"
-      >
+      <el-table-column width="200" sortable label="访问模式" prop="spec.accessModes">
       </el-table-column>
-      <el-table-column
-        width="200"
-        sortable
-        label="回收策略"
-        prop="spec.persistentVolumeReclaimPolicy"
-      >
+      <el-table-column width="200" sortable label="回收策略" prop="spec.persistentVolumeReclaimPolicy">
       </el-table-column>
       <el-table-column width="200" sortable label="状态" prop="status.phase">
       </el-table-column>
-      <el-table-column
-        width="200"
-        sortable
-        label="声明"
-        prop="spec.claimRef.name"
-      >
+      <el-table-column width="200" sortable label="声明" prop="spec.claimRef.name">
       </el-table-column>
-      <el-table-column
-        width="200"
-        sortable
-        label="主机路径"
-        prop="spec.hostPath.path"
-      >
+      <el-table-column width="200" sortable label="主机路径" prop="spec.hostPath.path">
       </el-table-column>
       <el-table-column align="right">
         <template slot="header">
@@ -84,52 +42,25 @@
         </template>
         <template slot-scope="scope">
           <!-- 修改界面 -->
-          <el-popover
-            :ref="'popover' + scope.$index"
-            placement="right"
-            width="300"
-            trigger="click"
-          >
-            <el-form
-              label-position="top"
-              label-width="80px"
-              :model="editform"
-              :status-icon="true"
-              :rules="edit_rules"
-              ref="editform"
-            >
+          <el-popover :ref="'popover' + scope.$index" placement="right" width="300" trigger="click">
+            <el-form label-position="top" label-width="80px" :model="editform" :status-icon="true" :rules="edit_rules"
+              ref="editform">
               <el-form-item label="容量大小" prop="vol">
-                <el-input
-                  v-model="editform.vol"
-                  placeholder="请输入要修改的容量大小"
-                  size="normal"
-                  clearable
-                >
+                <el-input v-model="editform.vol" placeholder="请输入要修改的容量大小" size="normal" clearable>
                   <template slot="append">GiB</template>
                 </el-input>
               </el-form-item>
               <el-form-item size="large">
                 <div style="text-align: right">
-                  <el-button
-                    type="primary"
-                    @click="edit_submit(scope.$index, scope.row, 'editform')"
-                    >确定修改</el-button
-                  >
+                  <el-button type="primary" @click="edit_submit(scope.$index, scope.row, 'editform')">确定修改</el-button>
                 </div>
               </el-form-item>
             </el-form>
           </el-popover>
           <div style="text-align: center">
             <el-button-group>
-              <el-button v-popover="'popover' + scope.$index" plain type="info"
-                >修改</el-button
-              >
-              <el-button
-                plain
-                type="danger"
-                @click="deletePerV(scope.$index, scope.row)"
-                >删除</el-button
-              >
+              <el-button v-popover="'popover' + scope.$index" plain type="info">修改</el-button>
+              <el-button plain type="danger" @click="deletePerV(scope.$index, scope.row)">删除</el-button>
             </el-button-group>
           </div>
         </template>
@@ -137,101 +68,45 @@
     </el-table>
     <!-- 分页栏 -->
     <div v-if="vsdata.length != 0" style="margin-top: 30px">
-      <el-pagination
-        :current-page.sync="curpage"
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size.sync="pagesize"
-        layout="sizes, total, prev, pager, next, jumper"
-        :total="totalvs"
-        background
-      >
+      <el-pagination :current-page.sync="curpage" :page-sizes="[10, 20, 30, 40, 50]" :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper" :total="totalvs" background>
       </el-pagination>
     </div>
     <!-- 上传创建持久卷对话框 -->
     <el-dialog title="创建持久卷" :visible.sync="createVirstoreVisible">
-      <el-form
-        label-position="top"
-        label-width="80px"
-        :model="vs_form"
-        :status-icon="true"
-        :rules="vs_rules"
-        ref="vs_form"
-      >
+      <el-form label-position="top" label-width="80px" :model="vs_form" :status-icon="true" :rules="vs_rules"
+        ref="vs_form">
         <el-row :gutter="20">
-          <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷名称" prop="pvInfo.pvName">
-              <el-input
-                v-model="vs_form.pvInfo.pvName"
-                placeholder="请输入持久卷名称"
-              ></el-input> </el-form-item
-          ></el-col>
-          <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷声明名称" prop="pvcInfo.pvcName">
-              <el-input
-                v-model="vs_form.pvcInfo.pvcName"
-                placeholder="请输入持久卷声明名称"
-              ></el-input> </el-form-item
-          ></el-col>
+          <el-col :span="12" :offset="0"><el-form-item label="持久卷名称" prop="pvInfo.pvName">
+              <el-input v-model="vs_form.pvInfo.pvName" placeholder="请输入持久卷名称"></el-input> </el-form-item></el-col>
+          <el-col :span="12" :offset="0"><el-form-item label="持久卷声明名称" prop="pvcInfo.pvcName">
+              <el-input v-model="vs_form.pvcInfo.pvcName" placeholder="请输入持久卷声明名称"></el-input> </el-form-item></el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷主机地址" prop="pvInfo.pvPath">
-              <el-input
-                v-model="vs_form.pvInfo.pvPath"
-                placeholder="请输入持久卷主机地址"
-              ></el-input> </el-form-item
-          ></el-col>
-          <el-col :span="12" :offset="0"
-            ><el-form-item
-              label="持久卷声明命名空间"
-              prop="pvcInfo.pvcNamespace"
-            >
-              <el-input
-                v-model="vs_form.pvcInfo.pvcNamespace"
-                placeholder="请输入持久卷声明命名空间"
-              ></el-input> </el-form-item
-          ></el-col>
+          <el-col :span="12" :offset="0"><el-form-item label="持久卷主机地址" prop="pvInfo.pvPath">
+              <el-input v-model="vs_form.pvInfo.pvPath" placeholder="请输入持久卷主机地址"></el-input> </el-form-item></el-col>
+          <el-col :span="12" :offset="0"><el-form-item label="持久卷声明命名空间" prop="pvcInfo.pvcNamespace">
+              <el-input v-model="vs_form.pvcInfo.pvcNamespace" placeholder="请输入持久卷声明命名空间"></el-input>
+            </el-form-item></el-col>
         </el-row>
         <el-row :gutter="20">
-          <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷容量" prop="pvInfo.pvQuantity">
-              <el-input
-                v-model="vs_form.pvInfo.pvQuantity"
-                placeholder="请输入持久卷容量"
-              ></el-input> </el-form-item
-          ></el-col>
-          <el-col :span="12" :offset="0"
-            ><el-form-item label="持久卷声明容量" prop="pvcInfo.pvcQuantity">
-              <el-input
-                v-model="vs_form.pvcInfo.pvcQuantity"
-                placeholder="请输入持久卷声明容量"
-              ></el-input> </el-form-item
-          ></el-col>
+          <el-col :span="12" :offset="0"><el-form-item label="持久卷容量" prop="pvInfo.pvQuantity">
+              <el-input v-model="vs_form.pvInfo.pvQuantity" placeholder="请输入持久卷容量"></el-input> </el-form-item></el-col>
+          <el-col :span="12" :offset="0"><el-form-item label="持久卷声明容量" prop="pvcInfo.pvcQuantity">
+              <el-input v-model="vs_form.pvcInfo.pvcQuantity" placeholder="请输入持久卷声明容量"></el-input>
+            </el-form-item></el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12" :offset="0">
             <el-form-item label="持久卷访问模式" prop="pvInfo.pvAccessMode">
-              <el-input
-                v-model="vs_form.pvInfo.pvAccessMode"
-                placeholder="请输入持久卷访问模式"
-              ></el-input>
+              <el-input v-model="vs_form.pvInfo.pvAccessMode" placeholder="请输入持久卷访问模式"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
             <el-form-item label="所在节点" prop="pvInfo.pvNodeName">
-              <el-select
-                style="width: 100%"
-                v-model="vs_form.pvInfo.pvNodeName"
-                clearable
-                @visible-change="noderemote"
-                placeholder="请选择持久卷所在节点"
-              >
-                <el-option
-                  v-for="item in nodename_options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
+              <el-select style="width: 100%" v-model="vs_form.pvInfo.pvNodeName" clearable @visible-change="noderemote"
+                placeholder="请选择持久卷所在节点">
+                <el-option v-for="item in nodename_options" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -241,9 +116,7 @@
         <el-form-item size="large">
           <div style="text-align: right; padding-top: 30px">
             <el-button round @click="resetForm('vs_form')">清空输入</el-button>
-            <el-button round type="primary" @click="vs_sumbit('vs_form')"
-              >立即创建</el-button
-            >
+            <el-button round type="primary" @click="vs_sumbit('vs_form')">立即创建</el-button>
           </div>
         </el-form-item>
       </el-form>
@@ -251,7 +124,7 @@
   </div>
 </template>
     
-    <script>
+<script>
 export default {
   name: "ImageList",
   mounted() {
@@ -504,45 +377,57 @@ export default {
     },
     // 删除持久卷
     deletePerV(idx, row) {
-      this.$axios({
-        method: "post",
-        url: this.baseurl + "/virtuleStorage/deleteVs",
-        data: {
-          pvName: this.vsdata[idx].metadata.name,
-          pvPath: this.vsdata[idx].spec.hostPath.path,
-          pvQuantity: this.vsdata[idx].spec.capacity.storage,
-          pvAccessMode: this.vsdata[idx].spec.accessModes[0],
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then(
-        (res) => {
-          if (res.data[0] === "F") {
+      this.$confirm('此操作将永久删除该持久卷, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$axios({
+          method: "post",
+          url: this.baseurl + "/virtuleStorage/deleteVs",
+          data: {
+            pvName: this.vsdata[idx].metadata.name,
+            pvPath: this.vsdata[idx].spec.hostPath.path,
+            pvQuantity: this.vsdata[idx].spec.capacity.storage,
+            pvAccessMode: this.vsdata[idx].spec.accessModes[0],
+          },
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }).then(
+          (res) => {
+            if (res.data[0] === "F") {
+              this.$notify.error({
+                title: "删除失败",
+                message: res.data,
+                position: "bottom-right",
+              });
+            } else {
+              this.$notify.success({
+                title: "操作通知",
+                message: "持久卷 " + this.vs_form.pvInfo.pvName + " 删除成功",
+                position: "bottom-right",
+              });
+            }
+            this.getPerVList();
+          },
+          (err) => {
+            console.log(err);
             this.$notify.error({
               title: "删除失败",
-              message: res.data,
+              message: "请检查网络连接设置",
               position: "bottom-right",
             });
-          } else {
-            this.$notify.success({
-              title: "操作通知",
-              message: "持久卷 " + this.vs_form.pvInfo.pvName + " 删除成功",
-              position: "bottom-right",
-            });
+            this.getPerVList();
           }
-          this.getPerVList();
-        },
-        (err) => {
-          console.log(err);
-          this.$notify.error({
-            title: "删除失败",
-            message: "请检查网络连接设置",
-            position: "bottom-right",
-          });
-          this.getPerVList();
-        }
-      );
+        );
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+
     },
     // 重置表单
     resetForm(formName) {
@@ -562,11 +447,12 @@ export default {
 };
 </script>
     
-    <style>
+<style>
 .el-upload {
   width: 100%;
   height: 400px;
 }
+
 .el-upload .el-upload-dragger {
   width: 100%;
   height: 400px;
@@ -585,20 +471,25 @@ export default {
   background-color: #08c0b9;
   color: #fff;
 }
+
 .el-pagination.is-background .el-pager li.active {
   color: #fff;
   cursor: default;
 }
+
 .el-pagination.is-background .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
   background-color: #08c0b9;
   color: #fff;
 }
+
 /*带背景的分页按钮背景色end*/
 
 /*不带背景的分页按钮背景色begin*/
@@ -606,11 +497,14 @@ export default {
   color: #08c0b9;
   cursor: default;
 }
+
 .el-pagination .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 /*不带背景的分页按钮背景色end*/
 </style>

@@ -31,7 +31,7 @@
     >
     </el-table-column>
     <el-table-column
-      width="250"
+      width="150"
       sortable
       label="Node名"
       prop="metadata.name"

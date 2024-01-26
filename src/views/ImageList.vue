@@ -2,11 +2,11 @@
   <div class="vmarea">
     <!-- 头部标题操作 -->
     <el-row :gutter="0">
-      <el-col :span="10" :offset="0"
-        ><p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
+      <el-col :span="10" :offset="0">
+        <p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
           容器镜像列表
-        </p></el-col
-      >
+        </p>
+      </el-col>
       <!-- <el-col :span="3" :offset="9">
         <el-button
           @click="openUploadImage"
@@ -18,32 +18,19 @@
         >
       </el-col> -->
       <el-col :span="2" :offset="12">
-        <el-button
-          @click="openUploadImage"
-          icon="el-icon-circle-plus-outline"
-          size="medium"
-          round
-          plain
-          >上传镜像</el-button
-        >
+        <el-button @click="openUploadImage" icon="el-icon-circle-plus-outline" size="medium" round plain>上传镜像</el-button>
       </el-col>
     </el-row>
     <!-- 表格区域 -->
-    <el-table
-      :data="
-        cidata
-          .slice((curpage - 1) * pagesize, curpage * pagesize)
-          .filter(
-            (data) =>
-              !psearch ||
-              data.imageName.toLowerCase().includes(psearch.toLowerCase())
-          )
-      "
-      style="width: 100%"
-      empty-text="暂无容器镜像"
-      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
-      @selection-change="handleSelectionChange"
-    >
+    <el-table :data="cidata
+        .slice((curpage - 1) * pagesize, curpage * pagesize)
+        .filter(
+          (data) =>
+            !psearch ||
+            data.imageName.toLowerCase().includes(psearch.toLowerCase())
+        )
+      " style="width: 100%" empty-text="暂无容器镜像" :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+      @selection-change="handleSelectionChange">
       <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
       <el-table-column width="80" type="index" label="序号"> </el-table-column>
       <el-table-column width="500" sortable label="镜像名称" prop="imageName">
@@ -60,47 +47,23 @@
         </template>
         <template slot-scope="scope">
           <div style="text-align: center">
-            <el-button
-              plain
-              type="danger"
-              @click="deleteimage(scope.$index, scope.row)"
-              >删除</el-button
-            >
+            <el-button plain type="danger" @click="deleteimage(scope.$index, scope.row)">删除</el-button>
           </div>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页栏 -->
     <div v-if="cidata.length != 0" style="margin-top: 30px">
-      <el-pagination
-        :current-page.sync="curpage"
-        :page-sizes="[10, 20, 30, 40, 50]"
-        :page-size.sync="pagesize"
-        layout="sizes, total, prev, pager, next, jumper"
-        :total="totalci"
-        background
-      >
+      <el-pagination :current-page.sync="curpage" :page-sizes="[10, 20, 30, 40, 50]" :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper" :total="totalci" background>
       </el-pagination>
     </div>
     <!-- 上传镜像对话框 -->
     <el-dialog title="上传镜像" :visible.sync="uploadimagevisible">
       <div style="text-align: center">
-        <el-upload
-          class="upload-demo"
-          drag
-          ref="upload"
-          :action="baseurl + '/containerd/uploadImage'"
-          :data="formData"
-          :multiple="false"
-          accept=".tar"
-          :auto-upload="true"
-          :limit="1"
-          name="tarFile"
-          :before-upload="handleBeforeUpload"
-          :on-success="sucupload"
-          :on-error="errupload"
-          style="width: 100%"
-        >
+        <el-upload class="upload-demo" drag ref="upload" :action="baseurl + '/containerd/uploadImage'" :data="formData"
+          :multiple="false" accept=".tar" :auto-upload="true" :limit="1" name="tarFile"
+          :before-upload="handleBeforeUpload" :on-success="sucupload" :on-error="errupload" style="width: 100%">
           <i class="el-icon-upload"></i>
           <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
           <div class="el-upload__tip" slot="tip">*只能上传.tar文件</div>
@@ -110,7 +73,7 @@
   </div>
 </template>
   
-  <script>
+<script>
 import { del } from "vue";
 
 export default {
@@ -150,42 +113,54 @@ export default {
     },
     // 删除镜像
     deleteimage(idx, row) {
-      this.reqData.virtualMachineIp = this.formData.virtualMachineIp;
-      this.reqData.userName = this.formData.userName;
-      this.reqData.userPassword = this.formData.userPassword;
-      this.reqData.imageId = row.imageid;
-      console.log("row:" + row);
-      this.$axios
-        .post(
-          this.baseurl +
+      this.$confirm('此操作将永久删除该容器镜像, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.reqData.virtualMachineIp = this.formData.virtualMachineIp;
+        this.reqData.userName = this.formData.userName;
+        this.reqData.userPassword = this.formData.userPassword;
+        this.reqData.imageId = row.imageid;
+        console.log("row:" + row);
+        this.$axios
+          .post(
+            this.baseurl +
             "/containerd/deleteImage?nodeName=" +
             this.$store.state.nodename +
             "&imageId=" +
             row.imageId
-        )
-        .then((res) => {
-          console.log(res);
-          if (res.data[0] === "I") {
-            this.$notify.success({
-              title: "删除成功",
-              message: "镜像删除成功",
-              position: "bottom-right",
-              duration: 6000,
-            });
-            this.getVMList();
-          } else {
-            this.$notify.error({
-              title: "删除失败",
-              message: response,
-              position: "bottom-right",
-              duration: 6000,
-            });
-            this.getVMList();
-          }
-        })
-        .catch((err) => {
-          console.log("errors", err);
+          )
+          .then((res) => {
+            console.log(res);
+            if (res.data[0] === "I") {
+              this.$notify.success({
+                title: "删除成功",
+                message: "镜像删除成功",
+                position: "bottom-right",
+                duration: 6000,
+              });
+              this.getVMList();
+            } else {
+              this.$notify.error({
+                title: "删除失败",
+                message: response,
+                position: "bottom-right",
+                duration: 6000,
+              });
+              this.getVMList();
+            }
+          })
+          .catch((err) => {
+            console.log("errors", err);
+          });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         });
+      });
+
     },
     // 上传失败
     errupload(err, file, fileList) {
@@ -256,8 +231,8 @@ export default {
       this.$axios
         .post(
           this.baseurl +
-            "/containerd/images/list?nodeName=" +
-            this.$store.state.nodename,
+          "/containerd/images/list?nodeName=" +
+          this.$store.state.nodename,
           {
             virtualMachineIp: "39.98.124.97",
             userName: "root",
@@ -292,11 +267,12 @@ export default {
 };
 </script>
   
-  <style>
+<style>
 .el-upload {
   width: 100%;
   height: 400px;
 }
+
 .el-upload .el-upload-dragger {
   width: 100%;
   height: 400px;
@@ -315,20 +291,25 @@ export default {
   background-color: #08c0b9;
   color: #fff;
 }
+
 .el-pagination.is-background .el-pager li.active {
   color: #fff;
   cursor: default;
 }
+
 .el-pagination.is-background .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 .el-pagination.is-background .el-pager li:not(.disabled).active:hover {
   background-color: #08c0b9;
   color: #fff;
 }
+
 /*带背景的分页按钮背景色end*/
 
 /*不带背景的分页按钮背景色begin*/
@@ -336,11 +317,14 @@ export default {
   color: #08c0b9;
   cursor: default;
 }
+
 .el-pagination .el-pager li:hover {
   color: #08c0b9;
 }
+
 .el-pagination .el-pager li:not(.disabled):hover {
   color: #08c0b9;
 }
+
 /*不带背景的分页按钮背景色end*/
 </style>
