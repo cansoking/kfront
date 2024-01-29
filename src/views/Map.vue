@@ -93,7 +93,7 @@ let menuGroups = [
 function handleMenuItemClick(index){
   if(index === "北京(云节点 1)"){
     sessionStorage.setItem("nodename", "master1");
-    sessionStorage.setItem("ip", "39.98.124.97");
+    sessionStorage.setItem("ip", "39.101.136.242");
   }
   if(index === "青岛(边节点 1)"){
     sessionStorage.setItem("nodename", "worker1");
@@ -177,7 +177,7 @@ function drawChina() {
       const city = params.data.name;
       if(city === "北京(云节点 1)"){
         sessionStorage.setItem("nodename", "master1");
-        sessionStorage.setItem("ip", "39.98.124.97");
+        sessionStorage.setItem("ip", "39.101.136.242");
       }
       if(city === "青岛(边节点 1)"){
         sessionStorage.setItem("nodename", "worker1");

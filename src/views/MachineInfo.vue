@@ -343,7 +343,7 @@ export default {
       ],
       addNodevisible: false,
       dialogTableVisible: false,
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       // baseurl: "http://127.0.0.1:8080",
       node_rules: {
         nodeName: [
@@ -538,7 +538,7 @@ export default {
                 }
               );
               this.addNodevisible = false;
-            });
+            }).catch((e)=>{console.log(e);});
           }else {
             // 提交表单，创建容器
             this.$axios({

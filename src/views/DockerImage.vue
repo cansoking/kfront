@@ -96,7 +96,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://39.98.124.97:8081",
+      baseurl: "http://39.101.136.242:8081",
       cidata: [],
       psearch: "",
       curpage: 1,
@@ -110,7 +110,7 @@ export default {
         imageId: "",
       },
       formData: {
-        virtualMachineIp: "39.98.124.97",
+        virtualMachineIp: "39.101.136.242",
         userName: "root",
         userPassword: "Upc123456@",
       },
@@ -211,7 +211,7 @@ export default {
       this.end_options = [];
       this.loading = true;
       this.$axios
-        .get("http://39.98.124.97:8080" + "/node/getNodeList1")
+        .get("http://39.101.136.242:8080" + "/node/getNodeList1")
         .then((res) => {
           let nodeinfo = res.data.content;
           for (let i = 0; i < nodeinfo.length; i++) {

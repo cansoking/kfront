@@ -345,7 +345,7 @@ export default {
       nodename_options: [],
       // pvc名称选项
       pvcName_options: [],
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       // baseurl: "http://127.0.0.1:8080",
       poddata: [],
       psearch: "",
@@ -792,7 +792,7 @@ export default {
           "/containerd/images/list?nodeName=" +
           this.$store.state.nodename,
           {
-            virtualMachineIp: "39.98.124.97",
+            virtualMachineIp: "39.101.136.242",
             userName: "root",
             userPassword: "Upc123456@",
           }

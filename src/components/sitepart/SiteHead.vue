@@ -57,7 +57,7 @@ export default {
   name: "SiteHead",
   data() {
     return {
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       search: "",
       isloading: false,
       nodeoption: [],

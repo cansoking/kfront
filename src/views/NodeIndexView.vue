@@ -117,7 +117,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       pidata: [],
       psearch: "",
       curpage: 1,
@@ -153,7 +153,7 @@ export default {
     getNodeIndexList() {
       this.$axios
         .post(this.baseurl + "/index/nodeIndex/list", {
-          virtualMachineIp: "39.98.124.97",
+          virtualMachineIp: "39.101.136.242",
           userName: "root",
           userPassword: "Upc123456@",
       })

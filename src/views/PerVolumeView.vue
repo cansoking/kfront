@@ -132,7 +132,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       // baseurl: "http://127.0.0.1:8080",
       vsdata: [],
       psearch: "",
@@ -146,7 +146,7 @@ export default {
       },
       vs_form: {
         vmInfo: {
-          virtualMachineIp: "39.98.124.97",
+          virtualMachineIp: "39.101.136.242",
           userName: "root",
           userPassword: "Upc123456@",
         },

@@ -18,7 +18,7 @@
           placeholder="请选择宿主机"
           @change="suzhuchange"
         >
-          <el-option label="39.98.124.97" value="39.98.124.97"></el-option>
+          <el-option label="39.101.136.242" value="39.101.136.242"></el-option>
           <el-option
             label="192.168.194.164"
             value="192.168.194.164"
@@ -648,7 +648,7 @@ export default {
       ],
       node_options: [
         {
-          label: "云节点:39.98.124.97",
+          label: "云节点:39.101.136.242",
           value: "192.168.194.178",
         },
         {
@@ -1019,7 +1019,7 @@ export default {
                     this.$store.state.nodeip +
                     "&fileName=" +
                     this.iamgename +
-                    "&targetPath=/testimg&sourceIp=39.98.124.97"
+                    "&targetPath=/testimg&sourceIp=39.101.136.242"
                 )
                 .then((res) => {
                   if (res.data.exitStatus == 0) {
@@ -1109,7 +1109,7 @@ export default {
     getimg() {
       this.img_list = [];
       this.$axios
-        .get("http://39.98.124.97:8081/api/ssh/imgListByIP?ip=39.98.124.97")
+        .get("http://39.101.136.242:8081/api/ssh/imgListByIP?ip=39.101.136.242")
         .then((res) => {
           let imgdata = res.data.output.split("\n");
           imgdata.pop();
@@ -1292,7 +1292,7 @@ export default {
       //   state: 'VIR_DOMAIN_RUNNING',
       //   cpuNum: 1,
       //   maxMem: 1,
-      //   ipaddr: "39.98.124.97:8080"
+      //   ipaddr: "39.101.136.242:8080"
       // }];
       // this.totalvm = this.vmdata.length;
     },

@@ -102,13 +102,13 @@ export default {
   data() {
     return {
       nodes: [],
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       terminal: null,
       wsshClient: new WSSHClient(),
       nodeinfo: [],
       options: {
         operate: 'connect',
-        host: '39.98.124.97', // IP
+        host: '39.101.136.242', // IP
         port: '22', // ssh default port
         username: 'root',
         password: 'Upc123456@',

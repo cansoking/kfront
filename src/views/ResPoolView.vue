@@ -1289,7 +1289,7 @@ export default {
       imagedrawer: false,
       // 命令执行结果flag
       res_state: "",
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       execurl: "http://" + this.$store.state.nodeip + ":8081",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
@@ -1325,7 +1325,7 @@ export default {
       ],
       node_options: [
         {
-          label: "云节点:39.98.124.97",
+          label: "云节点:39.101.136.242",
           value: "192.168.194.178",
         },
         {
@@ -1870,7 +1870,7 @@ export default {
     imageremote() {
       this.$axios
         .post(this.baseurl + "/containerd/images/list", {
-          virtualMachineIp: "39.98.124.97",
+          virtualMachineIp: "39.101.136.242",
           userName: "root",
           userPassword: "Upc123456@",
         })
@@ -2140,7 +2140,7 @@ export default {
                     this.$store.state.nodeip +
                     "&fileName=" +
                     this.iamgename +
-                    "&targetPath=/testimg&sourceIp=39.98.124.97"
+                    "&targetPath=/testimg&sourceIp=39.101.136.242"
                 )
                 .then((res) => {
                   if (res.data.exitStatus == 0) {
@@ -2230,7 +2230,7 @@ export default {
     getimg() {
       this.img_list = [];
       this.$axios
-        .get("http://39.98.124.97:8081/api/ssh/imgListByIP?ip=39.98.124.97")
+        .get("http://39.101.136.242:8081/api/ssh/imgListByIP?ip=39.101.136.242")
         .then((res) => {
           let imgdata = res.data.output.split("\n");
           imgdata.pop();
@@ -2415,7 +2415,7 @@ export default {
       //   state: 'VIR_DOMAIN_RUNNING',
       //   cpuNum: 1,
       //   maxMem: 1,
-      //   ipaddr: "39.98.124.97:8080"
+      //   ipaddr: "39.101.136.242:8080"
       // }];
       // this.totalvm = this.vmdata.length;
     },

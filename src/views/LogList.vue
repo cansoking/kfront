@@ -133,7 +133,7 @@ export default {
   name: "LogList",
   data() {
     return {
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       logdata: [],
       pageNum: 1, //当前页
       curpage: 1,
@@ -238,7 +238,7 @@ export default {
     },
     downloadFile() {
       // 通过 fetch 请求后端接口下载文件
-      fetch('http://39.98.124.97:8080/downloadLog', {
+      fetch('http://39.101.136.242:8080/downloadLog', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

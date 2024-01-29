@@ -84,7 +84,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       // baseurl: "http://127.0.0.1:8080",
       cidata: [],
       psearch: "",
@@ -99,7 +99,7 @@ export default {
         imageId: "",
       },
       formData: {
-        // virtualMachineIp: "39.98.124.97",
+        // virtualMachineIp: "39.101.136.242",
         // userName: "root",
         // userPassword: "Upc123456@",
         nodeName: this.tmp_nodename_w,
@@ -234,7 +234,7 @@ export default {
           "/containerd/images/list?nodeName=" +
           this.$store.state.nodename,
           {
-            virtualMachineIp: "39.98.124.97",
+            virtualMachineIp: "39.101.136.242",
             userName: "root",
             userPassword: "Upc123456@",
           }

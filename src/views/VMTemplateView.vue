@@ -469,7 +469,7 @@ export default {
   name: "VMLogList",
   data() {
     return {
-      baseurl: "http://39.98.124.97:8080",
+      baseurl: "http://39.101.136.242:8080",
       curpage: 1,
       totalvmtem: 0,
       pagesize: 10,
@@ -526,7 +526,7 @@ export default {
       ],
       node_options: [
       {
-          label: "云节点:39.98.124.97",
+          label: "云节点:39.101.136.242",
           value: "192.168.194.178",
         },
         {
