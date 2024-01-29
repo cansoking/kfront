@@ -505,33 +505,69 @@ export default {
       // 校验表单
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // 提交表单，创建容器
-          this.$axios({
-            method: "post",
-            url: this.baseurl + "/node/addNodeList1", //换成实际地址
-            data: this.node_form,
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }).then(
-            (res) => {
-              if (res.status === 200) {
-                this.$message.success("添加成功！");
-                this.getnodeinfo();
-              } else {
-                this.$message.success("添加失败！");
-              }
-            },
-            (err) => {
-              console.log(err);
-              this.$notify.error({
-                title: "创建失败",
-                message: "请检查网络连接设置",
-                position: "bottom-right",
-              });
-            }
-          );
-          this.addNodevisible = false;
+          if (this.nodeinfo.length >= 10) {
+            this.$confirm('节点已超过10个，确认要继续添加吗', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              // 提交表单，创建容器
+              this.$axios({
+                method: "post",
+                url: this.baseurl + "/node/addNodeList1", //换成实际地址
+                data: this.node_form,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }).then(
+                (res) => {
+                  if (res.status === 200) {
+                    this.$message.success("添加成功！");
+                    this.getnodeinfo();
+                  } else {
+                    this.$message.success("添加失败！");
+                  }
+                },
+                (err) => {
+                  console.log(err);
+                  this.$notify.error({
+                    title: "创建失败",
+                    message: "请检查网络连接设置",
+                    position: "bottom-right",
+                  });
+                }
+              );
+              this.addNodevisible = false;
+            });
+          }else {
+            // 提交表单，创建容器
+            this.$axios({
+                method: "post",
+                url: this.baseurl + "/node/addNodeList1", //换成实际地址
+                data: this.node_form,
+                headers: {
+                  "Content-Type": "application/json",
+                },
+              }).then(
+                (res) => {
+                  if (res.status === 200) {
+                    this.$message.success("添加成功！");
+                    this.getnodeinfo();
+                  } else {
+                    this.$message.success("添加失败！");
+                  }
+                },
+                (err) => {
+                  console.log(err);
+                  this.$notify.error({
+                    title: "创建失败",
+                    message: "请检查网络连接设置",
+                    position: "bottom-right",
+                  });
+                }
+              );
+              this.addNodevisible = false;
+          }
         } else {
           console.log("表单验证不通过");
           return false;
