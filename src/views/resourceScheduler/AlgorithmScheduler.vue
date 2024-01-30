@@ -155,7 +155,7 @@ import {
   fetchTasksByResource,
   fetchResourceByIds
 } from "@/api/resource";
-import { runAlgorithm, fetchAllAlgorithms, reloadAlgorithm } from "@/api/algorithm";
+import { runAlgorithm, fetchAllAlgorithms, reloadAlgorithm, confirmAlgorithm } from "@/api/algorithm";
 
 export default {
   name: "AlgorithmScheduler",
@@ -247,11 +247,33 @@ export default {
         return this.$message.error(result.message || '请求失败')
       }
       if (result.data) {
-        this.$alert(result.data, '调度结果', {
+        this.$msgbox({
+          title: '调度结果',
+          message: result.data,
+          showCancelButton: true,
           confirmButtonText: '确定',
-          callback: () => {
+          cancelButtonText: '取消',
+          beforeClose: (action, instance, done) => {
+            console.log(action,'action');
+            if (action === 'confirm') {
+              instance.confirmButtonLoading = true;
+              instance.confirmButtonText = '执行中...';
+              confirmAlgorithm().then(res => {
+                if(res.code === 200){
+                  done();
+                  instance.confirmButtonLoading = false;
+                  this.$message.success(res.data)
+                }else{
+                  return this.$message.error(res.msg)
+                }
+              })
+            } else {
+              done();
+            }
           }
-        });
+        }).catch(res => {
+          console.log(res)
+        })
       }
     },
     async getTaskTypeData() {

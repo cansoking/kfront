@@ -38,3 +38,10 @@ export const deleteAlgorithm = (data) => {
         params: data
     })
 }
+
+export const confirmAlgorithm = (data) => {
+    return post({
+        url: '/algorithm/confirm',
+        data: {}
+    })
+}
