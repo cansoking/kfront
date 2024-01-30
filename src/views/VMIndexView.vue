@@ -152,12 +152,11 @@ export default {
       return this.$store.state.nodename;
     },
   },
-  // watch: {
-  //   tmp_nodename_w(nv, ov) {
-  //     this.baseurl = "http://" + this.$store.state.nodeip + ":8080";
-  //     this.getPodIndexList();
-  //   },
-  // },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.getPodIndexList();
+    },
+  },
 };
 </script>
     
