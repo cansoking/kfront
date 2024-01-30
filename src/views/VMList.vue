@@ -588,8 +588,8 @@
 export default {
   name: "VMList",
   mounted() {
-    this.getVMList("http://127.0.0.1:8080");
-    this.baseurl="http://127.0.0.1:8080";
+    this.getVMList("http://39.101.136.242:8080");
+    this.baseurl="http://39.101.136.242:8080";
   },
   data() {
     return {
@@ -598,8 +598,8 @@ export default {
       imagedrawer: false,
       // 命令执行结果flag
       res_state: "",
-      baseurl: "http://127.0.0.1:8080",
-      execurl: "http://127.0.0.1:8081",
+      baseurl: "http://39.101.136.242:8080",
+      execurl: "http://39.101.136.242:8081",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
