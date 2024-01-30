@@ -7,24 +7,6 @@
           虚拟机列表
         </p></el-col
       >
-      <!-- <el-col :span="1" :offset="4">
-        <div style="font-size: 16px; line-height: 36px">宿主机：</div>
-      </el-col>
-
-      <el-col :span="3" :offset="0">
-        <el-select
-          style="width: 80%"
-          v-model="formInline.region"
-          placeholder="请选择宿主机"
-          @change="suzhuchange"
-        >
-          <el-option label="39.101.136.242" value="39.101.136.242"></el-option>
-          <el-option
-            label="192.168.194.164"
-            value="192.168.194.164"
-          ></el-option>
-        </el-select>
-      </el-col> -->
       <el-col :span="3" :offset="9">
         <el-button
           @click="refreshIP"
@@ -606,8 +588,8 @@
 export default {
   name: "VMList",
   mounted() {
-    this.getVMList("http://" + this.$store.state.nodeip + ":8080");
-    this.baseurl="http://" + this.$store.state.nodeip + ":8080";
+    this.getVMList("http://127.0.0.1:8080");
+    this.baseurl="http://127.0.0.1:8080";
   },
   data() {
     return {
@@ -616,8 +598,8 @@ export default {
       imagedrawer: false,
       // 命令执行结果flag
       res_state: "",
-      baseurl: "http://" + this.$store.state.nodeip + ":8080",
-      execurl: "http://" + this.$store.state.nodeip + ":8081",
+      baseurl: "http://127.0.0.1:8080",
+      execurl: "http://127.0.0.1:8081",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
@@ -648,16 +630,12 @@ export default {
       ],
       node_options: [
         {
-          label: "云节点:39.101.136.242",
-          value: "192.168.194.178",
+          label: "端节点1:10.0.8.14",
+          value: "10.0.8.14",
         },
         {
-          label: "端节点1:192.168.194.45",
-          value: "192.168.194.45",
-        },
-        {
-          label: "端节点2:192.168.194.164",
-          value: "192.168.194.164",
+          label: "端节点2:10.0.8.15",
+          value: "10.0.8.15",
         },
       ],
       ostype_options: [
@@ -1264,13 +1242,6 @@ export default {
         }
       });
     },
-    // 选择宿主机ip来更改baseurl，根据ip获取虚拟机数据
-    suzhuchange(item) {
-      this.serverip = item;
-      this.baseurl = "http://" + this.serverip + ":8080";
-      this.execurl = "http://" + this.serverip + ":8081";
-      this.getVMList(ip);
-    },
     // 打开执行命令
     opencommand(row) {
       this.commandvisible = true;
@@ -1279,7 +1250,7 @@ export default {
     // 获取虚拟机列表数据
     getVMList(ip) {
       this.$axios
-        .get(ip + "/getVMList")
+        .get(ip + "/getVMList/"+this.$store.state.nodeip)
         .then((res) => {
           this.vmdata = res.data;
           this.totalvm = res.data.length;
@@ -1530,16 +1501,16 @@ export default {
       return this.$store.state.nodename;
     },
   },
-  watch: {
-    tmp_nodename_w(nv, ov) {
-      this.vmdata = [];
-      this.totalvm = this.vmdata.length;
-      this.baseurl = "http://" + this.$store.state.nodeip + ":8080"
-      this.execurl = "http://" + this.$store.state.nodeip + ":8081"
-      // this.baseurl = this.$store.state.nodeip
-      this.getVMList("http://" + this.$store.state.nodeip + ":8080");
-    },
-  },
+  // watch: {
+  //   tmp_nodename_w(nv, ov) {
+  //     this.vmdata = [];
+  //     this.totalvm = this.vmdata.length;
+  //     this.baseurl = "http://" + this.$store.state.nodeip + ":8080"
+  //     this.execurl = "http://" + this.$store.state.nodeip + ":8081"
+  //     // this.baseurl = this.$store.state.nodeip
+  //     this.getVMList("http://" + this.$store.state.nodeip + ":8080");
+  //   },
+  // },
 };
 </script>
 

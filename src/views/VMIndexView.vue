@@ -103,8 +103,8 @@ export default {
   },
   data() {
     return {
-      // baseurl: "http://39.101.136.242:8080",
-      baseurl: "http://" + this.$store.state.nodeip + ":8080",
+      baseurl: "http://39.101.136.242:8080",
+      // baseurl: "http://" + this.$store.state.nodeip + ":8080",
       vmdata: [],
       psearch: "",
       curpage: 1,
@@ -127,7 +127,7 @@ export default {
     // 获取虚拟机指标列表数据
     getPodIndexList() {
       this.$axios
-        .get(this.baseurl + "/getVMIndexList")
+        .get(this.baseurl + "/getVMIndexList/"+this.$store.state.nodeip)
         .then((res) => {
           console.log(res);
           this.vmdata = res.data;
@@ -152,12 +152,12 @@ export default {
       return this.$store.state.nodename;
     },
   },
-  watch: {
-    tmp_nodename_w(nv, ov) {
-      this.baseurl = "http://" + this.$store.state.nodeip + ":8080";
-      this.getPodIndexList();
-    },
-  },
+  // watch: {
+  //   tmp_nodename_w(nv, ov) {
+  //     this.baseurl = "http://" + this.$store.state.nodeip + ":8080";
+  //     this.getPodIndexList();
+  //   },
+  // },
 };
 </script>
     
