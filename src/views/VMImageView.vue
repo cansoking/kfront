@@ -66,7 +66,7 @@
             :action="baseurl + '/Images/addImg'"
             :multiple="false"
             :data="vmima_form"
-            accept=".iso"
+            accept=".iso,.qcow2,.img"
             :auto-upload="false"
             :limit="1"
             :before-upload="handleBeforeUpload"
