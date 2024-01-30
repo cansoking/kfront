@@ -174,6 +174,9 @@ export default {
           position: "bottom-right",
           duration: 6000,
         });
+        this.createvmimavisible = false;
+        this.getVMIma();
+
       } else {
         this.$notify.error({
           title: "添加失败",
@@ -181,6 +184,7 @@ export default {
           position: "bottom-right",
           duration: 6000,
         });
+        this.createvmimavisible = false;
       }
     },
     errupload(err, file, fileList) {
@@ -190,6 +194,7 @@ export default {
         position: "bottom-right",
         duration: 6000,
       });
+      this.createvmimavisible = false;
     },
     addvmima_sumbit(formName) {
       // 校验表单
