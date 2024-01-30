@@ -1923,7 +1923,8 @@ export default {
           // 获取全部虚拟机
           this.vmdata = [];
           for (let i = 0; i < this.nodeinfo.length; i++) {
-            this.getVMList("http://" + this.nodeinfo[i].nodeIp + ":8080");
+            if(this.nodeinfo[i].nodeIp.startsWith("10"))
+            this.getVMList(this.baseurl,this.nodeinfo[i].nodeIp);
           }
         })
         .catch((err) => {
@@ -2386,22 +2387,16 @@ export default {
         }
       });
     },
-    // 选择宿主机ip来更改baseurl，根据ip获取虚拟机数据
-    suzhuchange(item) {
-      this.serverip = item;
-      this.baseurl = "http://" + this.serverip + ":8080";
-      this.execurl = "http://" + this.serverip + ":8081";
-      this.getVMList();
-    },
+
     // 打开执行命令
     opencommand(row) {
       this.commandvisible = true;
       this.command_tmp_data = row;
     },
     // 获取虚拟机列表数据
-    getVMList(ip) {
+    getVMList(ip,nodeip) {
       this.$axios
-        .get(ip + "/getVMList")
+        .get(ip + "/getVMList/"+nodeip)
         .then((res) => {
           this.vmdata = this.vmdata.concat(res.data);
           this.totalvm = this.vmdata.length;
