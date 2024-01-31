@@ -15,7 +15,7 @@
     "element-ui": "^2.15.14",
     "jquery": "^3.7.1",
     "lodash": "^4.17.21",
-    "moment": "^2.29.4",
+    "moment": "^2.30.1",
     "vue": "^2.6.14",
     "vue-baidu-map": "^0.21.22",
     "vue-router": "^3.6.5",
