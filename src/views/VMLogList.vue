@@ -67,7 +67,7 @@ export default {
   name: "VMLogList",
   data() {
     return {
-      baseurl: "http://39.101.136.242:8080",
+      baseurl: "http://39.98.124.97:8080",
       curpage: 1,
       totalvmlog: 0,
       pagesize: 10,
@@ -94,11 +94,11 @@ export default {
   methods: {
     getSaveDays() {
       this.$axios
-        .get(this.baseurl + "/log/getSaveDays")
-        .then((res) => {
-          this.savedays = res.data.content
-        })
-        .catch((err) => { });
+          .get(this.baseurl + "/log/getVMSaveDays")
+          .then((res) => {
+            this.savedays = res.data.content
+          })
+          .catch((err) => {});
     },
     getVMName() {
       this.$axios
