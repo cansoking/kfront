@@ -17,7 +17,7 @@
     >
     <el-table-column
           prop="event_ID"
-          label="event_ID"
+          label="日志号"
       ></el-table-column>
       <el-table-column
           prop="operationtime"
@@ -25,12 +25,12 @@
       ></el-table-column>
       <el-table-column
           prop="loglevel"
-          label="loglevel"
+          label="日志级别"
       ></el-table-column>
       <el-table-column
           class-name="resource_log_msg"
           prop="msg"
-          label="msg"
+          label="日志信息"
       >
       <template slot-scope="scope">
             <el-popover placement="right" width="400" trigger="click">
@@ -46,14 +46,14 @@
             </el-popover>
           </template>
     </el-table-column>
-      <el-table-column
+      <!-- <el-table-column
           prop="method"
           label="method"
       ></el-table-column>
       <el-table-column
           prop="class"
           label="class"
-      ></el-table-column>
+      ></el-table-column> -->
     </el-table>
   </div>
 </template>
