@@ -28,11 +28,11 @@
           prop="info"
           label="算法描述"
       ></el-table-column>
-      <el-table-column
+      <!-- <el-table-column
           prop="class_name"
           label="算法类名"
       >
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
           prop="action"
           label="操作"
@@ -46,8 +46,8 @@
           >
             <el-button :loading="deleteLoading" slot="reference" type="danger" plain>删除</el-button>
           </el-popconfirm>
-          <el-divider direction="vertical"></el-divider>
-          <el-button @click="()=> download(scope.row)" type="primary" plain>下载</el-button>
+          <!-- <el-divider direction="vertical"></el-divider> -->
+          <!-- <el-button @click="()=> download(scope.row)" type="primary" plain>下载</el-button> -->
         </template>
       </el-table-column>
     </el-table>
