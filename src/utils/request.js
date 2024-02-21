@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const request = axios.create({
-    baseURL: '//81.70.164.10:8750/',
+    baseURL: '//39.101.136.242:8750/',
 })
 
 
