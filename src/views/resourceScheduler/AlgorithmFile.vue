@@ -87,7 +87,7 @@
       </el-form>
       <el-upload
           style="width: 100%"
-          action="//81.70.164.10:8750/algorithmFile/uploadAlgorithm"
+          action="//39.101.136.242:8750/algorithmFile/uploadAlgorithm"
           :before-upload="beforeUpload"
           :on-error="onError"
           :on-success="onSuccess"
