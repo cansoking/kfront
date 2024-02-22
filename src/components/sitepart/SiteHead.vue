@@ -10,8 +10,8 @@
           ></el-input> -->
           <span style="font-size: 30px; font-weight: 600; color: #ffffff">基于虚拟化的资源管理演示验证原型系统v1.0</span>
         </el-col>
-        <el-col :offset="7" :span="6">
-          <div style="color: #ffffff; font-size: 20px; line-height: 40px">
+        <el-col  :offset="7" :span="6">
+          <div v-if="isShowSelect" style="color: #ffffff; font-size: 20px; line-height: 40px">
             当前节点：
             <el-select v-model="value" placeholder="请选择" :loading="isloading" loading-text="正在拉取数据"
               @visible-change="noderemote" @change="nodechange">
@@ -63,6 +63,16 @@ export default {
       nodeoption: [],
       value: [],
       nodeinfo: [],
+      isShowSelect: true,
+      disabledArray: [
+        'taskTypeManage',
+        'taskManage',
+        'resourceTypeManage',
+        'resourceManage',
+        'algorithmFile',
+        'algorithmScheduler',
+        'taskLog',
+      ]
     };
   },
   methods: {
@@ -111,6 +121,13 @@ export default {
         });
       this.isloading = false;
     },
+    onCheckSelect(str){
+      let flag = true;
+      if(this.disabledArray.includes(str)){
+        flag = false;
+      }
+      this.isShowSelect = flag;
+    },
   },
   mounted() {
     this.noderemote();
@@ -124,6 +141,7 @@ export default {
       this.$store.state.nodename = this.$store.state.nodename.replace("边节点", "worker");
     }
     this.value = this.$store.state.nodename;
+    this.onCheckSelect(location.hash.split('/')[1])
   },
   computed: {
     tmp_nodename_w() {
@@ -134,6 +152,9 @@ export default {
     tmp_nodename_w(nv, ov) {
       this.value = nv;
     },
+    $route(to,from){
+      this.onCheckSelect(to.name)
+    }
   },
 };
 </script>
