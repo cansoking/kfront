@@ -184,7 +184,7 @@
       <el-upload
         class="upload-demo"
         ref="upload"
-        action="http://81.70.164.10:8750/task/createMultiTaskByFile"
+        action="http://39.101.136.242:8750/task/createMultiTaskByFile"
         :on-success="handleSuccess"
         :file="taskFile"
         :auto-upload="false">
