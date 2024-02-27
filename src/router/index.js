@@ -38,6 +38,11 @@ const routes = [
                 name: 'messionList',
                 component: () => import('../views/TerminalList.vue')
             },
+            {//北工大界面，CPE列表
+              path: '/cpeList',
+              name: 'cpeList',
+              component: () => import('../views/CPEList.vue')
+            },
             // {//中国地图
             //     path: '/chinaMap',
             //     name: 'chinaMap',
@@ -278,6 +283,11 @@ const routes = [
         path:'/messionList',
         name:'messionList',
         component:() => import('../views/TerminalList.vue')
+      },
+      {//北工大界面，CPE列表
+        path: '/cpeList',
+        name: 'cpeList',
+        component: () => import('../views/CPEList.vue')
       },
       {
         path: '/dockerimage',

@@ -9,7 +9,8 @@
     import { BarChart } from 'echarts/charts';
     import { CanvasRenderer } from 'echarts/renderers';
     echarts.use([GridComponent, BarChart, CanvasRenderer]);
-    import {onBeforeMount, onMounted} from 'vue'
+    import {onBeforeMount, onMounted, ref,onUnmounted} from 'vue';
+    import axios from 'axios';
     export default{ 
         setup(){
             
@@ -18,9 +19,44 @@
                 
                 var myChart = echarts.init(container);//运用了插槽，从父组件传来的模板
 
-                // let data = [11, 22, 7];//初始数据
-                let data = [0,0, 0];//初始数据
+                var data = ref([0,0,0]);//初始数据
+
+                const url = process.env.VUE_APP_API_URI_NOPORT;//服务器地址
                 
+
+                //获取数据方法
+                function getData(){
+                    axios({
+                        method:"post",
+                        // url:"http://localhost:8887/file/inquireReceiveState",
+                        url:url+":8887/file/inquireReceiveState",
+                    })
+                    .then((response)=>{
+                        var length = response.data.length;
+                        for(let i = 1;i<=length;i++){
+                            let progress = response.data[length-i].transmissProgress;
+                            // progress = parseFloat(progress.toFixed(3))*100; 
+                            progress = (progress*100).toFixed(1);
+                            data.value[3-i] = progress;              
+                        }
+                        // var progress0 = response.data[length-3].transmissProgress;
+                        // var progress1 = response.data[length-2].transmissProgress;
+                        // var progress2 = response.data[length-1].transmissProgress;
+                        // //将数据截取到小数点后3位，再乘100，向下取整，得到当前百分比
+                        // progress2 = parseFloat(progress2.toFixed(3))*100;  
+                        // data.value[2] = progress2;
+                        
+                        // progress1 = parseFloat(progress1.toFixed(3))*100;  
+                        // data.value[1] = progress1;
+
+                        // progress0 = parseFloat(progress0.toFixed(3))*100;  
+                        // data.value[0] = progress0;
+                    })
+                    .catch((error)=>{
+                        console.log(error);
+                    })
+                }
+
                 
                 myChart.setOption( {
                     title:{
@@ -69,9 +105,8 @@
                         }
                     },
                     series: [
-                        {
-                            
-                            data: data,
+                        {               
+                            data: data.value,
                             type: 'bar',
                             showBackground: true,
                             backgroundStyle: {
@@ -124,29 +159,29 @@
                     } 
                 });
 
-                
+                //每秒对图表数据进行一次更新
+                const intervalId = setInterval(()=>{
+                    getData();
+                    myChart.setOption({
+                        series: [
+                            {  
+                                data: data.value,
+                            }
+                        ],
+                    })
+                },1000)
+
+
+                // 组件卸载时清除定时器
+                onUnmounted(() => {
+                    clearInterval(intervalId);
+                });
 
                 //让图表随浏览器大小变换而变换
                 let resizeObserver = new ResizeObserver(()=>myChart?.resize());
                 resizeObserver.observe(container);
 
-                //暂时隐藏数据
-                //数据每秒加1
-                // setInterval(function () {
-                //     for(var i=0;i<3;i++){
-                //         if(data[i]<100){
-                //             data[i] = data[i]+1;
-                //         }
-                //     }
-                //     //date的push在randomData()中
-                //     myChart.setOption({//貌似其他设置不会改变
-                //         series: [
-                //         {
-                //             data: data
-                //         }
-                //         ]
-                //     });
-                // }, 1000);
+                
             })
         }
     }
