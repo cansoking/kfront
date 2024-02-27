@@ -285,7 +285,7 @@ async function getCurrentPriority(){
   })
 }
 
-getCurrentPriority();//初始获取一次优先级
+// getCurrentPriority();//初始获取一次优先级
 
 countNetNum();//设置初始网络连接数
 
@@ -297,14 +297,14 @@ onMounted(() => {
   // 设置定时器，每隔一秒执行一次
   timerID = setInterval(countNetNum, 3000);
   //获取优先级，3秒一次
-  timerPriority = setInterval(getCurrentPriority,3000);
+  // timerPriority = setInterval(getCurrentPriority,3000);
 });
 
 // 在组件卸载前清除定时器
 onBeforeUnmount(() => {
   // 在此处清除定时器
   clearInterval(timerID);
-  clearInterval(timerPriority);
+  // clearInterval(timerPriority);
 });
 
 </script>
