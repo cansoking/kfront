@@ -162,14 +162,18 @@
           <i class="el-icon-pie-chart"></i>
           <span slot="title">世界地图</span>
         </el-menu-item> -->
-        <el-menu-item index="/detail" route="detail">
+        <el-menu-item index="/worldMap" route="worldMap">
           <i class="el-icon-pie-chart"></i>
-          <span slot="title">服务器详情</span>
+          <span slot="title">接入点分布</span>
+        </el-menu-item>
+        <el-menu-item index="/cpeList" route="cpeList">
+          <i class="el-icon-pie-chart"></i>
+          <span slot="title">接入点列表</span>
         </el-menu-item>
         <el-menu-item index="/messionList" route="messionList">
           <i class="el-icon-pie-chart"></i>
-          <span slot="title">任务列表</span>
-        </el-menu-item>
+          <span slot="title">数传任务列表</span>
+        </el-menu-item> 
       </el-submenu>
 
       <!-- <el-menu-item index="">

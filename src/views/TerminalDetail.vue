@@ -1,24 +1,24 @@
 <template>
   <body class="detailBody">
-    <!-- 头部的盒子 -->
     <header class="detailHeader">
-      <h1>边缘服务器异构网络传输详情</h1>
+      <h1>边缘服务器异构网络传输详情:北京接入点</h1>
+      <h2>当前策略：{{ currentPriority }}</h2>
       <div class="showTime"></div>
     </header>
     <!-- 页面主题部分 -->
     <section class="mainbox1">
       <div class="column">
-        <Select1></Select1>
-        <HighOrbitSatellite>
-          <div id="HighOrbitSatellite" class="panel bar">
-            <div class="panel-footer"></div>
-          </div>
-        </HighOrbitSatellite>
+        <Select1 :getCurrentPriority="getCurrentPriority"></Select1>
         <LeoSatellite>
           <div id="LeoSatellite" class="panel line">
             <div class="panel-footer"></div>
           </div>
         </LeoSatellite>
+        <HighOrbitSatellite>
+          <div id="HighOrbitSatellite" class="panel bar">
+            <div class="panel-footer"></div>
+          </div>
+        </HighOrbitSatellite>
         <MobileCommunicationNetwork>
           <div id="MobileCommunicationNetwork" class="panel pie">
             <div class="panel-footer"></div>
@@ -30,14 +30,14 @@
         <div class="no">
           <div class="no-hd">
             <ul>
-              <li>0</li>
-              <li>0</li>
+              <li>2</li>
+              <li>{{ netNum }}</li>
             </ul>
           </div>
           <div class="no-bd">
             <ul>
-              <li>接入终端数量</li>
-              <li>当前网络连接</li>
+              <li>接入点数量</li>
+              <li>异构网络数量</li>
             </ul>
           </div>
         </div>
@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="column">
-        <Select2></Select2>
+        <Button @custom-click="goToPage"></Button>
 
         <CurrentMissionStatus>
           <div class="panel bar2">
@@ -59,17 +59,16 @@
             <div class="panel-footer"></div>
           </div>
         </CurrentMissionStatus>
-        <TransmissionStrategyAnalysis>
-          <div id="TransmissionStrategyAnalysis" class="panel line">
-            <div class="panel-footer"></div>
-          </div>
-        </TransmissionStrategyAnalysis>
-
         <DataTrafficStatistics>
           <div id="DataTrafficStatistics" class="panel pie">
             <div class="panel-footer"></div>
           </div>
         </DataTrafficStatistics>
+        <TransmissionStrategyAnalysis>
+          <div id="TransmissionStrategyAnalysis" class="panel line">
+            <div class="panel-footer"></div>
+          </div>
+        </TransmissionStrategyAnalysis>
       </div>
     </section>
   </body>
@@ -88,14 +87,226 @@ import TransmissionStrategyAnalysis from "../components/TerminalDetail/Transmiss
 import DataTrafficStatistics from "../components/TerminalDetail/DataTrafficStatistics.vue";
 import Select1 from "../components/TerminalDetail/Select1.vue";
 import Select2 from "../components/TerminalDetail/Select2.vue";
+import Button  from "../components/TerminalDetail/Button.vue";
 
 // import { useRouter } from 'vue-router';
 import router from "@/router";
+import axios from 'axios';
+import {onMounted, ref,onBeforeUnmount,computed} from 'vue';
+
+
+
+
+
+const url = process.env.VUE_APP_API_URI_ROUTE;//统一的url
+var netNum = ref(0);//当前网络连接数
+
+var currentPriority = ref(null);//当前优先级
 
 // const router = useRouter();
 const goToList = () => {
   router.push("/messionList");
 };
+
+
+
+const goToPage = () =>{
+  window.open('http://59.110.238.62:1010', '_blank');
+  console.log("点击按钮");
+};
+
+
+
+//获取session
+function getSession(){
+  return new Promise((resolve, reject) => {
+  let data = {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "call",
+      params: [
+          "00000000000000000000000000000000",
+          "session",
+          "login",
+          {
+              username: "root",
+              password: "password",
+              timeout:7200
+          }
+      ]
+  }   
+  axios({
+  method:"post",
+  headers:{
+  'Content-Type':'application/json;'
+  },
+  data:JSON.stringify(data),
+  url:url,
+  responseType:"json"
+  })
+  .then((response)=>{
+  const sessionValue = response.data.result[1].ubus_rpc_session;
+  resolve(sessionValue);
+  })
+  .catch((error)=>{
+  console.log(error);
+  console.log("fail");
+  reject(error);
+  })
+  });
+}
+
+
+//获取当前网络连接数
+async function countNetNum(){
+  const sessionValue = await getSession();
+  let data = {
+      jsonrpc: "2.0",
+      id: 1,
+      method: "call",
+      params: [
+          sessionValue,
+          "mwan3",
+          "status",
+          {
+          }
+      ]
+  }
+  axios({
+  method:"post",
+  headers:{
+  'Content-Type':'application/json;'
+  },
+  data:JSON.stringify(data),
+  url:url,
+  })
+  .then((response)=>{
+        // netNum.value = response.data.result[1].statistics.rx_bytes+response.data.result[1].statistics.tx_bytes;
+        // console.log(response.data.result[1].interfaces);
+        var interfaces = response.data.result[1].interfaces;
+        var count = 0 ;
+        var keys = Object.keys(interfaces);
+        for(var i=0;i<keys.length;i++){
+          var interfaceName = keys[i];
+          var status = interfaces[interfaceName].status;
+          if(status === "online"){
+            count++;
+          }
+        }
+        netNum.value = count;
+        console.log(netNum.value);
+
+  })
+  .catch((error)=>{
+  console.log(error);
+  console.log("fail2");
+  })
+}
+
+
+//获取当前优先级
+async function getCurrentPriority(){
+  const sessionValue = await getSession();
+  var array = [];
+  let wanMetric = {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "call",
+    params: [
+        sessionValue,
+        "uci",
+        "get",
+        { 
+          config: "mwan3", 
+          section:"wan_m1_w1"
+        }
+    ]
+  }
+  let wan2Metric = {
+    jsonrpc: "2.0",
+    id: 1,
+    method: "call",
+    params: [
+        sessionValue,
+        "uci",
+        "get",
+        { 
+          config: "mwan3", 
+          section:"wan2_m1_w1"
+        }
+    ]
+  }
+  
+  await axios({
+  method:"post",
+  headers:{
+  'Content-Type':'application/json;'
+  },
+  data:JSON.stringify(wanMetric),
+  url:url,
+  })
+  .then((response)=>{
+    console.log("低轨跃点数：",response.data.result[1].values.metric);
+    array.push(response.data.result[1].values.metric);
+  })
+  .catch((error)=>{
+    console.log(error);
+    console.log("获取低轨跃点数失败");
+  })
+  await axios({
+  method:"post",
+  headers:{
+  'Content-Type':'application/json;'
+  },
+  data:JSON.stringify(wan2Metric),
+  url:url,
+  })
+  .then((response)=>{
+    console.log("高轨跃点数：",response.data.result[1].values.metric);
+    let metric = response.data.result[1].values.metric;
+    array.push(metric);
+    console.log(array[0],array[1]);
+    if(array[0]==='2'&&array[1]==='2'){
+      currentPriority.value="智能多路径传输";
+    }
+    else if(array[0]==='2'){
+      currentPriority.value="低轨优先";
+    }
+    else if(array[1]==='2'){
+      currentPriority.value="高轨优先";
+    }
+    else{
+      currentPriority.value="移动通信网络优先";
+    }
+  })
+  .catch((error)=>{
+    console.log(error);
+    console.log("获取高轨跃点数失败");
+  })
+}
+
+// getCurrentPriority();//初始获取一次优先级
+
+countNetNum();//设置初始网络连接数
+
+var timerID;//定时器
+var timerPriority;//获取优先级的计时器
+
+// 在组件挂载时启动定时器
+onMounted(() => {
+  // 设置定时器，每隔一秒执行一次
+  timerID = setInterval(countNetNum, 3000);
+  //获取优先级，3秒一次
+  // timerPriority = setInterval(getCurrentPriority,3000);
+});
+
+// 在组件卸载前清除定时器
+onBeforeUnmount(() => {
+  // 在此处清除定时器
+  clearInterval(timerID);
+  // clearInterval(timerPriority);
+});
+
 </script>
 
 
@@ -133,6 +344,12 @@ li {
     color: #fff;
     text-align: center;
     line-height: 80px;
+  }
+  h2 {
+    font-size: 28px;
+    color: #fff;
+    text-align: center;
+    line-height: 20px;
   }
 }
 

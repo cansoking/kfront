@@ -2,7 +2,7 @@
   <body class="listBody">
     <!-- 头部的盒子 -->
     <header class="listHeader">
-      <h1>异构网络资源管理分系统:数传任务列表</h1>
+      <h1>CPE管理分系统</h1>
     </header>
     <!-- 页面主题部分 -->
     <section class="mainbox2">
@@ -10,10 +10,10 @@
         <!-- 第二列 -->
 
         <!-- 列表标题 -->
-        <BaseTitle data="任务列表" class="listTitle" />
+        <BaseTitle data="CPE列表" class="listTitle" />
 
         <!-- 添加任务按钮 -->
-        <BaseButton data="新建测试任务" class="addButton" :click="addMession" />
+        <BaseButton data="添加节点" class="addButton" :click="addMession" />
 
         <!-- 表单 -->
         <div class="addForm" v-show="showForm">
@@ -22,7 +22,7 @@
 
         <!-- 列表 -->
         <div class="tb">
-          <TerminalTable />
+          <CPETable></CPETable>
         </div>
       </div>
     </section>
@@ -34,7 +34,7 @@
       :visible.sync="dialogVisibleSuccess"
       width="30%"
       :before-close="handleClose">
-      <span>传输任务启动</span>
+      <span>上传成功</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisibleSuccess = false">确 定</el-button>
       </span>
@@ -47,7 +47,7 @@
       :visible.sync="dialogVisibleFail"
       width="30%"
       :before-close="handleClose">
-      <span>传输启动失败</span>
+      <span>上传失败</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisibleFail = false">确 定</el-button>
       </span>
@@ -60,15 +60,15 @@
   
   
   <script>
-import BaseTitle from "../components/TerminalList/BaseTitle.vue";
-import TerminalTable from "../components/TerminalList/TerminalTable.vue";
-import BaseButton from "../components/TerminalList/BaseButton.vue";
-import AddRecord from "../components/TerminalList/AddRecord.vue";
+import BaseTitle from "../components/CPEList/BaseTitle.vue";
+import CPETable from "../components/CPEList/CPETable.vue";
+import BaseButton from "../components/CPEList/BaseButton.vue";
+import AddRecord from "../components/CPEList/AddRecord.vue";
 
 export default {
   components: {
     BaseTitle,
-    TerminalTable,
+    CPETable,
     BaseButton,
     AddRecord,
   },

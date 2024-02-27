@@ -3,15 +3,44 @@
 
 
     <el-table :data="tableData" style="width: 100%" height="600" class="table">
-    <el-table-column prop="sid" label="端侧服务器ID" width="180" />
-    <el-table-column prop="mid" label="任务ID" width="180" />
-    <el-table-column prop="sendingEnd" label="发送端IP" width="180" />
-    <el-table-column prop="receiveEnd" label="接收端IP" />
-    <el-table-column prop="curState" label="当前状态" />
-    <el-table-column prop="totalPackageNum" label="总数据包数量" />
-    <el-table-column prop="finishPackageNum" label="已传输数据包数量" />
-    <el-table-column prop="startTime" label="任务开始时间" />
-    <el-table-column prop="finishTime" label="任务结束时间" />
+    <!-- <el-table-column prop="packetSize" label="端侧服务器ID" width="180" /> -->
+    <el-table-column label="源节点" width="90" align="center">
+      <template>
+        <span>北京终端</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="源IP地址" width="140" align="center">
+      <template>
+        <span>192.168.192.243</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="目的节点" width="90" align="center">
+      <template>
+        <span>云服务器</span>
+      </template>
+    </el-table-column>
+    <el-table-column label="目的IP地址" width="140" align="center">
+      <template>
+        <span>192.168.192.182</span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="fileId" label="任务ID" width="110" align="center"/>
+    <el-table-column prop="fileName" label="传输文件名"  width="100" align="center"/>
+    <el-table-column prop="startTime" label="任务开始时间" align="center"/>
+    <el-table-column prop="totalPackageNum" label="原始数据包数量" width="140" align="center"/>
+    <el-table-column prop="startTime" label="传输开始时间" align="center"/>
+    <el-table-column prop="lossProbability" label="丢包率"  width="70" align="center"/>
+    <el-table-column prop="transEndTime" label="传输完成时间" align="center"/>
+    <el-table-column prop="currentPackageNum" label="已解码数据包数量" align="center"/>
+    <!-- <el-table-column prop="ipAndPort" label="发送端IP" width="180" /> -->
+    <!-- <el-table-column prop="receiveIp" label="接收端IP" /> -->
+    <!-- <el-table-column prop="completed" label="当前状态" /> -->
+    <!-- <el-table-column prop="totalPackageNum" label="总数据包数量" /> -->
+    
+    <!-- <el-table-column prop="transmissProgress" label="当前进度" /> -->
+    
+    <el-table-column prop="endTime" label="解码完成时间" align="center"/>
+    
 
 
     <!-- 暂时不需要操作按钮 -->
@@ -29,64 +58,124 @@
 
 
 
-<script setup>
+<script>
 // import { useRouter } from 'vue-router';
 import router from '@/router'
-
 // const router = useRouter();
 
-//数据
-// const tableData = [
-//   {
-//     sid:'00000001',
-//     mid:'00000001',
-//     sendingEnd:'192.168.1.5',
-//     receiveEnd:'192.168.2.5',
-//     curState:"传输中",
-//     totalPackageNum:'100',
-//     finishPackageNum:'55',
-//     startTime:'15:00',
-//     finishTime:'-'
-//   },
-//   {
-//     sid:'00000001',
-//     mid:'00000002',
-//     sendingEnd:'192.168.20.4',
-//     receiveEnd:'192.168.23.5',
-//     curState:"已完成",
-//     totalPackageNum:'100',
-//     finishPackageNum:'100',
-//     startTime:'14:59',
-//     finishTime:'15:10',
-//   },
-//   {
-//     sid:'00000001',
-//     mid:'00000003',
-//     sendingEnd:'192.168.1.5',
-//     receiveEnd:'192.168.2.5',
-//     curState:"已取消",
-//     totalPackageNum:'200',
-//     finishPackageNum:'33',
-//     startTime:'13:00',
-//     finishTime:'-'
-//   },
-//   {
-//     sid:'00000001',
-//     mid:'00000004',
-//     sendingEnd:'192.168.100.5',
-//     receiveEnd:'192.168.200.6',
-//     curState:"暂停中",
-//     totalPackageNum:'60',
-//     finishPackageNum:'33',
-//     startTime:'11:00',
-//     finishTime:'-'
-//   },
-  
-// ]
 
-const goToDetail = ()=>{
-  router.push('/detail');
+export default{
+  data(){
+    return {
+      tableData:[],
+      timer:null,//计时器
+      url : process.env.VUE_APP_API_URI_NOPORT,//服务器地址
+    }
+  },
+
+  methods:{
+    //查询传输文件列表
+    queryList(){
+      var that = this;
+      this.$axios({
+        method:"post",
+        // url:"http://localhost:8887/file/inquireReceiveState",
+        url:that.url+":8887/file/inquireReceiveState",
+      })
+      .then((response)=>{
+        // console.log(response);
+        that.tableData = response.data;
+        console.log(that.tableData[0].transmissProgress);
+        this.tableData.forEach(element => {
+          var massionId = element.fileId;
+          massionId = Math.abs(massionId);//对任务ID取绝对值
+          var ipandport = element.ipAndPort;
+          var progress = element.transmissProgress;
+          //加工进度数据，向下取整
+          
+          // progress = parseFloat(progress).toFixed(3)*100;
+          progress = (progress*100).toFixed(1);
+          element.transmissProgress = progress + "%";
+          // element.transmissProgress = Math.floor(progress) + "%";
+          Object.keys(ipandport).forEach(key=>{
+            element.ipAndPort = key;
+          })
+          element.fileId = massionId;
+
+          //为每一行数据计算丢包率
+          const sendPacketNum = element.sendPacketNum;
+          const receivePacketNum = element.receivePacketNum;
+          const lossProbability = ((sendPacketNum-receivePacketNum)*100/sendPacketNum).toFixed(1);
+          element.lossProbability = lossProbability+"%";
+        });
+      })
+      .catch((error)=>{
+        console.log(error);
+      })
+      
+    },
+
+    
+
+    startPolling(){
+      //在mounted生命周期钩子中调用此方法以开始查询
+      this.timer = setInterval(this.queryList,1000);
+    },
+
+    stopPolling(){
+      //在beforeDestroy生命周期钩子中调用此方法以停止轮询
+      if(this.timer){
+        clearInterval(this.timer);
+      }
+    },
+
+
+    //打开接受文件接口
+    receiveFile(){
+      let data={
+        port:[
+            9000
+        ],
+        // receivepath:"F:\\2test\\"
+        receivepath:"/usr/aispace/2test/"
+      }
+      var that = this;
+      this.$axios({
+        headers:{
+          'Content-Type':'application/json;'
+        },
+        method:"post",
+        // url:"http://localhost:8887/file/receive",
+        url:that.url+":8887/file/receive",
+        data:JSON.stringify(data),
+      })
+      .then((response)=>{
+        console.log(response);
+        console.log("接受文件接口已打开");
+      })
+      .catch((error)=>{
+        console.log(error);
+      })
+    }
+  },
+
+  created(){
+    // this.receiveFile();
+  },
+
+  mounted(){
+      // this.queryList();
+      this.startPolling();
+  },
+
+  beforeDestroy(){
+    this.stopPolling();
+  }
 }
+
+
+
+
 
 </script>
 
