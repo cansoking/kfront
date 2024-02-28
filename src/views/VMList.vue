@@ -1476,7 +1476,7 @@ export default {
       })
         .then(() => {
           this.$axios
-            .delete(this.baseurl + "/delete/" + row.name)
+            .post(this.baseurl + "/delete/" + row.name)
             .then((response) => {
               const data = response.data;
               if (data.success) {
