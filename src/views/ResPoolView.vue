@@ -1,22 +1,30 @@
 <template>
   <div v-loading="resloading" element-loading-text="资源汇聚中。。。">
     <div
-      style="font-size: 30px; color: #3d3d3d; font-weight: 600; padding-left: 20px; padding-bottom: 20px; padding-top: 30px">
-      资源汇聚-资源汇聚时间
-      <div v-if="endTime != 0">
-        <div>
-          总汇聚时间：{{ (endTime - beginTime) / 1000 }} 秒
-        </div>
-        <div>
-          节点汇聚时间：{{ (node_endTime2 - node_endTime1) / 1000 }} 秒
-        </div>
-        <div>
-          容器汇聚时间：{{ (pod_endTime2 - pod_endTime1) / 1000 }} 秒
-        </div>
-        <div>
-          虚拟机汇聚时间：{{ (vm_endTime2 - vm_endTime1) / 1000 }} 秒
-        </div>
-      </div>
+      style="font-size: 25px; color: #222222; font-weight: 600; padding-left: 20px; padding-bottom: 10px; padding-top: 20px">
+      <div>资源汇聚-资源汇聚时间</div>
+      <el-table v-if="endTime != 0" :data="resdatas" style="width: 100%">
+        <el-table-column prop="nodetime" label="节点汇聚时间">
+          <template slot-scope="scope">
+            {{ scope.row.nodetime }} 秒
+          </template>
+        </el-table-column>
+        <el-table-column prop="podtime" label="容器汇聚时间">
+          <template slot-scope="scope">
+            {{ scope.row.podtime }} 秒
+          </template>
+        </el-table-column>
+        <el-table-column prop="vmtime" label="虚拟机汇聚时间">
+          <template slot-scope="scope">
+            {{ scope.row.vmtime }} 秒
+          </template>
+        </el-table-column>
+        <el-table-column prop="totaltime" label="总汇聚时间">
+          <template slot-scope="scope">
+            <div style="font-size: 25px; color: #9fda82; font-weight: 600;">{{ scope.row.totaltime }} 秒</div>
+          </template>
+        </el-table-column>
+      </el-table>
       <span v-else>资源汇聚中。。。</span>
     </div>
     <!-- 节点表 -->
@@ -714,6 +722,7 @@ export default {
       callback();
     };
     return {
+      resdatas: [],
       // 统计时间
       node_endTime1: 0,
       pod_endTime1: 0,
@@ -2153,6 +2162,12 @@ export default {
       if (this.temparr1 == 1 && this.temparr2 == 1 && this.temparr3 == 1) {
         this.endTime = +new Date();
         this.resloading = false;
+        this.resdatas = [{
+          nodetime: (this.node_endTime2 - this.node_endTime1) / 1000,
+          podtime: (this.pod_endTime2 - this.pod_endTime1) / 1000,
+          vmtime: (this.vm_endTime2 - this.vm_endTime1) / 1000,
+          totaltime: (this.endTime - this.beginTime) / 1000
+        }]
       }
     },
     // 容器
@@ -2161,6 +2176,12 @@ export default {
       if (this.temparr1 == 1 && this.temparr2 == 1 && this.temparr3 == 1) {
         this.endTime = +new Date();
         this.resloading = false;
+        this.resdatas = [{
+          nodetime: (this.node_endTime2 - this.node_endTime1) / 1000,
+          podtime: (this.pod_endTime2 - this.pod_endTime1) / 1000,
+          vmtime: (this.vm_endTime2 - this.vm_endTime1) / 1000,
+          totaltime: (this.endTime - this.beginTime) / 1000
+        }]
       }
     },
     // 虚拟机
@@ -2169,6 +2190,12 @@ export default {
       if (this.temparr1 == 1 && this.temparr2 == 1 && this.temparr3 == 1) {
         this.endTime = +new Date();
         this.resloading = false;
+        this.resdatas = [{
+          nodetime: (this.node_endTime2 - this.node_endTime1) / 1000,
+          podtime: (this.pod_endTime2 - this.pod_endTime1) / 1000,
+          vmtime: (this.vm_endTime2 - this.vm_endTime1) / 1000,
+          totaltime: (this.endTime - this.beginTime) / 1000
+        }]
       }
     },
   },
