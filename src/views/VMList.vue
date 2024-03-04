@@ -44,7 +44,7 @@
       :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
     >
       <el-table-column type="index" label="序号" width="50"> </el-table-column>
-      <el-table-column width="150" sortable label="名称" prop="name">
+      <el-table-column width="150" sortable label="名称" prop="otherName">
       </el-table-column>
       <el-table-column width="100" sortable label="状态" prop="state">
         <template slot-scope="scope">
