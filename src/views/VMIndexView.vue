@@ -65,11 +65,6 @@
           <el-tag v-else type="danger">关机</el-tag>
         </template>
       </el-table-column>
-      <el-table-column
-        prop="name"
-        label="虚拟机名称"
-        width="200"
-      ></el-table-column>
       <el-table-column prop="cpuNum" label="cpu个数"></el-table-column>
       <el-table-column prop="usecpu" label="cpu占用率(%)"></el-table-column>
       <el-table-column prop="maxMem" label="最大内存(GiB)"></el-table-column>
