@@ -394,18 +394,11 @@
         </el-table-column>
         <el-table-column width="150" sortable label="名称" prop="name">
         </el-table-column>
-        <el-table-column width="100" sortable label="状态" prop="state">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning">挂起</el-tag>
-            <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'">运行</el-tag>
-            <el-tag v-else type="danger">关机</el-tag>
-          </template>
-        </el-table-column>
         <el-table-column width="100" sortable label="cpu个数" prop="cpuNum">
         </el-table-column>
-        <el-table-column width="140" sortable label="分配内存(GiB)" prop="maxMem">
+        <el-table-column width="140" sortable label="分配内存(GiB)" prop="memory">
         </el-table-column>
-        <el-table-column width="180" sortable label="IP地址" prop="ipaddr">
+        <el-table-column width="180" sortable label="IP地址" prop="ip">
         </el-table-column>
         <el-table-column align="right">
           <template slot="header">
@@ -1437,10 +1430,12 @@ export default {
           this.nodeinfo = res.data.content;
           // 获取全部虚拟机
           this.vmdata = [];
-          for (let i = 0; i < this.nodeinfo.length; i++) {
-            if (this.nodeinfo[i].nodeIp.startsWith("10"))
-              this.getVMList(this.baseurl, this.nodeinfo[i].nodeIp);
-          }
+          this.getVMList(this.baseurl);
+          // for (let i = 0; i < this.nodeinfo.length; i++) {
+          // //for (let i = 3; i <= 3; i++) {
+          //   if (this.nodeinfo[i].nodeIp.startsWith("10"))
+          //     this.getVMList(this.baseurl, this.nodeinfo[i].nodeIp);
+          // }
         })
         .catch((err) => {
           console.log("errors", err);
@@ -1909,10 +1904,10 @@ export default {
       this.command_tmp_data = row;
     },
     // 获取虚拟机列表数据
-    getVMList(ip, nodeip) {
+    getVMList(ip) {
       this.vm_endTime1 = +new Date();
       this.$axios
-        .get(ip + "/getVMList/" + nodeip)
+        .get(ip + "/getVMList2")
         .then((res) => {
           this.vmdata = this.vmdata.concat(res.data);
           this.totalvm = this.vmdata.length;

@@ -26,7 +26,7 @@
         )
       " style="width: 100%" empty-text="暂无虚拟机" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
       <el-table-column type="index" label="序号" width="50"> </el-table-column>
-      <el-table-column width="150" sortable label="名称" prop="otherName">
+      <el-table-column width="150" sortable label="名称" prop="name">
       </el-table-column>
       <el-table-column width="100" sortable label="状态" prop="state">
         <template slot-scope="scope">
@@ -75,15 +75,17 @@
         ref="formData">
         <el-row :gutter="30">
           <el-col :span="12" :offset="0">
-            <el-form-item label="虚拟机别名" prop="otherName">
-              <el-input style="width: 60%" v-model="formData.otherName" placeholder="请输入虚拟机中文名称"
+            <el-form-item label="虚拟机名称" prop="name">
+              <el-input style="width: 60%" v-model="formData.name" placeholder="请输入虚拟机英文名称"
                 @blur="validName()"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
-            <el-form-item label="虚拟机名称" prop="name">
-              <el-input style="width: 60%" v-model="formData.name" placeholder="请输入虚拟机英文名称"
-                @blur="validName()"></el-input>
+            <el-form-item label="内存" prop="memory">
+              <el-select style="width: 60%" v-model="formData.memory" clearable placeholder="请选择内存大小(GiB)">
+                <el-option v-for="item in memory_options" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -132,14 +134,6 @@
             <el-form-item label="网络类型" prop="nettype">
               <el-select style="width: 60%" v-model="formData.nettype" clearable placeholder="请选择创建虚拟机的网络类型">
                 <el-option v-for="item in nettype_options" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" :offset="0">
-            <el-form-item label="内存" prop="memory">
-              <el-select style="width: 60%" v-model="formData.memory" clearable placeholder="请选择内存大小(GiB)">
-                <el-option v-for="item in memory_options" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
               </el-select>
             </el-form-item>
@@ -1113,9 +1107,7 @@ export default {
               "&nettype=" +
               this.formData.nettype +
               "&serverip=" +
-              this.formData.node +
-              "&otherName=" +
-              this.formData.otherName
+              this.formData.node
             )
             .then((res) => {
               if (res.data.success === false) {
