@@ -74,6 +74,11 @@ const routes = [
                 component: () => import('../views/PodList.vue')
             },
             {
+              path: '/podlist_k8s',
+              name: 'podlist_k8s',
+              component: () => import('../views/PodList_k8s.vue')
+          },
+            {
                 path: '/podindex',
                 name: 'podindex',
                 component: () => import('../views/PodIndexView.vue')

@@ -70,6 +70,10 @@
             <i class="el-icon-pie-chart"></i>
             <span slot="title">容器列表</span>
           </el-menu-item>
+          <el-menu-item index="/podlist_k8s" route="podlist_k8s">
+            <i class="el-icon-pie-chart"></i>
+            <span slot="title">K8S容器列表</span>
+          </el-menu-item>
         </el-submenu>
         <el-submenu index="image">
           <template slot="title">
