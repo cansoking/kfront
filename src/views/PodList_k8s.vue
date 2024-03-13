@@ -451,11 +451,12 @@ export default {
         .then((res) => {
           // console.log(JSON.parse(res.data.result));
           this.poddata = JSON.parse(res.data.result).items;
-          this.poddata = this.poddata.filter(
-            (data) =>
-              this.$store.state.nodename ===
-              (data.spec.nodeName ? data.spec.nodeName : "master1")
-          );
+          // 按节点筛选
+          // this.poddata = this.poddata.filter(
+          //   (data) =>
+          //     this.$store.state.nodename ===
+          //     (data.spec.nodeName ? data.spec.nodeName : "master1")
+          // );
           // 获取namepath
           for (let i = 0; i < this.poddata.length; i++) {
             this.poddata[i].info = {};
@@ -840,11 +841,6 @@ export default {
   computed: {
     tmp_nodename_w() {
       return this.$store.state.nodename
-    }
-  },
-  watch: {
-    tmp_nodename_w(nv, ov) {
-      this.getPodList()
     }
   }
 };
