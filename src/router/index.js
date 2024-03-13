@@ -247,10 +247,7 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: () => import('../views/LoginView.vue'),
-        children: [
-            
-        ]
+        component: () => import('../views/LoginView.vue')
     },
     {
         path: '/map',
