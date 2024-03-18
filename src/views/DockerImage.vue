@@ -96,7 +96,7 @@ export default {
   },
   data() {
     return {
-      baseurl: "http://39.101.136.242:8081",
+      baseurl: "http://39.101.136.242:8181",
       cidata: [],
       psearch: "",
       curpage: 1,
