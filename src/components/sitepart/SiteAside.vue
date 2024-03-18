@@ -34,7 +34,7 @@
         <el-submenu index="machine">
           <template slot="title">
             <i class="el-icon-coin"></i>
-            <span>物理机管理</span>
+            <span>多云管理</span>
           </template>
           <el-menu-item index="/machineinfo" route="machineinfo">
             <i class="el-icon-pie-chart"></i>
@@ -74,6 +74,10 @@
             <i class="el-icon-pie-chart"></i>
             <span slot="title">K8S容器列表</span>
           </el-menu-item>
+          <el-menu-item index="/podtemlist" route="podtemlist">
+            <i class="el-icon-copy-document"></i>
+            <span slot="title">容器模版管理</span>
+          </el-menu-item>
         </el-submenu>
         <el-submenu index="image">
           <template slot="title">
@@ -96,7 +100,7 @@
         <el-submenu index="virstorage">
           <template slot="title">
             <i class="el-icon-copy-document"></i>
-            <span>虚拟存储</span>
+            <span>虚拟存储管理</span>
           </template>
           <el-menu-item index="/pervolume" route="pervolume">
             <i class="el-icon-c-scale-to-original"></i>
