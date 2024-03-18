@@ -452,11 +452,11 @@ export default {
           // console.log(JSON.parse(res.data.result));
           this.poddata = JSON.parse(res.data.result).items;
           // 按节点筛选
-          // this.poddata = this.poddata.filter(
-          //   (data) =>
-          //     this.$store.state.nodename ===
-          //     (data.spec.nodeName ? data.spec.nodeName : "master1")
-          // );
+          this.poddata = this.poddata.filter(
+            (data) =>
+              this.$store.state.nodename ===
+              (data.spec.nodeName ? data.spec.nodeName : "k8s-master1")
+          );
           // 获取namepath
           for (let i = 0; i < this.poddata.length; i++) {
             this.poddata[i].info = {};
