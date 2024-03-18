@@ -368,7 +368,7 @@ export default {
       // 命令执行结果flag
       res_state: "",
       baseurl: "http://39.101.136.242:8080",
-      execurl: "http://39.101.136.242:8081",
+      execurl: "http://39.101.136.242:8181",
       // baseurl: "http://127.0.0.1:8080",
       vmdata: [],
       psearch: "",
@@ -856,7 +856,7 @@ export default {
     getimg() {
       this.img_list = [];
       this.$axios
-        .get("http://39.101.136.242:8081/api/ssh/imgListByIP?ip=39.101.136.242")
+        .get("http://39.101.136.242:8181/api/ssh/imgListByIP?ip=39.101.136.242")
         .then((res) => {
           let imgdata = res.data.output.split("\n");
           imgdata.pop();
