@@ -2,7 +2,7 @@
   <div class="vmarea">
     <el-col :span="10" :offset="0">
       <p style="font-size: 25px; font-weight: 600; margin-bottom: 20px">
-        模版列表
+        虚拟机模版列表
       </p>
     </el-col>
     <el-col :span="2" :offset="12">
@@ -11,7 +11,7 @@
     </el-col>
 
     <el-table :data="vmtemdata.slice((curpage - 1) * pagesize, curpage * pagesize)" style="width: 100%"
-      empty-text="暂无日志" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
+      empty-text="暂无虚拟机模板" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
       <el-table-column width="100" type="index" label="序号"> </el-table-column>
       <!--      <el-table-column  sortable label="ID" prop="id">-->
       <!--      </el-table-column>-->
