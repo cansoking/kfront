@@ -38,7 +38,7 @@
                 <el-tag v-else type="success">成功</el-tag></span>
             </el-form-item>
             <el-form-item label="是否可用">
-              <span><el-tag v-if="props.row.metadata.annotations.status === 'Yes'" type="success">可用</el-tag>
+              <span><el-tag v-if="props.row.status.phase === 'Running'" type="success">可用</el-tag>
                 <el-tag v-else type="danger">不可用</el-tag></span>
             </el-form-item>
             <el-form-item label="创建时间">
@@ -83,12 +83,22 @@
       <el-table-column width="150" sortable label="命名空间" prop="metadata.namespace">
       </el-table-column>
       <el-table-column sortable label="节点" prop="spec.nodeName">
-        <template slot-scope="scope">
-          {{
-            $store.state.nodetype +
-            "节点" +
+        <template slot-scope="scope"  type="warning">
+          <span v-if="$store.state.nodename.includes('master')">
+            {{
+            "k8s边节点" +
             $store.state.nodename[$store.state.nodename.length - 1]
+            }}
+
+          </span>
+          <span v-else>
+            {{
+            "k8s边节点" +
+            (parseInt($store.state.nodename[$store.state.nodename.length - 1]) + 1)
           }}
+
+          </span>
+          
         </template>
       </el-table-column>
       <el-table-column width="100" sortable label="状态" prop="status.phase">
@@ -98,9 +108,9 @@
           <el-tag v-else type="success">成功</el-tag>
         </template>
       </el-table-column>
-      <el-table-column width="100" sortable label="是否可用" prop="metadata.annotations.status">
+      <el-table-column width="100" sortable label="是否可用" prop="status.phase">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.metadata.annotations.status === 'Yes'" type="success">可用</el-tag>
+          <el-tag v-if="scope.row.status.phase === 'Running'" type="success">可用</el-tag>
           <el-tag v-else type="danger">不可用</el-tag>
         </template>
       </el-table-column>
@@ -147,7 +157,7 @@
           </el-popover>
           <el-button-group>
             <el-button v-popover="'popover' + scope.$index" plain type="info" size="mini">迁移</el-button>
-            <el-button @click="startPod(scope.$index, scope.row)" v-if="scope.row.metadata.annotations.status === 'No'"
+            <el-button @click="startPod(scope.$index, scope.row)" v-if="scope.row.status.phase !== 'Running'"
               size="mini" type="success">启动</el-button>
             <el-button @click="stopPod(scope.$index, scope.row)" v-else size="mini" type="warning">停止</el-button>
             <el-button @click="deletePod(scope.$index, scope.row)" plain size="mini" type="danger">删除</el-button>
@@ -345,8 +355,8 @@ export default {
       nodename_options: [],
       // pvc名称选项
       pvcName_options: [],
-      baseurl: "http://39.101.136.242:8080",
-      // baseurl: "http://127.0.0.1:8080",
+      // baseurl: "http://39.101.136.242:8080",
+      baseurl: "http://127.0.0.1:8080",
       poddata: [],
       psearch: "",
       isstart: false,
@@ -449,14 +459,21 @@ export default {
       this.$axios
         .get(this.baseurl + "/workload_k8s/getPodList")
         .then((res) => {
-          // console.log(JSON.parse(res.data.result));
-          this.poddata = JSON.parse(res.data.result).items;
+          console.log(res.data.items);
+          
+          this.poddata = res.data.items;
+          console.log(this.poddata.length);
           // 按节点筛选
           this.poddata = this.poddata.filter(
             (data) =>
               this.$store.state.nodename ===
               (data.spec.nodeName ? data.spec.nodeName : "k8s-master1")
           );
+          var name=this.$store.state.nodename
+          console.log(name)
+          // +
+          //   "节点" +
+          //   this.$store.state.nodename[$store.state.nodename.length - 1])
           // 获取namepath
           for (let i = 0; i < this.poddata.length; i++) {
             this.poddata[i].info = {};
@@ -512,7 +529,7 @@ export default {
             message: "容器 " + row.metadata.name + " 启动成功",
             position: "bottom-right",
           });
-          row.metadata.annotations.status = "Yes";
+          row.status.phase = 'Running';
         },
         (err) => {
           console.log(err);
@@ -546,7 +563,7 @@ export default {
             message: "容器 " + row.metadata.name + " 停止成功",
             position: "bottom-right",
           });
-          row.metadata.annotations.status = "No";
+          row.status.phase = 'Pending';
         },
         (err) => {
           console.log(err);
@@ -841,6 +858,11 @@ export default {
   computed: {
     tmp_nodename_w() {
       return this.$store.state.nodename
+    }
+  },
+  watch: {
+    tmp_nodename_w(nv, ov) {
+      this.getPodList()
     }
   }
 };
