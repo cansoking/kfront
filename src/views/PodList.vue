@@ -38,7 +38,7 @@
                 <el-tag v-else type="success">成功</el-tag></span>
             </el-form-item>
             <el-form-item label="是否可用">
-              <span><el-tag v-if="props.row.metadata.annotations.status === 'Yes'" type="success">可用</el-tag>
+              <span><el-tag v-if="props.row.status.phase === 'Running'" type="success">可用</el-tag>
                 <el-tag v-else type="danger">不可用</el-tag></span>
             </el-form-item>
             <el-form-item label="创建时间">
@@ -98,9 +98,9 @@
           <el-tag v-else type="success">成功</el-tag>
         </template>
       </el-table-column>
-      <el-table-column width="100" sortable label="是否可用" prop="metadata.annotations.status">
+      <el-table-column width="100" sortable label="是否可用" prop="status.phase">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.metadata.annotations.status === 'Yes'" type="success">可用</el-tag>
+          <el-tag v-if="scope.row.status.phase === 'Running'" type="success">可用</el-tag>
           <el-tag v-else type="danger">不可用</el-tag>
         </template>
       </el-table-column>
@@ -146,11 +146,11 @@
             </el-form>
           </el-popover>
           <el-button-group>
-            <el-button :disabled="scope.row.metadata.annotations.status === 'No'" v-popover="'popover' + scope.$index" plain type="info" size="mini">迁移</el-button>
-            <el-button @click="startPod(scope.$index, scope.row)" v-if="scope.row.metadata.annotations.status === 'No'"
+            <el-button v-popover="'popover' + scope.$index" plain type="info" size="mini">迁移</el-button>
+            <el-button @click="startPod(scope.$index, scope.row)" v-if="scope.row.status.phase !== 'Running'"
               size="mini" type="success">启动</el-button>
             <el-button @click="stopPod(scope.$index, scope.row)" v-else size="mini" type="warning">停止</el-button>
-            <el-button :disabled="scope.row.metadata.annotations.status === 'No'" @click="deletePod(scope.$index, scope.row)" plain size="mini" type="danger">删除</el-button>
+            <el-button @click="deletePod(scope.$index, scope.row)" plain size="mini" type="danger">删除</el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -346,7 +346,7 @@ export default {
       // pvc名称选项
       pvcName_options: [],
       baseurl: "http://39.101.136.242:8080",
-      // baseurl: "http://127.0.0.1:8080",
+       //baseurl: "http://127.0.0.1:8080",
       poddata: [],
       psearch: "",
       isstart: false,
@@ -447,15 +447,76 @@ export default {
     // 获取容器列表数据
     getPodList() {
       this.$axios
-        .get(this.baseurl + "/workload/getPodList")
+        .get(this.baseurl + "/workload_k8s/getPodList")
         .then((res) => {
-          // console.log(JSON.parse(res.data.result));
-          this.poddata = JSON.parse(res.data.result).items;
+          console.log(res.data.items);
+          
+          this.poddata = res.data.items;
+          console.log(this.poddata.length);
+          // 按节点筛选
           this.poddata = this.poddata.filter(
             (data) =>
               this.$store.state.nodename ===
-              (data.spec.nodeName ? data.spec.nodeName : "master1")
+              (data.spec.nodeName ? data.spec.nodeName : "k8s-master1")
           );
+          var name=this.$store.state.nodename
+          console.log(name)
+          // +
+          //   "节点" +
+          //   this.$store.state.nodename[$store.state.nodename.length - 1])
+          // 获取namepath
+          for (let i = 0; i < this.poddata.length; i++) {
+            this.poddata[i].info = {};
+            if (this.poddata[i].spec.volumes) {
+              this.poddata[i].info.ppname =
+                this.poddata[i].spec.volumes[0].name;
+              this.$axios
+                .get(
+                  this.baseurl +
+                  "/virtuleStorage/pvPath?pvName=" +
+                  this.poddata[i].spec.volumes[0].name
+                )
+                .then((res) => {
+                  this.poddata[i].info.podpath = res.data.pvPath;
+                })
+                .catch((err) => {
+                  console.log(this.poddata[i].spec.volumes[0].name + "无path");
+                  // this.poddata[i].info.podpath = "---";
+                });
+              if (!this.poddata[i].info.podpath) {
+                this.poddata[i].info.podpath = "---";
+              }
+            } else {
+              this.poddata[i].info.ppname = "---";
+              this.poddata[i].info.podpath = "---";
+            }
+          }
+          this.totalpod = this.poddata.length;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    //获取k8s容器
+    getk8sPodList() {
+      this.$axios
+        .get(this.baseurl + "/workload_k8s/getPodList")
+        .then((res) => {
+          console.log(res.data.items);
+          
+          this.poddata = res.data.items;
+          console.log(this.poddata.length);
+          // 按节点筛选
+          this.poddata = this.poddata.filter(
+            (data) =>
+              this.$store.state.nodename ===
+              (data.spec.nodeName ? data.spec.nodeName : "k8s-master1")
+          );
+          var name=this.$store.state.nodename
+          console.log(name)
+          // +
+          //   "节点" +
+          //   this.$store.state.nodename[$store.state.nodename.length - 1])
           // 获取namepath
           for (let i = 0; i < this.poddata.length; i++) {
             this.poddata[i].info = {};
@@ -511,7 +572,7 @@ export default {
             message: "容器 " + row.metadata.name + " 启动成功",
             position: "bottom-right",
           });
-          row.metadata.annotations.status = "Yes";
+          // row.metadata.annotations.status = "Yes";
         },
         (err) => {
           console.log(err);
@@ -545,7 +606,7 @@ export default {
             message: "容器 " + row.metadata.name + " 停止成功",
             position: "bottom-right",
           });
-          row.metadata.annotations.status = "No";
+          // row.metadata.annotations.status = "No";
         },
         (err) => {
           console.log(err);
@@ -844,7 +905,12 @@ export default {
   },
   watch: {
     tmp_nodename_w(nv, ov) {
-      this.getPodList()
+      if(this.$store.state.nodename.includes('k8s')){
+        this.getk8sPodList();
+      }
+      else{
+        this.getPodList();
+      }
     }
   }
 };
