@@ -12,13 +12,8 @@
         ></el-image>
       </a> -->
     </div>
-    <el-menu
-      :default-active="$route.path"
-      background-color="#393e46"
-      text-color="#8d97ad"
-      router
-      active-text-color="#ffffff"
-    >
+    <el-menu :default-active="$route.path" background-color="#393e46" text-color="#8d97ad" router
+      active-text-color="#ffffff">
       <!-- 分布式资源管理 -->
       <el-submenu index="fenbu">
         <template slot="title">
@@ -181,7 +176,14 @@
         <el-menu-item index="/messionList" route="messionList">
           <i class="el-icon-pie-chart"></i>
           <span slot="title">数传任务列表</span>
-        </el-menu-item> 
+        </el-menu-item>
+        <el-menu-item>
+          <i class="el-icon-pie-chart"></i>
+          <span slot="title">
+            <a style="text-decoration: none; color: #8d97ad;" href="http://39.101.128.8:51821/"
+              target="_blank">虚拟网络管理</a>
+          </span>
+        </el-menu-item>
       </el-submenu>
 
       <!-- <el-menu-item index="">
@@ -257,7 +259,7 @@
   </div>
 </template>
 
-  <script>
+<script>
 export default {
   name: "SiteAside",
 
@@ -265,7 +267,7 @@ export default {
     return {};
   },
 
-  created() {},
+  created() { },
 
   methods: {},
 };
@@ -278,6 +280,7 @@ export default {
   color: #fff;
   border-bottom: 1px solid #343e50;
 }
+
 .el-menu {
   border-right: solid 0px #e6e6e6;
 }
