@@ -27,6 +27,23 @@
       " style="width: 100%" empty-text="暂无虚拟机" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
       <el-table-column type="index" label="序号" width="50"> </el-table-column>
       <el-table-column width="150" sortable label="名称" prop="name">
+        <template slot-scope="scope">
+        <span v-if="scope.row.name.includes('FB_')">
+        {{
+          '联邦学习区块链_'+scope.row.name.match(/\d+/)[0]
+        }}
+      </span>
+      <span v-else-if="scope.row.name.includes('F_')">
+        {{
+          '联邦学习_'+scope.row.name.match(/\d+/)[0]
+        }}
+      </span>
+      <span v-else>
+        {{
+          scope.row.name
+        }}
+      </span>
+      </template>
       </el-table-column>
       <el-table-column width="100" sortable label="状态" prop="state">
         <template slot-scope="scope">
@@ -151,9 +168,12 @@
 
     <el-dialog title="执行命令" :visible.sync="commandvisible">
       <el-descriptions title="虚拟机信息">
-        <el-descriptions-item label="名称">{{
+        <el-descriptions-item label="名称">
+          {{
+
       this.command_tmp_data.name
-    }}</el-descriptions-item>
+          }}
+    </el-descriptions-item>
         <el-descriptions-item label="状态">
           <el-tag v-if="this.command_tmp_data.state === 'VIR_DOMAIN_PAUSED'" type="warning">挂起</el-tag>
           <el-tag v-else-if="this.command_tmp_data.state === 'VIR_DOMAIN_RUNNING'">运行</el-tag>
