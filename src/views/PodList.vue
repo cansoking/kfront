@@ -83,14 +83,26 @@
       <el-table-column width="150" sortable label="命名空间" prop="metadata.namespace">
       </el-table-column>
       <el-table-column sortable label="节点" prop="spec.nodeName">
-        <template slot-scope="scope">
-          {{
-            $store.state.nodetype +
-            "节点" +
-            $store.state.nodename[$store.state.nodename.length - 1]
-          }}
-        </template>
-      </el-table-column>
+  <template slot-scope="scope">
+    <span v-if="$store.state.nodename.includes('k8s')">
+      <span v-if="$store.state.nodename.includes('master')">
+        {{
+          'k8s边节点' + $store.state.nodename[$store.state.nodename.length - 1]
+        }}
+      </span>
+      <span v-else>
+        {{
+          'k8s边节点' + (parseInt($store.state.nodename[$store.state.nodename.length - 1]) + 1)
+        }}
+      </span>
+    </span>
+    <span v-else>
+      {{
+        $store.state.nodetype + '节点' + $store.state.nodename[$store.state.nodename.length - 1]
+      }}
+    </span>
+  </template>
+</el-table-column>
       <el-table-column width="100" sortable label="状态" prop="status.phase">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status.phase === 'Pending'" type="warning">挂起</el-tag>
@@ -447,23 +459,15 @@ export default {
     // 获取容器列表数据
     getPodList() {
       this.$axios
-        .get(this.baseurl + "/workload_k8s/getPodList")
+        .get(this.baseurl + "/workload/getPodList")
         .then((res) => {
-          console.log(res.data.items);
-          
-          this.poddata = res.data.items;
-          console.log(this.poddata.length);
-          // 按节点筛选
+          // console.log(JSON.parse(res.data.result));
+          this.poddata = JSON.parse(res.data.result).items;
           this.poddata = this.poddata.filter(
             (data) =>
               this.$store.state.nodename ===
-              (data.spec.nodeName ? data.spec.nodeName : "k8s-master1")
+              (data.spec.nodeName ? data.spec.nodeName : "master1")
           );
-          var name=this.$store.state.nodename
-          console.log(name)
-          // +
-          //   "节点" +
-          //   this.$store.state.nodename[$store.state.nodename.length - 1])
           // 获取namepath
           for (let i = 0; i < this.poddata.length; i++) {
             this.poddata[i].info = {};
@@ -473,8 +477,8 @@ export default {
               this.$axios
                 .get(
                   this.baseurl +
-                  "/virtuleStorage/pvPath?pvName=" +
-                  this.poddata[i].spec.volumes[0].name
+                    "/virtuleStorage/pvPath?pvName=" +
+                    this.poddata[i].spec.volumes[0].name
                 )
                 .then((res) => {
                   this.poddata[i].info.podpath = res.data.pvPath;
@@ -502,10 +506,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/workload_k8s/getPodList")
         .then((res) => {
-          console.log(res.data.items);
-          
           this.poddata = res.data.items;
-          console.log(this.poddata.length);
           // 按节点筛选
           this.poddata = this.poddata.filter(
             (data) =>
@@ -513,7 +514,6 @@ export default {
               (data.spec.nodeName ? data.spec.nodeName : "k8s-master1")
           );
           var name=this.$store.state.nodename
-          console.log(name)
           // +
           //   "节点" +
           //   this.$store.state.nodename[$store.state.nodename.length - 1])
@@ -905,7 +905,7 @@ export default {
   },
   watch: {
     tmp_nodename_w(nv, ov) {
-      if(this.$store.state.nodename.includes('k8s')){
+      if(this.$store.state.nodename !== null && this.$store.state.nodename.includes('k8s')){
         this.getk8sPodList();
       }
       else{
