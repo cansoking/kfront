@@ -38,7 +38,7 @@
                 <el-tag v-else type="success">成功</el-tag></span>
             </el-form-item>
             <el-form-item label="是否可用">
-              <span><el-tag v-if="props.row.status.phase === 'Running'" type="success">可用</el-tag>
+              <span><el-tag v-if="props.row.metadata.annotations.status === 'Yes'" type="success">可用</el-tag>
                 <el-tag v-else type="danger">不可用</el-tag></span>
             </el-form-item>
             <el-form-item label="创建时间">
@@ -110,9 +110,9 @@
           <el-tag v-else type="success">成功</el-tag>
         </template>
       </el-table-column>
-      <el-table-column width="100" sortable label="是否可用" prop="status.phase">
+      <el-table-column width="100" sortable label="是否可用" prop="metadata.annotations.status">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.status.phase === 'Running'" type="success">可用</el-tag>
+          <el-tag v-if="scope.row.metadata.annotations.status === 'Yes'" type="success">可用</el-tag>
           <el-tag v-else type="danger">不可用</el-tag>
         </template>
       </el-table-column>
@@ -357,8 +357,8 @@ export default {
       nodename_options: [],
       // pvc名称选项
       pvcName_options: [],
-      baseurl: "http://39.101.136.242:8080",
-       //baseurl: "http://127.0.0.1:8080",
+      //baseurl: "http://39.101.136.242:8080",
+       baseurl: "http://127.0.0.1:8080",
       poddata: [],
       psearch: "",
       isstart: false,
@@ -506,7 +506,7 @@ export default {
       this.$axios
         .get(this.baseurl + "/workload_k8s/getPodList")
         .then((res) => {
-          this.poddata = res.data.items;
+          this.poddata = JSON.parse(res.data.result).items;
           // 按节点筛选
           this.poddata = this.poddata.filter(
             (data) =>
