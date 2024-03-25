@@ -106,8 +106,13 @@
       <el-table-column width="100" sortable label="状态" prop="status.phase">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.status.phase === 'Pending'" type="warning">挂起</el-tag>
+          <el-tag v-else-if="scope.row.status.phase === 'Failed'">失败</el-tag>
+          <el-tag v-else-if="scope.row.status.phase === 'CrashLoopBackOff'">崩溃回滚</el-tag>
+          <el-tag v-else-if="scope.row.status.phase === 'ContainerCreating'">正在创建</el-tag>
+          <el-tag v-else-if="scope.row.status.phase === 'Terminating'">停止中</el-tag>
+          <el-tag v-else-if="scope.row.status.phase === 'Initializing'">初始化中</el-tag>
           <el-tag v-else-if="scope.row.status.phase === 'Running'">运行</el-tag>
-          <el-tag v-else type="success">成功</el-tag>
+          <el-tag v-else type="success">完成</el-tag>
         </template>
       </el-table-column>
       <el-table-column width="100" sortable label="是否可用" prop="metadata.annotations.status">
