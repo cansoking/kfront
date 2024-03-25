@@ -357,8 +357,8 @@ export default {
       nodename_options: [],
       // pvc名称选项
       pvcName_options: [],
-      //baseurl: "http://39.101.136.242:8080",
-       baseurl: "http://127.0.0.1:8080",
+      baseurl: "http://39.101.136.242:8080",
+       //baseurl: "http://127.0.0.1:8080",
       poddata: [],
       psearch: "",
       isstart: false,
