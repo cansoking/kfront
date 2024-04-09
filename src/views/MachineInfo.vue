@@ -73,6 +73,11 @@
                 <el-input v-model="node_form.nodeIp" placeholder="请输入节点IP"></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="架构类型" prop="architecture">
+                <el-input v-model="node_form.architecture" placeholder="请输入节点架构类型"></el-input>
+              </el-form-item>
+            </el-col>
           </el-row>
           <div class="cp-sbm-area" style="display: flex; justify-content: right; margin-top: 50px">
             <el-button round @click="resetForm('node_form')">重置</el-button>
@@ -142,6 +147,11 @@
                 <el-input v-model="editnode_form.nodeIp" placeholder="请输入节点IP"></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="12" :offset="0">
+              <el-form-item label="架构类型" prop="architecture">
+                <el-input v-model="editnode_form.architecture" placeholder="请输入节点架构类型"></el-input>
+              </el-form-item>
+            </el-col>
           </el-row>
 
           <div class="cp-sbm-area" style="display: flex; justify-content: right; margin-top: 50px">
@@ -163,6 +173,8 @@
         <el-table-column sortable prop="nodeStatus" label="节点状态" width="200">
         </el-table-column>
         <el-table-column sortable prop="nodeLocation" label="节点位置" width="200">
+        </el-table-column>
+        <el-table-column sortable prop="architecture" label="架构类型" width="200">
         </el-table-column>
         <el-table-column sortable prop="nodeType" label="节点类型" width="180">
           <template slot-scope="scope">
@@ -313,7 +325,8 @@ export default {
         nodeUserPasswd: "",
         nodeLon: "",
         nodeLat: "",
-        alias: ""
+        alias: "",
+        architecture: ""
       },
       editnode_form: {
         id: "",
@@ -325,7 +338,8 @@ export default {
         nodeUserPasswd: "",
         nodeLon: "",
         nodeLat: "",
-        alias: ""
+        alias: "",
+        architecture: ""
       },
       node_options: [
         {
@@ -370,6 +384,9 @@ export default {
         ],
         nodeType: [
           { required: true, message: "选择节点类型", trigger: "change" },
+        ],
+        architecture: [
+          { required: true, message: "请输入节点架构类型", trigger: "blur" },
         ],
       },
       cpuInfo: {
@@ -443,6 +460,7 @@ export default {
       this.editnode_form.nodeLon = row.nodeLon;
       this.editnode_form.nodeLat = row.nodeLat;
       this.editnode_form.alias = row.alias;
+      this.editnode_form.architecture = row.architecture;
       this.editnodevisible = true;
     },
     editnode_sumbit(formName) {
