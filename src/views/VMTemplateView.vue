@@ -172,19 +172,11 @@
         ref="buildvmtem_form">
         <el-row :gutter="30">
           <el-col :span="12" :offset="0">
-            <el-form-item label="请输入虚拟机别名" prop="otherName">
-              <el-input v-model="buildvmtem_form.otherName" placeholder="请输入虚拟机中文名称" style="width: 60%"
-                @blur="validName('buildvmtem_form')"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12" :offset="0">
             <el-form-item label="请输入虚拟机名称" prop="vmname">
               <el-input v-model="buildvmtem_form.vmname" placeholder="请输入虚拟机名称" style="width: 60%"
                 @blur="validName('buildvmtem_form')"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row :gutter="30">
           <el-col :span="24" :offset="0">
             <el-form-item label="节点" prop="node">
               <el-select style="width: 60%" v-model="buildvmtem_form.node" clearable placeholder="请选择创建虚拟机所在宿主机节点">
@@ -275,6 +267,10 @@ export default {
       buildvmtemvisible: false,
       vmtemdata: [],
       cpuNum_options: [
+        {
+          value: "1",
+          label: "1",
+        },
         {
           value: "2",
           label: "2",
@@ -411,7 +407,7 @@ export default {
           this.buildvmvisible = false;
           this.$axios
             .get(
-              "http://" + this.buildvmtem_form.node + ":8080" +
+              "http://" + this.baseurl + ":8080" +
               "/Template/addVirtual?ImgName=" +
               this.buildvmtem_form.ImgName +
               "&name=" +
@@ -425,9 +421,7 @@ export default {
               "&nettype=" +
               this.buildvmtem_form.nettype +
               "&serverip=" +
-              this.buildvmtem_form.node + 
-              "&otherName=" +
-              this.buildvmtem_form.otherName
+              this.buildvmtem_form.node
             )
             .then((response) => {
               this.$notify.success({
