@@ -406,7 +406,7 @@ export default {
           this.buildvmvisible = false;
           this.$axios
             .get(
-              "http://" + this.baseurl + ":8080" +
+              "http://" + this.baseurl  +
               "/Template/addVirtual?ImgName=" +
               this.buildvmtem_form.ImgName +
               "&name=" +
