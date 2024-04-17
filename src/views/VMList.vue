@@ -374,6 +374,8 @@
 </template>
 
 <script>
+import router from '@/router';
+
 export default {
   name: "VMList",
   mounted() {
@@ -1258,7 +1260,13 @@ export default {
         });
     },
     vmdelete(row) {
-      this.$confirm(`您确定删除该虚拟机吗?`, "提示", {
+    if(row.state === 'VIR_DOMAIN_RUNNING'){
+      this.$confirm(`该虚拟机正在运行，请将虚拟机关闭后删除`, "提示", {
+        confirmButtonText: "确定",
+        type: "warning",
+      })
+    }else{
+     this.$confirm(`您确定删除该虚拟机吗?`, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -1283,7 +1291,8 @@ export default {
             message: "已取消",
           });
         });
-    },
+    }
+  },
   },
   computed: {
     tmp_nodename_w() {
