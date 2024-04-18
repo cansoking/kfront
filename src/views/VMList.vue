@@ -421,12 +421,12 @@ export default {
       ],
       node_options: [
         {
-          label: "端节点1:10.0.8.14",
-          value: "10.0.8.14",
-        },
-        {
           label: "端节点2:10.0.8.15",
           value: "10.0.8.15",
+        },
+        {
+          label: "端节点3:10.0.8.20",
+          value: "10.0.8.20",
         },
       ],
       ostype_options: [
@@ -1261,7 +1261,7 @@ export default {
     },
     vmdelete(row) {
     if(row.state === 'VIR_DOMAIN_RUNNING'){
-      this.$confirm(`该虚拟机正在运行，请将虚拟机关闭后删除`, "提示", {
+      this.$alert(`该虚拟机正在运行，请将虚拟机关闭后删除`, "提示", {
         confirmButtonText: "确定",
         type: "warning",
       })
