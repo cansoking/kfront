@@ -142,7 +142,7 @@
             :key="index"
             :label="item.info"
             :prop="['attributes_values', item.name].join('.')"
-            :rules="[{ required: true, validator: (rule, value)=>checkAttribute(value, item.data_type_name), trigger: 'blur' }]"
+
         >
           <el-input
               v-if="item.data_type_name === 'string'"
