@@ -39,15 +39,18 @@
           <template slot-scope="scope">
 
             <div v-if="scope.row.status === 2">
-              <el-tag>正在执行</el-tag>
+              <el-tag>编排完成</el-tag>
             </div>
             <div v-else-if="scope.row.status === 3">
-              <el-tag type="warning">任务停止</el-tag>
+              <el-tag type="warning">正在调度</el-tag>
             </div>
             <div v-else-if="scope.row.status === 4">
-              <el-tag type="success">任务结束</el-tag>
+              <el-tag type="success">正在运行</el-tag>
             </div>
             <div v-else-if="scope.row.status === 5">
+              <el-tag type="success">任务完成</el-tag>
+            </div>
+            <div v-else-if="scope.row.status === 6">
               <el-tag type="danger">任务失败</el-tag>
             </div>
             <div v-else>
@@ -183,10 +186,11 @@ export default {
       taskTypeOptions: [],
       taskStatusOptions: [
         { "value": 1, "label": "任务发起" },
-        { "value": 2, "label": "正在执行" },
-        { "value": 3, "label": "任务停止" },
-        { "value": 4, "label": "任务结束" },
-        { "value": 5, "label": "任务失败" }
+        { "value": 2, "label": "编排完成" },
+        { "value": 3, "label": "正在调度" },
+        { "value": 4, "label": "正在运行" },
+        { "value": 5, "label": "任务完成" },
+        { "value": 6, "label": "任务失败" }
       ],
       tabsData: [],
       resourceTypeOptions: []
