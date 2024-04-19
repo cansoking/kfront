@@ -164,7 +164,7 @@
           </el-popover>
           <el-button-group>
             <el-button v-popover="'popover' + scope.$index" plain type="info" size="mini">迁移</el-button>
-            <el-button @click="startPod(scope.$index, scope.row)" v-if="scope.row.status.phase !== 'Running'"
+            <el-button @click="startPod(scope.$index, scope.row)" v-if="scope.row.metadata.annotations.status === 'No'"
               size="mini" type="success">启动</el-button>
             <el-button @click="stopPod(scope.$index, scope.row)" v-else size="mini" type="warning">停止</el-button>
             <el-button @click="deletePod(scope.$index, scope.row)" plain size="mini" type="danger">删除</el-button>
