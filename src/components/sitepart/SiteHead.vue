@@ -8,7 +8,7 @@
             v-model="search"
             placeholder="请输入搜索内容..."
           ></el-input> -->
-          <span style="font-size: 30px; font-weight: 600; color: #ffffff">基于虚拟化的资源管理演示验证原型系统v1.0</span>
+          <span style="font-size: 30px; font-weight: 600; color: #ffffff">基于虚拟化的资源管理演示验证原型软件v1.0</span>
         </el-col>
         <el-col  :offset="7" :span="6">
           <div v-if="isShowSelect" style="color: #ffffff; font-size: 20px; line-height: 40px">

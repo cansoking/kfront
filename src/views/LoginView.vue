@@ -8,7 +8,7 @@
           fit="fill"
           :lazy="true"
         ></el-image>
-        <div>基于虚拟化的资源管理演示验证原型系统</div>
+        <div>基于虚拟化的资源管理演示验证原型软件</div>
       </div>
       <div class="content">
         <div class="login-box">
