@@ -10,7 +10,13 @@
       </el-button>
     </el-col>
 
-    <el-table :data="vmtemdata.slice((curpage - 1) * pagesize, curpage * pagesize)" style="width: 100%"
+    <el-table :data="vmtemdata
+        .slice((curpage - 1) * pagesize, curpage * pagesize)
+        .filter(
+          (data) =>
+            !psearch ||
+            data.name.toLowerCase().includes(psearch.toLowerCase())
+        )" style="width: 100%"
       empty-text="暂无虚拟机模板" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
       <el-table-column width="100" type="index" label="序号"> </el-table-column>
       <!--      <el-table-column  sortable label="ID" prop="id">-->
@@ -26,7 +32,10 @@
       </el-table-column>
       <el-table-column sortable label="网络类型" prop="nettype">
       </el-table-column>
-      <el-table-column fixed="right" label="操作">
+      <el-table-column fixed="right">
+        <template slot="header">
+          <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
+        </template>
         <template slot-scope="scope">
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
           <el-button size="mini" type="warning" @click="edit(scope.row)">修改</el-button>
@@ -256,6 +265,7 @@ export default {
   name: "VMLogList",
   data() {
     return {
+      psearch: '',
       baseurl: "http://39.101.136.242:8080",
       // baseurl: "http://127.0.0.1:8080",
       curpage: 1,

@@ -10,8 +10,13 @@
             </el-button>
         </el-col>
 
-        <el-table :data="vmtemdata.slice((curpage - 1) * pagesize, curpage * pagesize)" style="width: 100%"
-            empty-text="暂无容器模版" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
+        <el-table :data="vmtemdata
+            .slice((curpage - 1) * pagesize, curpage * pagesize)
+            .filter(
+                (data) =>
+                    !psearch ||
+                    data.name.toLowerCase().includes(psearch.toLowerCase())
+            )" style="width: 100%" empty-text="暂无容器模版" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
             <el-table-column width="100" type="index" label="序号"> </el-table-column>
             <!--      <el-table-column  sortable label="ID" prop="id">-->
             <!--      </el-table-column>-->
@@ -36,7 +41,10 @@
                     </el-popover>
                 </template>
             </el-table-column>
-            <el-table-column width="250" fixed="right" label="操作">
+            <el-table-column width="250" fixed="right">
+                <template slot="header">
+                    <el-input v-model="psearch" size="mini" placeholder="输入名称搜索" />
+                </template>
                 <template slot-scope="scope">
                     <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
                     <el-button size="mini" type="warning" @click="edit(scope.row)">修改</el-button>
@@ -247,8 +255,8 @@
                 </el-form-item>
                 <el-form-item label="选择持久卷声明" prop="pvcName">
                     <!-- <el-input v-model="build_cp_form.containerImage"></el-input> -->
-                    <el-select disabled style="width: 100%" v-model="build_cp_form.pvcName" clearable @visible-change="pvcremote"
-                        placeholder="请选择pvc">
+                    <el-select disabled style="width: 100%" v-model="build_cp_form.pvcName" clearable
+                        @visible-change="pvcremote" placeholder="请选择pvc">
                         <el-option v-for="item in pvcName_options" :key="item.value" :label="item.label"
                             :value="item.value">
                         </el-option>
@@ -340,6 +348,7 @@ export default {
             callback();
         };
         return {
+            psearch: '',
             temp_pod_names: [],
             tempPodname: '',
             nodename_options: [],
