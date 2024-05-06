@@ -440,7 +440,6 @@ export default {
                 position: "bottom-right",
                 duration: 6000,
               });
-              this.getVMList();
             })
             .catch((err) => {
               this.$notify.error({
