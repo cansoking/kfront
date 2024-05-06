@@ -436,7 +436,7 @@ export default {
             .then((response) => {
               this.$notify.success({
                 title: "创建成功",
-                message: "虚拟机 " + this.buildvmtem_form.name + " 创建成功！",
+                message: "根据模板"+this.buildvmtem_form.name+"，虚拟机 " + this.buildvmtem_form.vmname + " 创建成功！",
                 position: "bottom-right",
                 duration: 6000,
               });
