@@ -329,11 +329,11 @@ export default {
       node_options: [
         {
           label: "端节点2:10.0.8.15",
-          value: "10.0.8.14",
+          value: "10.0.8.15",
         },
         {
           label: "端节点3:10.0.8.20",
-          value: "10.0.8.15",
+          value: "10.0.8.20",
         },
       ],
       vmtem_form: {
