@@ -1,7 +1,7 @@
 <template>
   <body class="detailBody">
     <header class="detailHeader">
-      <h1>边缘服务器异构网络传输详情:北京接入点</h1>
+      <h1>边缘服务器异构网络传输详情:{{cpeName}}</h1>
       <h2>当前策略：{{ currentPriority }}</h2>
       <div class="showTime"></div>
     </header>
@@ -30,7 +30,7 @@
         <div class="no">
           <div class="no-hd">
             <ul>
-              <li>2</li>
+              <li>{{ cpeNum }}</li>
               <li>{{ netNum }}</li>
             </ul>
           </div>
@@ -88,6 +88,7 @@ import DataTrafficStatistics from "../components/TerminalDetail/DataTrafficStati
 import Select1 from "../components/TerminalDetail/Select1.vue";
 import Select2 from "../components/TerminalDetail/Select2.vue";
 import Button  from "../components/TerminalDetail/Button.vue";
+import store from '../store/index'
 
 // import { useRouter } from 'vue-router';
 import router from "@/router";
@@ -100,8 +101,86 @@ import {onMounted, ref,onBeforeUnmount,computed} from 'vue';
 
 const url = process.env.VUE_APP_API_URI_ROUTE;//统一的url
 var netNum = ref(0);//当前网络连接数
+var cpeNum = ref(0);//当前在线接入点数量
+
+var cpeName = ref(null);
+var ipandport1 = ref(null);
+const selectedTerminal = computed(() => store.getters.getSelectedTerminal);
+cpeName = selectedTerminal.value.name;
+console.log(cpeName);
+ipandport1 = selectedTerminal.value.ipandport1;
+var ip = ipandport1.split(':')[0]+":"+ipandport1.split(':')[1];//获取当前在线cpe数量时传递的参数
+console.log(ipandport1);
 
 var currentPriority = ref(null);//当前优先级
+
+const socket = new WebSocket("ws://59.110.238.62:8887/websocket");
+socket.onopen = function(event){
+    console.log("WebSocket连接已建立");
+    const messageForNetNum = {
+      function:'countConnectNum',
+      parameters:{
+      ipAndPort:ipandport1
+      }
+    }
+    sendMessage(JSON.stringify(messageForNetNum));
+    const messageForPriority = {
+    function:'countPriority',
+    parameters:{
+      ipAndPort:ipandport1
+    }
+    }
+    sendMessage(JSON.stringify(messageForPriority));
+    const messageForCPENum = {
+    function:'countAccessPointNum',
+    parameters:{
+      ip:ip
+    }
+    }
+    sendMessage(JSON.stringify(messageForCPENum));
+}
+
+socket.onmessage = function(event){
+  var message = event.data;
+  message = JSON.parse(message);
+  // console.log(event);
+  if(message[0]==="countConnectNum"){
+    var messageofNetNum = message[1];
+    netNum.value = messageofNetNum;
+    console.log("网络连接数：",netNum.value);
+  }
+  if(message[0]==="countPriority"){
+    // console.log(message[1]);
+    var messageofPriority = message[1];
+    currentPriority.value = messageofPriority;
+  }
+  if(message[0]==="countAccessPointNum"){
+    // console.log(message[1]);
+    var messageofCPENum = message[1];
+    cpeNum.value = messageofCPENum;
+    console.log("接入点数量：",cpeNum.value);
+  }
+    
+}
+
+socket.onclose = function(event){
+    console.error("WebSocket连接已关闭");
+}
+
+socket.onerror = function(error){
+    console.log('WebSocket连接发生错误:', error);
+}
+
+// 可以通过发送数据来与后端进行通信
+function sendMessage(message) {
+    socket.send(message);
+    console.log('网络连接数组件已发送消息：', message);
+}
+
+// 关闭WebSocket连接
+function closeWebSocket() {
+    socket.close();
+}
 
 // const router = useRouter();
 const goToList = () => {
@@ -111,7 +190,7 @@ const goToList = () => {
 
 
 const goToPage = () =>{
-  window.open('http://59.110.238.62:1010', '_blank');
+  window.open(ipandport1, '_blank');
   console.log("点击按钮");
 };
 
@@ -287,24 +366,25 @@ async function getCurrentPriority(){
 
 // getCurrentPriority();//初始获取一次优先级
 
-countNetNum();//设置初始网络连接数
+// countNetNum();//设置初始网络连接数
 
 var timerID;//定时器
 var timerPriority;//获取优先级的计时器
 
 // 在组件挂载时启动定时器
 onMounted(() => {
-  // 设置定时器，每隔一秒执行一次
-  timerID = setInterval(countNetNum, 3000);
-  //获取优先级，3秒一次
+  // // 设置定时器，每隔一秒执行一次
+  // timerID = setInterval(countNetNum, 3000);
+  // // //获取优先级，3秒一次
   // timerPriority = setInterval(getCurrentPriority,3000);
 });
 
 // 在组件卸载前清除定时器
 onBeforeUnmount(() => {
   // 在此处清除定时器
-  clearInterval(timerID);
+  // clearInterval(timerID);
   // clearInterval(timerPriority);
+  closeWebSocket();
 });
 
 </script>

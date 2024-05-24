@@ -22,8 +22,14 @@
 </template>
   
 <script lang="ts" setup>
-import Vue, { onMounted, ref, watch ,defineProps} from "vue";
+import Vue, { onMounted, ref, watch ,defineProps,computed,onBeforeUnmount} from "vue";
 import axios from 'axios';
+import store from '../../store/index'
+
+var ipandport2 = ref(null);
+const selectedTerminal = computed(() => store.getters.getSelectedTerminal);
+ipandport2 = selectedTerminal.value.ipandport2;
+console.log(ipandport2);
 
 const  props = defineProps({
   getCurrentPriority:{
@@ -31,6 +37,8 @@ const  props = defineProps({
     required:true,
   }
 });
+
+
 
 
 
@@ -57,6 +65,53 @@ const options = [
     label: "智能多路径传输",
   },
 ];
+
+
+const websocketAddress = process.env.VUE_APP_ACCESSPOINT_WEBSOCKET;//webSocket连接来获取接入点信息的路径，通常是服务器的地址
+
+const socket = new WebSocket(websocketAddress+":8887/websocket");
+socket.onopen = function(event){
+    console.log("WebSocket连接已建立");
+    // const messageForNetNum = {
+    // function:'countConnectNum',
+    // parameters:{
+    //   ipAndPort:ipandport1
+    // }
+    // }
+    // sendMessage(JSON.stringify(messageForNetNum));
+    // const messageForPriority = {
+    // function:'countPriority',
+    // parameters:{
+    //   ipAndPort:ipandport1
+    // }
+    // }
+    // sendMessage(JSON.stringify(messageForPriority));
+}
+
+socket.onmessage = function(event){
+  // var message = event.data;
+  // message = JSON.parse(message);
+  
+}
+
+socket.onclose = function(event){
+    console.error("WebSocket连接已关闭");
+}
+
+socket.onerror = function(error){
+    console.log('WebSocket连接发生错误:', error);
+}
+
+// 可以通过发送数据来与后端进行通信
+function sendMessage(message) {
+    socket.send(message);
+    console.log('切换优先级组件已发送消息：', message);
+}
+
+// 关闭WebSocket连接
+function closeWebSocket() {
+    socket.close();
+}
 
 const updatePriority = () =>{
   if(selectedOption.value){
@@ -94,20 +149,32 @@ watch(selectedOption,()=>{
 // }
 
 function setPriorityBySSH(){
+  var message = {
+    function:'',
+    parameters:{
+      ipAndPort:ipandport2
+    }
+    }
   switch(priority.value[3]){
       case 0:
-        setLowOrbitPriority();
+        // setLowOrbitPriority();
+        message.function = 'transLow';
+        
         break;
       case 1:
-        setHighOrbitPriority();
+        message.function = 'transHigh';
+        // setHighOrbitPriority();
         break;
       case 2:
-        setMobilePriority();
+        message.function = 'transMobile';
+        // setMobilePriority();
         break;
       case 3:
-        setIntelligentPriority();
+        message.function = 'transMulti';
+        // setIntelligentPriority();
         break;
     }
+    sendMessage(JSON.stringify(message));//webSocket调用方法
 }
 
 
@@ -785,6 +852,12 @@ async function openInterface(arr,sessionValue){
     console.log("开启接口2失败");
   });
 }
+
+
+onBeforeUnmount(() => {
+
+  closeWebSocket();
+});
 
 
 

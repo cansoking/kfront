@@ -14,15 +14,65 @@
     export default{ 
         setup(){
             
+
             onMounted(()=>{
                 let container = document.getElementById("CurrentMissionStatus");//获取容器
-                
+            
                 var myChart = echarts.init(container);//运用了插槽，从父组件传来的模板
 
                 var data = ref([0,0,0]);//初始数据
 
                 const url = process.env.VUE_APP_API_URI_NOPORT;//服务器地址
+
+                const websocketAddress = process.env.VUE_APP_ACCESSPOINT_WEBSOCKET;//webSocket连接来获取接入点信息的路径，通常是服务器的地址
                 
+                const socket = new WebSocket(websocketAddress+":8887/websocket");
+                socket.onopen = function(event){
+                    console.log("WebSocket连接已建立");
+                    const message = {
+                    function:'inquireReceiveState',
+                    parameters:''
+                    }
+                    sendMessage(JSON.stringify(message));
+                }
+
+                socket.onmessage = function(event){
+                    var message = event.data;
+                    message = JSON.parse(message);
+                    var length = message.length;
+                    for(let i = 1;i<=length;i++){
+                        let progress = message[length-i].transmissProgress;
+                        // progress = parseFloat(progress.toFixed(3))*100; 
+                        progress = (progress*100).toFixed(1);
+                        data.value[3-i] = progress;              
+                    }
+                    myChart.setOption({
+                        series: [
+                            {  
+                                data: data.value,
+                            }
+                        ],
+                    })
+                }
+                
+                socket.onclose = function(event){
+                    console.error("WebSocket连接已关闭");
+                }
+
+                socket.onerror = function(error){
+                    console.log('WebSocket连接发生错误:', error);
+                }
+
+                // 可以通过发送数据来与后端进行通信
+                function sendMessage(message) {
+                    socket.send(message);
+                    console.log('进度条组件已发送消息：', message);
+                }
+
+                // 关闭WebSocket连接
+                function closeWebSocket() {
+                    socket.close();
+                }
 
                 //获取数据方法
                 function getData(){
@@ -160,21 +210,23 @@
                 });
 
                 //每秒对图表数据进行一次更新
-                const intervalId = setInterval(()=>{
-                    getData();
-                    myChart.setOption({
-                        series: [
-                            {  
-                                data: data.value,
-                            }
-                        ],
-                    })
-                },1000)
+                // const intervalId = setInterval(()=>{
+                //     getData();
+                //     myChart.setOption({
+                //         series: [
+                //             {  
+                //                 data: data.value,
+                //             }
+                //         ],
+                //     })
+                // },1000)
 
 
                 // 组件卸载时清除定时器
                 onUnmounted(() => {
-                    clearInterval(intervalId);
+                    // clearInterval(intervalId);
+
+                    closeWebSocket();
                 });
 
                 //让图表随浏览器大小变换而变换
@@ -183,6 +235,7 @@
 
                 
             })
+            
         }
     }
 </script>

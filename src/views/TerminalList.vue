@@ -33,7 +33,7 @@
       title="提示"
       :visible.sync="dialogVisibleSuccess"
       width="30%"
-      :before-close="handleClose">
+      >
       <span>传输任务启动</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisibleSuccess = false">确 定</el-button>
@@ -46,7 +46,7 @@
       title="提示"
       :visible.sync="dialogVisibleFail"
       width="30%"
-      :before-close="handleClose">
+      >
       <span>传输启动失败</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisibleFail = false">确 定</el-button>

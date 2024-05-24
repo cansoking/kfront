@@ -70,6 +70,7 @@ export default{
       tableData:[],
       timer:null,//计时器
       url : process.env.VUE_APP_API_URI_NOPORT,//服务器地址
+      socket:null,//webSocket
     }
   },
 
@@ -83,7 +84,7 @@ export default{
         url:that.url+":8887/file/inquireReceiveState",
       })
       .then((response)=>{
-        // console.log(response);
+        console.log(response.data);
         that.tableData = response.data;
         console.log(that.tableData[0].transmissProgress);
         this.tableData.forEach(element => {
@@ -146,7 +147,7 @@ export default{
         },
         method:"post",
         // url:"http://localhost:8887/file/receive",
-        url:that.url+":8887/file/receive",
+        url:that.url+":8887/file/inquireReceiveState",
         data:JSON.stringify(data),
       })
       .then((response)=>{
@@ -156,6 +157,17 @@ export default{
       .catch((error)=>{
         console.log(error);
       })
+    },
+
+    // webSocket发送消息
+    sendMessage(message) {
+      this.socket.send(message);
+      console.log('已发送消息：', message);
+    },
+
+    // 关闭WebSocket连接
+    closeWebSocket() {
+      this.socket.close();
     }
   },
 
@@ -164,12 +176,74 @@ export default{
   },
 
   mounted(){
-      // this.queryList();
-      this.startPolling();
+      //用controller接口调用的方式
+      //this.queryList();
+      //this.startPolling();
+
+
+      //用webSocket接口调用的方式
+      var that = this;
+      const websocketAddress = process.env.VUE_APP_ACCESSPOINT_WEBSOCKET;//webSocket连接来获取接入点信息的路径，通常是服务器的地址
+
+      this.socket = new WebSocket(websocketAddress+":8887/websocket");
+      this.socket.onopen = function(event){
+        console.log("WebSocket连接已建立");
+        const message = {
+          function:'inquireReceiveState',
+          parameters:''
+        }
+        that.sendMessage(JSON.stringify(message));
+      }
+
+      
+
+      this.socket.onmessage = function(event){
+        var message = event.data;
+        message = JSON.parse(message);
+        that.tableData = message;
+        console.log(that.tableData[0]);
+        that.tableData.forEach(element => {
+          var massionId = element.fileId;
+          massionId = Math.abs(massionId);//对任务ID取绝对值
+          var ipandport = element.ipAndPort;
+          var progress = element.transmissProgress;
+          //加工进度数据，向下取整
+          
+          // progress = parseFloat(progress).toFixed(3)*100;
+          progress = (progress*100).toFixed(1);
+          element.transmissProgress = progress + "%";
+          // element.transmissProgress = Math.floor(progress) + "%";
+          Object.keys(ipandport).forEach(key=>{
+          element.ipAndPort = key;
+          })
+          element.fileId = massionId;
+
+          //为每一行数据计算丢包率
+          const sendPacketNum = element.sendPacketNum;
+          const receivePacketNum = element.receivePacketNum;
+          const lossProbability = ((sendPacketNum-receivePacketNum)*100/sendPacketNum).toFixed(1);
+          element.lossProbability = lossProbability+"%";
+        });
+      }
+      
+      this.socket.onclose = function(event){
+        console.error("WebSocket连接已关闭");
+      }
+
+      this.socket.onerror = function(error){
+        console.log('WebSocket连接发生错误:', error);
+      }
+
+      
+
+      
+
+      
   },
 
   beforeDestroy(){
-    this.stopPolling();
+    // this.stopPolling();
+    this.closeWebSocket();
   }
 }
 

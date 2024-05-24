@@ -29,16 +29,71 @@
         BarChart,
         CanvasRenderer
     ]);
-    import {onBeforeMount, onMounted,onUnmounted,ref} from 'vue'
+    import {onBeforeMount, onMounted,onUnmounted,ref,computed} from 'vue'
+    import store from '../../store/index'
     export default{ 
         setup(){
+            var mount = ref([0,0,0]);//记录流量
+
+            //根据列表选择的接入点获取相应的url
+            var ipandport1 = ref(null);
+            const selectedTerminal = computed(() => store.getters.getSelectedTerminal);
+            ipandport1 = selectedTerminal.value.ipandport1;
+
+            const websocketAddress = process.env.VUE_APP_ACCESSPOINT_WEBSOCKET;//webSocket连接来获取接入点信息的路径，通常是服务器的地址
+
+            const socket = new WebSocket(websocketAddress+":8887/websocket");
             
+
+            // 关闭WebSocket连接
+            function closeWebSocket() {
+                socket.close();
+            }
             onMounted(()=>{
                 let container = document.getElementById("DataTrafficStatistics");//获取容器
                 // var myChart = echarts.init(document.getElementById('main'));
                 var myChart = echarts.init(container);//运用了插槽，从父组件传来的模板
                 const url = process.env.VUE_APP_API_URI_ROUTE;//统一的url
-                var mount = ref([0,0,0]);//记录流量
+                
+                socket.onopen = function(event){
+                    console.log("WebSocket连接已建立");
+                    const message = {
+                    function:'countFlow',
+                    parameters:{
+                        ipAndPort:ipandport1
+                    }
+                    }
+                    sendMessage(JSON.stringify(message));
+                }
+
+                socket.onmessage = function(event){
+                    var message = event.data;
+                    message = JSON.parse(message);
+                    var length = message.length;
+                    for(let i = 0;i<length;i++){
+                        mount.value[i]=message[i];
+                    }
+                    myChart.setOption({
+                        series:{
+                            data: [mount.value[0], mount.value[1], mount.value[2]],
+                        }
+                    })
+                }
+                
+                socket.onclose = function(event){
+                    console.error("WebSocket连接已关闭");
+                }
+
+                socket.onerror = function(error){
+                    console.log('WebSocket连接发生错误:', error);
+                }
+
+                // 可以通过发送数据来与后端进行通信
+                function sendMessage(message) {
+                    socket.send(message);
+                    console.log('数据流量统计组件已发送消息：', message);
+                }
+
                 myChart.setOption( {
                     grid:{
                         top:"20%",
@@ -302,19 +357,20 @@
                 }
 
 
-                 //每秒对图表数据进行一次更新
-                const intervalId = setInterval(()=>{
-                    getMount();
-                    myChart.setOption({
-                    series:{
-                        data: [mount.value[0], mount.value[1], mount.value[2]],
-                    }
-                    })
-                },1000)
+                //  //每秒对图表数据进行一次更新
+                // const intervalId = setInterval(()=>{
+                //     getMount();
+                //     myChart.setOption({
+                //     series:{
+                //         data: [mount.value[0], mount.value[1], mount.value[2]],
+                //     }
+                //     })
+                // },1000)
 
                 // 组件卸载时清除定时器
                 onUnmounted(() => {
-                    clearInterval(intervalId);
+                    // clearInterval(intervalId);
+                    closeWebSocket();
                 });
 
                 

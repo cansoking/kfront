@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="addRecordBackground"></div>
-    <div class="addRecordTitle">新建测试任务</div>
+    <div class="addRecordTitle">添加CPE列表</div>
     <div>
       <el-form
         class="addRecordForm"
@@ -9,23 +9,34 @@
         label-width="100px"
         :model="record"
         style="max-width: 460px"
+        :rules="rules"
+        ref = "record"
       >
 
 
         
-        <el-form-item label="节点名称" class="input">
-          <el-input size="mini" v-model="record.node_name" type="text" />
+        <el-form-item label="接入点名称" class="input" prop="node_name">
+          <el-input size="mini" v-model="record.node_name" type="text" placeholder="请输入接入点名称"/>
         </el-form-item>
-        <el-form-item label="节点位置">
-          <el-input size="mini" v-model="record.node_location">
+        <el-form-item label="接入点位置" prop="node_location">
+          <el-input size="mini" v-model="record.node_location" placeholder="请输入接入点位置">
+          </el-input>
+        </el-form-item>
+        <el-form-item label="GPS" prop="node_gps">
+          <el-input size="mini" v-model="record.node_gps" placeholder="格式为：39°54′24″N 116°23′51″E">
           </el-input>
         </el-form-item>
         <el-form-item label="部署状态">
           <el-select size="mini" v-model="record.deploy_state" class="select" popper-class="child">
-            <el-option label="已部署" value="highOrbit" />
-            <el-option label="未部署" value="lowOrbit" />
+            <el-option label="已部署" value="已部署" />
+            <el-option label="未部署" value="未部署" />
           </el-select>
         </el-form-item>
+        <el-form-item label="IP和端口号">
+          <el-input size="mini" v-model="record.node_ip_and_port" readonly>
+          </el-input>
+        </el-form-item>
+        
         
 
         <el-form-item class="button">
@@ -47,104 +58,131 @@
 <script>
 import { reactive, ref } from "vue";
 
+
+
 export default {
   data() {
+
+    //表单GPS项的验证
+    var validateGPS=(rule, value, cb) =>{
+      const reg = /^[0-9]{1,2}°[0-9]{1,2}′[0-9]{1,2}″[NS]\s[0-9]{1,3}°[0-9]{1,2}′[0-9]{1,2}″[EW]$/;
+      if (reg.test(value)) {
+        cb();
+      } else {
+        cb(new Error('请输入正确的GPS格式'));
+      }
+    };
+
+    
+
     return {
-      record: reactive({
+      // record: reactive({
+      //   node_name:"",
+      //   node_location:"",
+      //   node_gps:"",
+      //   deploy_state:"",  
+      //   node_ip_and_port:"",     
+      // }),
+
+      record: {
         node_name:"",
         node_location:"",
-        deploy_state:"",       
-      }),
+        node_gps:"",
+        deploy_state:"已部署",  
+        node_ip_and_port:"",     
+      },
+      
+
+      
+      //表单规则
+      rules:{
+        node_name:[
+          { required: true, message: '请输入接入点名称', trigger: 'blur' },
+        ],
+        node_location:[
+          { required: true, message: '请输入接入点位置', trigger: 'blur' },
+        ],
+        node_gps: [
+          { required: true, message: '请输入坐标', trigger: 'blur' },
+          { 
+            validator: validateGPS, 
+            trigger: 'blur' 
+          }
+        ]
+      },
+
+      
+
+      
 
       //上传文件
       fileList:[],
 
-      url : "http://59.110.238.62",//服务器地址
+      url : process.env.VUE_APP_API_URI_NOPORT,//服务器地址
     };
   },
   props: {
     close: Function,
     uploadSucceed:Function,
     uploadFail:Function,
+    ipandport:String,
+    eventBus:Object,
+  },
+  
+
+  watch:{
+    ipandport(newVal){
+      this.record.node_ip_and_port = newVal;//监听父组件传来的新的ipandPort，并赋值给node_ip_and_port
+    }
   },
 
   methods: {
-    // //覆盖默认的上传行为，自定义上传的实现，将上传的文件依次添加到fileList数组中
-    // httpRequest(param){
-    //   //将上传的文件加到fileList中
-    //   this.fileList.push(param.file);
-    // },
-
-    // handleRemove(file, fileList) {
-    //     console.log(file, fileList);
-
-    //     //用删除文件后的列表代替旧列表，做到实际上删除文件，否则旧文件依旧存储在fileList中
-    //     this.fileList = fileList;
-    // },
-    // handlePreview(file) {
-    //   console.log(file);
-    // },
-    // handleExceed(files, fileList) {
-    //   this.$message.warning(`当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-    // },
-    // beforeRemove(file, fileList) {
-    //   return this.$confirm(`确定移除 ${ file.name }？`);
-    // },
-
+    
+    
     //提交表单
     commit(){ 
-      //获取输入的文件名和文件路径并加到表单
-      var path = this.record.filename;
-      var pos = path.lastIndexOf('/');
-      var fileName = path.substr(pos+1);
-      var filePath = path.substr(0,pos+1);
-      
-      let data = {
-        encodePackageSize:30000,
-        clientFilePath:filePath,
-        fileName:[fileName],
-        ipAndPortInfoSend:[
-            {
-                ip:"127.0.0.1",
-                // ip:"59.110.238.62",
-                port:9000,
-                probability:1.0
+      this.$refs["record"].validate((valid) => {
+          if (valid) {
+            console.log('submit!!');
+            let data = {
+              "name":this.record.node_name,
+              "position":this.record.node_location,
+              "deploy":this.record.deploy_state,
+              "GPS":this.record.node_gps,
+              "ipAndPort":this.record.node_ip_and_port
             }
-        ],
-        maxRate:2097152
-      }
+            const _this = this;
+            this.$axios({
+              method:"post",
+              headers:{
+                'Content-Type':'application/json;'
+              },
+              data:JSON.stringify(data),
+              url:_this.url+":8887/file/insertCPE",
+            })
+            .then((response)=>{
+              console.log("发送成功");
+              console.log(response);
+              //需要成功对话框
+              _this.uploadSucceed();
+              //提交成功需要关闭表单,并清空表单数据
+              _this.close(false);
+              _this.clearForm();
+              _this.eventBus.$emit('addCPE',1);
+            })
+            .catch((error)=>{
+              console.log(error);
+              console.log("失败");
+              //需要失败对话框
+              _this.uploadFail();
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
 
-      console.log(filePath);
-      console.log(fileName);
       
-
-      const _this = this;
-      this.$axios({
-        method:"post",
-        headers:{
-          'Content-Type':'application/json;'
-        },
-        data:JSON.stringify(data),
-
-        // url:"http://localhost:9000/file/send",
-        url:_this.url+":9000/file/send",
-      })
-      .then((response)=>{
-        console.log("发送成功");
-        console.log(response);
-        //需要成功对话框
-        _this.uploadSucceed();
-        //提交成功需要关闭表单,并清空表单数据
-        _this.close(false);
-        _this.clearForm();
-
-      })
-      .catch((error)=>{
-        console.log(error);
-        console.log("失败");
-        //需要失败对话框
-        _this.uploadFail();
-      })
     },
 
     //取消提交
@@ -157,11 +195,16 @@ export default {
     clearForm(){
       this.record.node_name = "";
       this.record.node_location = "";
-      this.record.deploy_state = "";
+      this.record.node_gps = "";
+      this.record.deploy_state = "已部署";
+      // this.record.node_ip_and_port= "";
     },
 
     
+
+    
   },
+
 };
 </script>
 
@@ -221,6 +264,14 @@ export default {
 .addRecordForm .el-form-item:nth-child(5) {
   top: 300px;
 }
+
+
+.addRecordForm .el-form-item__error{
+  width:max-content;
+  top:35px;
+  left: -15px;
+}
+
 
 // .addRecordForm .input{
 //   left:0px;

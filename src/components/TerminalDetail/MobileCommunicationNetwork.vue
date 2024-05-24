@@ -27,11 +27,59 @@ echarts.use([
   CanvasRenderer,
   UniversalTransition,
 ]);
-import { onBeforeUnmount, onMounted } from "vue";
+import { onBeforeUnmount, onMounted,computed} from "vue";
+import store from '../../store/index'
 export default {
   setup() {
+    //根据列表选择的接入点获取相应的url
+    var ipandport1 = ref(null);
+    const selectedTerminal = computed(() => store.getters.getSelectedTerminal);
+    ipandport1 = selectedTerminal.value.ipandport1;
+
     //定时器
     const timer = ref(null);
+
+    var rate = 0;//速率
+
+    const websocketAddress = process.env.VUE_APP_ACCESSPOINT_WEBSOCKET;//webSocket连接来获取接入点信息的路径，通常是服务器的地址
+
+    const socket = new WebSocket(websocketAddress+":8887/websocket");
+    socket.onopen = function(event){
+        console.log("WebSocket连接已建立");
+        const message = {
+        function:'countMobileRate',
+        parameters:{
+          ipAndPort:ipandport1
+        }
+        }
+        sendMessage(JSON.stringify(message));
+    }
+
+    socket.onmessage = function(event){
+        var message = event.data;
+        message = JSON.parse(message);
+        // console.log("移动：",message);
+        rate = message;
+    }
+    
+    socket.onclose = function(event){
+        console.error("WebSocket连接已关闭");
+    }
+
+    socket.onerror = function(error){
+        console.log('WebSocket连接发生错误:', error);
+    }
+
+    // 可以通过发送数据来与后端进行通信
+    function sendMessage(message) {
+        socket.send(message);
+        console.log('移动通信流量已发送消息：', message);
+    }
+
+    // 关闭WebSocket连接
+    function closeWebSocket() {
+        socket.close();
+    }
     onMounted(() => {
       let container = document.getElementById("MobileCommunicationNetwork"); //获取容器
       // var myChart = echarts.init(document.getElementById('main'));
@@ -41,9 +89,11 @@ export default {
       var Bytes = [];//记录各个时间点的的字节数
       var currentBytes = ref(0);//当前字节数
       // var lastBytes = ref(0);//前一秒的字节数
-      var rate = 0;//速率
+      
 
       const url = process.env.VUE_APP_API_URI_ROUTE;//统一的url
+
+      
 
       function randomData() {
         now = new Date(+now + oneSecond); //创建一个Date对象，可以用toString获取日期值，或者其他参数获取年月日
@@ -247,7 +297,8 @@ export default {
           let string = [hour,minute,second].join(':');
           date.push(string);//每当执行data.push()时，也会执行date.push()
 
-          getRate();
+          //不再用getRate获取rate了，通过webSocket获取rate
+          //getRate();
           
 
           // //下面的代码是算速率的（目前不用）
@@ -296,6 +347,7 @@ export default {
     //在组件销毁之前停止定时器
     onBeforeUnmount(()=>{
         clearInterval(timer.value);
+        closeWebSocket();
     })
   },
 };

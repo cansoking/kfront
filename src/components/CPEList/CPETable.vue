@@ -5,10 +5,11 @@
       :data="tableData"
       :span-method="objectSpanMethod"
       class="cpetable"
-      style="width: 100%; margin-top: 20px"
+      style="width: 100%; margin-top: 20px;max-height: 600px;overflow-y:auto;" 
       :cell-style="{borderColor:'#C0C0C0'}"
       :header-cell-style="{borderColor:'#C0C0C0'}"
-      @cell-click="handleCellClick">
+      @cell-click="handleCellClick"
+      >
       <el-table-column
         prop="id"
         label="ID"
@@ -28,6 +29,10 @@
         label="位置">
       </el-table-column>
       <el-table-column
+        prop="GPS"
+        label="GPS">
+      </el-table-column>
+      <el-table-column
         prop="deployState"
         label="部署状态">
       </el-table-column>
@@ -44,11 +49,11 @@
         </el-table-column>
         <el-table-column
           prop="upBandwidth"
-          label="上行带宽">
+          label="上行带宽(Mbps)">
         </el-table-column>
         <el-table-column
           prop="downBandWidth"
-          label="下行带宽">
+          label="下行带宽(Mbps)">
         </el-table-column>
         <el-table-column
           prop="priority"
@@ -75,81 +80,88 @@
 
 
 <script>
+import Vue from 'vue';
+
 
 
 
 export default{
   data(){
     return {
-      tableData: [{
-          id: '1',
-          name: '北京接入点',
-          location:"北京",
-          deployState:"已部署",
-          port:"Eth1",
-          netType:"低轨",
-          upBandwidth:"100MB/s",
-          downBandWidth:"100MB/s",
-          priority:"1"
-        }, {
-          id: '1',
-          name: '北京接入点',
-          location:"北京",
-          deployState:"已部署",
-          port:"Eth2",
-          netType:"高轨",
-          upBandwidth:"100MB/s",
-          downBandWidth:"100MB/s",
-          priority:"2"
-        }, {
-          id: '1',
-          name: '北京接入点',
-          location:"北京",
-          deployState:"已部署",
-          port:"Eth3",
-          netType:"移动通信",
-          upBandwidth:"100MB/s",
-          downBandWidth:"100MB/s",
-          priority:"3"
-        }, {
-          id: '2',
-          name: '海南接入点',
-          location:"海南",
-          deployState:"已部署",
-          port:"Eth1",
-          netType:"低轨",
-          upBandwidth:"100MB/s",
-          downBandWidth:"100MB/s",
-          priority:"1"
-        }, {
-          id: '2',
-          name: '海南接入点',
-          location:"海南",
-          deployState:"已部署",
-          port:"Eth2",
-          netType:"高轨",
-          upBandwidth:"100MB/s",
-          downBandWidth:"100MB/s",
-          priority:"2"
-        }, {
-          id: '2',
-          name: '海南接入点',
-          location:"海南",
-          deployState:"已部署",
-          port:"Eth3",
-          netType:"移动通信",
-          upBandwidth:"100MB/s",
-          downBandWidth:"100MB/s",
-          priority:"3"
-        }],
+      // tableData: [{
+      //     id: '1',
+      //     name: '北京接入点',
+      //     location:"北京",
+      //     deployState:"已部署",
+      //     port:"Eth1",
+      //     netType:"低轨",
+      //     upBandwidth:"100MB/s",
+      //     downBandWidth:"100MB/s",
+      //     priority:"1"
+      //   }, {
+      //     id: '1',
+      //     name: '北京接入点',
+      //     location:"北京",
+      //     deployState:"已部署",
+      //     port:"Eth2",
+      //     netType:"高轨",
+      //     upBandwidth:"100MB/s",
+      //     downBandWidth:"100MB/s",
+      //     priority:"2"
+      //   }, {
+      //     id: '1',
+      //     name: '北京接入点',
+      //     location:"北京",
+      //     deployState:"已部署",
+      //     port:"Eth3",
+      //     netType:"移动通信",
+      //     upBandwidth:"100MB/s",
+      //     downBandWidth:"100MB/s",
+      //     priority:"3"
+      //   }, {
+      //     id: '2',
+      //     name: '海南接入点',
+      //     location:"海南",
+      //     deployState:"已部署",
+      //     port:"Eth1",
+      //     netType:"低轨",
+      //     upBandwidth:"100MB/s",
+      //     downBandWidth:"100MB/s",
+      //     priority:"1"
+      //   }, {
+      //     id: '2',
+      //     name: '海南接入点',
+      //     location:"海南",
+      //     deployState:"已部署",
+      //     port:"Eth2",
+      //     netType:"高轨",
+      //     upBandwidth:"100MB/s",
+      //     downBandWidth:"100MB/s",
+      //     priority:"2"
+        // }, {
+        //   id: '2',
+        //   name: '海南接入点',
+        //   location:"海南",
+        //   deployState:"已部署",
+        //   port:"Eth3",
+        //   netType:"移动通信",
+        //   upBandwidth:"100MB/s",
+        //   downBandWidth:"100MB/s",
+        //   priority:"3"
+        // }],
+      tableData:[],
       timer:null,//计时器
-      url : "http://59.110.238.62",//服务器地址
+      url : process.env.VUE_APP_API_URI_NOPORT,//服务器地址
     }
+  },
+
+  props: {
+    eventBus:Object,
   },
 
   methods:{
       objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-        if (columnIndex>=0&&columnIndex<=3||columnIndex===9) {
+        if (columnIndex>=0&&columnIndex<=4||columnIndex===10) {
           if (rowIndex % 3 === 0) {
             return {
               rowspan: 3,
@@ -181,7 +193,65 @@ export default{
         this.$store.dispatch('updateSelectedTerminal', row);
         // console.log(row);//通过这个可以判断当点击按钮的时候，获取的row是三行中第一行的数据
         this.$router.push({ path: '/detail' });
-      }
+      },
+
+      //查询CPE列表
+      queryList(){
+        var that = this;
+        this.tableData=[];//先把tableData置空
+        this.$axios({
+          method:"post",
+          url:that.url+":8887/file/inquireAllCityInfo",
+        })
+        .then((response)=>{
+          var listData = response.data;
+          console.log(listData);
+          listData.forEach(element => {
+            var cpeId = element.id;
+            var cpeName = element.name;
+            var position = element.position;
+            var deploy = element.deploy;
+            var GPS = element.gps;
+            // console.log(GPS);
+            var ipandport1 = element.ipandport1;
+            var ipandport2 = element.ipandport2;
+            element.cityInfoDTOS.forEach(elem =>{
+              var ethId = elem.port;
+              var ethName = elem.netType;
+              var upstreamBandWidth = elem.upstreamBandwidth;
+              var downstreamBandwidth = elem.downstreamBandwidth;
+              var priority = elem.priority;
+              that.tableData.push({
+                id: cpeId,
+                name: cpeName,
+                location: position,
+                GPS:GPS,
+                deployState:deploy,
+                port: ethId,
+                netType: ethName,
+                upBandwidth: upstreamBandWidth,
+                downBandWidth: downstreamBandwidth,
+                priority: priority,
+                ipandport1: ipandport1,
+                ipandport2: ipandport2,
+              });
+            });
+          });
+        })
+        .catch((error)=>{
+          console.log(error);
+        }) 
+      },
+
+      
+      
+  },
+
+  mounted() {
+    this.queryList(); // 在组件挂载到DOM后调用queryList方法
+    this.eventBus.$on('addCPE',(data)=>{//通过局部总线，当AddRecord添加CPE记录后，重新查询一次列表
+      this.queryList();
+    })
   },
 
  
@@ -192,19 +262,20 @@ export default{
 .page-table {
   width: inherit;
   margin-bottom: 20px;
-  padding: 10px;
+  // padding: 10px;
   border-radius: 15px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(2px);//模糊程度
   // &.no-data {
   //   height: 450px;
   // }
+
 }
 
 .cpetable{
   border-radius: 10px 10px 0 0 ;
-  
-  
+  position: static;
+
 }
 
 
@@ -262,7 +333,7 @@ export default{
 // }
 
 
-// // 修改分页样式
+// 修改分页样式
 // .pagination {
 //   display: flex;
 //   justify-content: flex-end;

@@ -97,11 +97,11 @@
 
         <el-form-item label="选择发送文件">
           <el-select size="mini" v-model="record.filePath" class="select" popper-class="child">
-            <el-option label="1.pdf" value="/usr/aispace/1test/1.pdf" />
-            <el-option label="2.rar" value="/usr/aispace/1test/2.rar" />
-            <el-option label="3.flac" value="/usr/aispace/1test/3.flac" />
-            <el-option label="4.rar" value="/usr/aispace/1test/4.rar" />
-            <el-option label="5.mp4" value="/usr/aispace/1test/5.mp4" />
+            <el-option label="1.pdf" value="F:\\1test\\1.pdf" />
+            <el-option label="2.rar" value="F:\\1test\\2.rar" />
+            <el-option label="3.flac" value="F:\\1test\\3.flac" />
+            <el-option label="4.rar" value="F:\\1test\\4.rar" />
+            <el-option label="5.mp4" value="F:\\1test\\5.mp4" />
           </el-select>
         </el-form-item>
 
@@ -219,8 +219,8 @@ export default {
     commit(){ 
       //获取输入的文件名和文件路径并加到表单
       var path = this.record.filePath;
-      // var pos = path.lastIndexOf('\\');//windows上文件用这条
-      var pos = path.lastIndexOf('/');//linux上文件用这条
+      var pos = path.lastIndexOf('\\');//windows上文件用这条
+      // var pos = path.lastIndexOf('/');//linux上文件用这条
       var fileName = path.substr(pos+1);
       var filePath = path.substr(0,pos+1);
       var rateLimit = Number(this.record.rateLimit);
@@ -233,8 +233,8 @@ export default {
         fileName:[fileName],
         ipAndPortInfoSend:[
             {
-                ip:"127.0.0.1",
-                // ip:"192.168.192.182",//阿里云虚拟IP
+                // ip:"127.0.0.1",
+                ip:"192.168.192.182",//阿里云虚拟IP
                 port:9000,
                 probability:1.0
             }
@@ -242,7 +242,21 @@ export default {
         maxRate:rateLimit
       }
 
-      
+      // //调用服务器上发送接口时的参数
+      // let data = {
+      //   encodePackageSize:30000,
+      //   clientFilePath:filePath,
+      //   fileName:[fileName],
+      //   ipAndPortInfoSend:[
+      //       {
+      //           ip:"127.0.0.1",
+      //           // ip:"59.110.238.62",
+      //           port:9000,
+      //           probability:1.0
+      //       }
+      //   ],
+      //   maxRate:2097152
+      // }
 
       console.log(filePath);
       console.log(fileName);

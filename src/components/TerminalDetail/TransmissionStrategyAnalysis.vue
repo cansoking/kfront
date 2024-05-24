@@ -23,10 +23,54 @@ export default {
         delayOfTrans:0,
         delayOfDecode:0,
       })
+
+      const websocketAddress = process.env.VUE_APP_ACCESSPOINT_WEBSOCKET;//webSocket连接来获取接入点信息的路径，通常是服务器的地址
+
+      const socket = new WebSocket(websocketAddress+":8887/websocket");
+      socket.onopen = function(event){
+        console.log("WebSocket连接已建立");
+        const message = {
+          function:'inquireReceiveState',
+          parameters:''
+        }
+        sendMessage(JSON.stringify(message));
+      }
+
+      socket.onmessage = function(event){
+        var message = event.data;
+        message = JSON.parse(message);
+        data.delayOfStart = message[0].delayOfStart.toFixed(1);
+        data.delayOfTrans = message[0].delayOfTrans.toFixed(1);
+        data.delayOfDecode = message[0].delayOfDecode.toFixed(1);
+        myChart.setOption({
+          series:{
+            data: [data.delayOfStart,data.delayOfTrans,data.delayOfDecode],
+          }
+        })
+      }
       
+      socket.onclose = function(event){
+        console.error("WebSocket连接已关闭");
+      }
+
+      socket.onerror = function(error){
+        console.log('WebSocket连接发生错误:', error);
+      }
+
+      // 可以通过发送数据来与后端进行通信
+      function sendMessage(message) {
+          socket.send(message);
+          console.log('时延统计分析组件已发送消息：', message);
+      }
+
+      // 关闭WebSocket连接
+      function closeWebSocket() {
+          socket.close();
+      }
 
       //获取数据方法
       function getData(){
+        用axios调用接口的方法
         axios({
           method:"post",
           // url:"http://localhost:8887/file/inquireReceiveTotalInfo",//调用本地接口
@@ -41,7 +85,9 @@ export default {
           console.log(error);
           console.log("延迟数据失败");
         })
+     
       }
+
       
       
 
@@ -102,217 +148,25 @@ export default {
           },
           left: "center",
         },
-        // grid: [
-        //   { left: "13%", top: "23%", bottom: "10%", width: "35%" },
-        //   { right: "13%", top: "23%", bottom: "10%", width: "35%" },
-        // ],
-          
-        // legend: [
-        //   {
-        //     // orient: 'vertical',
-        //     // right: '1%',
-        //     top: "8%",
-        //     textStyle: {
-        //       color: "#FFF",
-        //       fontSize: "10",
-        //     },
-        //     icon: "circle",
-        //     itemHeight: "6",
-        //     show: "true",
-        //     data: ["原始编码包", "固定编码包", "自定义编码包"],
-        //   },
-        //   {
-        //     // orient: 'vertical',
-        //     // right: '1%',
-        //     top: "14%",
-        //     textStyle: {
-        //       color: "#FFF",
-        //       fontSize: "10",
-        //     },
-        //     icon: "circle",
-        //     itemHeight: "6",
-        //     show: "true",
-        //     data: ["单路径传输", "多路径传输", "智能切换传输"],
-        //   },
-        //   ],
         
-        // tooltip: {},
-        // title: {
-        //   text: "时延统计分析",
-        //   textStyle: {
-        //     color: "#FFF",
-        //   },
-        //   left: "center",
-        // },
-
-        // xAxis: [
-        //   {
-        //     name: "编码文件大小",
-        //     nameLocation: "center",
-        //     nameGap: 8,
-        //     nameTextStyle: {
-        //       color: "#FFF",
-        //     },
-        //     type: "category",
-        //     gridIndex: 0,
-        //     axisLabel: {
-        //       textStyle: {
-        //         color: "#FFF",
-        //       },
-        //       show: false,
-        //     },
-        //   },
-        //   {
-        //     name: "平均传输时延",
-        //     nameLocation: "center",
-        //     nameGap: 8,
-        //     nameTextStyle: {
-        //       color: "#FFF",
-        //     },
-        //     type: "category",
-        //     gridIndex: 1,
-        //     axisLabel: {
-        //       textStyle: {
-        //         color: "#FFF",
-        //       },
-        //       show: false,
-        //     },
-        //   },
-        // ],
-        // yAxis: [
-        //   {
-        //     gridIndex: 0,
-        //     axisLabel: {
-        //       textStyle: {
-        //         color: "#FFF",
-        //       },
-        //     },
-        //     name: "单位:B",
-        //     nameTextStyle: {
-        //       padding: [0, 20, 0, 0],
-        //       color: "#FFF",
-        //     },
-        //   },
-        //   {
-        //     gridIndex: 1,
-        //     axisLabel: {
-        //       textStyle: {
-        //         color: "#FFF",
-        //       },
-        //     },
-        //     position: "right",
-        //     name: "单位:ms/Mb",
-        //     nameTextStyle: {
-        //       padding: [0, 0, 0, 20],
-        //       color: "#FFF",
-        //     },
-        //   },
-        // ],
-        // // Declare several bar series, each will be mapped
-        // // to a column of dataset.source by default.
-        // series: [
-        //   {
-        //     type: "bar",
-        //     name: "原始编码包",
-        //     data: [0],
-        //     xAxisIndex: 0,
-        //     yAxisIndex: 0,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "固定编码包",
-        //     data: [data.fixedStrategy],
-        //     xAxisIndex: 0,
-        //     yAxisIndex: 0,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "自定义编码包",
-        //     data: [0],
-        //     xAxisIndex: 0,
-        //     yAxisIndex: 0,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "单路径传输",
-        //     data: [0],
-        //     xAxisIndex: 1,
-        //     yAxisIndex: 1,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "多路径传输",
-        //     data: [0],
-        //     xAxisIndex: 1,
-        //     yAxisIndex: 1,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "智能切换传输",
-        //     data: [0],
-        //     xAxisIndex: 1,
-        //     yAxisIndex: 1,
-        //   },
-        // ],
       });
 
-      //每秒对图表数据进行一次更新
-      const intervalId = setInterval(()=>{
-        getData();
-        myChart.setOption({
-          series:{
-            data: [data.delayOfStart,data.delayOfTrans,data.delayOfDecode],
-          }
-        //   series: [
-        //   {
-        //     type: "bar",
-        //     name: "原始编码包",
-        //     data: [0],
-        //     xAxisIndex: 0,
-        //     yAxisIndex: 0,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "固定编码包",
-        //     data: [data.fixedStrategy],
-        //     xAxisIndex: 0,
-        //     yAxisIndex: 0,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "自定义编码包",
-        //     data: [0],
-        //     xAxisIndex: 0,
-        //     yAxisIndex: 0,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "单路径传输",
-        //     data: [0],
-        //     xAxisIndex: 1,
-        //     yAxisIndex: 1,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "多路径传输",
-        //     data: [0],
-        //     xAxisIndex: 1,
-        //     yAxisIndex: 1,
-        //   },
-        //   {
-        //     type: "bar",
-        //     name: "智能切换传输",
-        //     data: [0],
-        //     xAxisIndex: 1,
-        //     yAxisIndex: 1,
-        //   },
-        // ],
-        })
-      },1000)
+      // //每秒对图表数据进行一次更新
+      // const intervalId = setInterval(()=>{
+      //   getData();
+      //   myChart.setOption({
+      //     series:{
+      //       data: [data.delayOfStart,data.delayOfTrans,data.delayOfDecode],
+      //     }
+        
+      //   })
+      // },1000)
+      
 
       // 组件卸载时清除定时器
       onUnmounted(() => {
-        clearInterval(intervalId);
+        // clearInterval(intervalId);
+        closeWebSocket();
       });
 
       //让图表随浏览器大小变换而变换

@@ -2,7 +2,7 @@
   <body class="listBody">
     <!-- 头部的盒子 -->
     <header class="listHeader">
-      <h1>CPE管理分系统</h1>
+      <h1>接入点列表</h1>
     </header>
     <!-- 页面主题部分 -->
     <section class="mainbox2">
@@ -10,44 +10,44 @@
         <!-- 第二列 -->
 
         <!-- 列表标题 -->
-        <BaseTitle data="CPE列表" class="listTitle" />
+        <BaseTitle data="接入点列表" class="listTitle" />
 
         <!-- 添加任务按钮 -->
         <BaseButton data="添加节点" class="addButton" :click="addMession" />
 
         <!-- 表单 -->
         <div class="addForm" v-show="showForm">
-          <AddRecord :close="closeForm" :uploadSucceed="uploadSucceed" :uploadFail="uploadFail"/>
+          <AddRecord :close="closeForm" :uploadSucceed="uploadSucceed" :uploadFail="uploadFail" :ipandport="ipandport" :eventBus="eventBus"/>
         </div>
 
         <!-- 列表 -->
         <div class="tb">
-          <CPETable></CPETable>
+          <CPETable :eventBus="eventBus"></CPETable>
         </div>
       </div>
     </section>
 
 
-    <!-- 上传文件成功对话框 -->
+    <!-- 新建cpe记录成功对话框 -->
     <el-dialog
       title="提示"
       :visible.sync="dialogVisibleSuccess"
       width="30%"
-      :before-close="handleClose">
-      <span>上传成功</span>
+      >
+      <span>添加节点成功</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisibleSuccess = false">确 定</el-button>
       </span>
     </el-dialog>
 
 
-    <!-- 上传文件失败对话框 -->
+    <!-- 新建cpe记录失败对话框 -->
     <el-dialog
       title="提示"
       :visible.sync="dialogVisibleFail"
       width="30%"
-      :before-close="handleClose">
-      <span>上传失败</span>
+      >
+      <span>添加节点失败</span>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogVisibleFail = false">确 定</el-button>
       </span>
@@ -64,6 +64,7 @@ import BaseTitle from "../components/CPEList/BaseTitle.vue";
 import CPETable from "../components/CPEList/CPETable.vue";
 import BaseButton from "../components/CPEList/BaseButton.vue";
 import AddRecord from "../components/CPEList/AddRecord.vue";
+import Vue from 'vue';
 
 export default {
   components: {
@@ -83,12 +84,61 @@ export default {
 
       //上传文件失败对话框显示与否
       dialogVisibleFail:false,
+
+      //服务端url
+      url : process.env.VUE_APP_API_URI_NOPORT,//服务器地址
+
+      //查询到的未被占用的端口号
+      ipandport:"",
+
+      //局部总线
+      eventBus:new Vue(),
+
     };
   },
   methods: {
+    //查询最小的可用端口号
+    queryPort(){
+      var that = this;
+      this.$axios({
+        method:"post",
+        url:that.url+":8887/file/inquireAllCityInfo",
+      })
+      .then((response)=>{
+        var listData = response.data;
+        var portList = [];
+        var protoAndHost;//存储协议和主机部分，http://...
+        listData.forEach(element => {
+          var ipandport1 = element.ipandport1;//获取每个cpe节点的ipandport字段
+          var portStr = ipandport1.split(':')[2];//将ipandport中的端口号提取出来
+          protoAndHost = ipandport1.split(':')[0]+":"+ipandport1.split(':')[1]+":";//把端口号前面的部分保留下来，后面拼接用
+          var portNum = parseInt(portStr, 10);//将端口号从字符串类型转为数字类型
+          portList.push(portNum);
+          
+        });
+
+        const occupiedPorts = new Set(portList);//通过Set数据结构存储被占用的端口号
+      
+        var minPort=1010//用于记录最小端口号
+        for(let i=1010;i<=2090;i+=10){//从小到大遍历端口号，知道找到未被占用的最小的端口号
+          if(!occupiedPorts.has(i)){
+            minPort = i;
+            break;
+          }
+        }
+
+        that.ipandport = protoAndHost + minPort;//字符串拼接
+        // console.log(that.ipandport);
+      })
+      .catch((error)=>{
+        console.log(error);
+      }) 
+    },
+
     //点击按钮显示表单
     addMession() {
       this.showForm = true;
+      this.queryPort();//每次点击创建按钮的时候就会给表单传一个ipandport
     },
 
     //关闭表单
@@ -96,16 +146,17 @@ export default {
       this.showForm = data;
     },
     
-    //上传文件成功
+    //新建cpe记录成功
     uploadSucceed(){
       this.dialogVisibleSuccess = true;
     },
 
 
-    //上传文件失败
+    //新建cpe记录失败
     uploadFail(){
       this.dialogVisibleFail = true;
-    }
+    },
+
   },
 };
 </script>
@@ -168,6 +219,7 @@ export default {
       top: 70px;
       left: 50px;
       right: 50px;
+      border: none;
     }
   }
 }
