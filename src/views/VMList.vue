@@ -8,47 +8,63 @@
         </p>
       </el-col>
       <el-col :span="3" :offset="9">
-        <el-button @click="refreshIP" icon="el-icon-refresh" size="medium" round plain>更新虚拟机ip地址
+        <el-button
+          @click="refreshIP"
+          icon="el-icon-refresh"
+          size="medium"
+          round
+          plain
+          >更新虚拟机ip地址
         </el-button>
       </el-col>
       <el-col :span="2" :offset="0">
-        <el-button @click="openCreateVM" icon="el-icon-circle-plus-outline" size="medium" round plain>新增虚拟机
+        <el-button
+          @click="openCreateVM"
+          icon="el-icon-circle-plus-outline"
+          size="medium"
+          round
+          plain
+          >新增虚拟机
         </el-button>
       </el-col>
     </el-row>
     <!-- 表格区域 -->
-    <el-table :data="vmdata
-        .slice((curpage - 1) * pagesize, curpage * pagesize)
-        .filter(
-          (data) =>
-            !psearch ||
-            data.name.toLowerCase().includes(psearch.toLowerCase())
-        )
-      " style="width: 100%" empty-text="暂无虚拟机" :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
+    <el-table
+      :data="
+        vmdata
+          .slice((curpage - 1) * pagesize, curpage * pagesize)
+          .filter(
+            (data) =>
+              !psearch ||
+              data.name.toLowerCase().includes(psearch.toLowerCase())
+          )
+      "
+      style="width: 100%"
+      empty-text="暂无虚拟机"
+      :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+    >
       <el-table-column type="index" label="序号" width="50"> </el-table-column>
       <el-table-column width="150" sortable label="名称" prop="name">
         <template slot-scope="scope">
-        <span v-if="scope.row.name.includes('FB_')">
-        {{
-          '联邦学习区块链_'+scope.row.name.match(/\d+/)[0]
-        }}
-      </span>
-      <span v-else-if="scope.row.name.includes('F_')">
-        {{
-          '联邦学习_'+scope.row.name.match(/\d+/)[0]
-        }}
-      </span>
-      <span v-else>
-        {{
-          scope.row.name
-        }}
-      </span>
-      </template>
+          <span v-if="scope.row.name.includes('FB_')">
+            {{ "联邦学习区块链_" + scope.row.name.match(/\d+/)[0] }}
+          </span>
+          <span v-else-if="scope.row.name.includes('F_')">
+            {{ "联邦学习_" + scope.row.name.match(/\d+/)[0] }}
+          </span>
+          <span v-else>
+            {{ scope.row.name }}
+          </span>
+        </template>
       </el-table-column>
       <el-table-column width="100" sortable label="状态" prop="state">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning">挂起</el-tag>
-          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'">运行</el-tag>
+          <el-tag v-if="scope.row.state === 'VIR_DOMAIN_PAUSED'" type="warning"
+            >挂起</el-tag
+          >
+          <el-tag v-else-if="scope.row.state === 'VIR_DOMAIN_RUNNING'"
+            >运行</el-tag
+          >
           <el-tag v-else type="danger">关机</el-tag>
         </template>
       </el-table-column>
@@ -59,48 +75,97 @@
       <el-table-column width="180" sortable label="IP地址" prop="ipaddr">
       </el-table-column>
       <el-table-column align="right">
-
         <template slot="header">
-          <el-input style="width: 30%" v-model="psearch" placeholder="输入名称搜索" />
+          <el-input
+            style="width: 30%"
+            v-model="psearch"
+            placeholder="输入名称搜索"
+          />
         </template>
 
         <template slot-scope="scope">
           <el-button-group>
-            <el-button plain type="success" @click="vmstart(scope.row)">启动</el-button>
-            <el-button plain type="warning" @click="vmsuspend(scope.row)">挂起</el-button>
-            <el-button plain type="success" @click="vmresume(scope.row)">还原</el-button>
-            <el-button plain type="primary" @click="vmreboot(scope.row)">重启</el-button>
-            <el-button plain type="info" @click="vmshutdown(scope.row)">关闭</el-button>
-            <el-button plain type="danger" @click="vmshutdownMust(scope.row)">强制关闭</el-button>
-            <el-button plain type="danger" @click="vmdelete(scope.row)">删除</el-button>
-            <el-button plain type="warning" @click="opencommand(scope.row)">执行命令</el-button>
-            <el-button plain type="primary" @click="openpod(scope.row)">容器管理</el-button>
-            <el-button plain type="primary" @click="openimage(scope.row)">镜像管理</el-button>
+            <el-button plain type="success" @click="vmstart(scope.row)"
+              >启动</el-button
+            >
+            <el-button plain type="warning" @click="vmsuspend(scope.row)"
+              >挂起</el-button
+            >
+            <el-button plain type="success" @click="vmresume(scope.row)"
+              >还原</el-button
+            >
+            <el-button plain type="primary" @click="vmreboot(scope.row)"
+              >重启</el-button
+            >
+            <el-button plain type="info" @click="vmshutdown(scope.row)"
+              >关闭</el-button
+            >
+            <el-button plain type="danger" @click="vmshutdownMust(scope.row)"
+              >强制关闭</el-button
+            >
+            <el-button plain type="danger" @click="vmdelete(scope.row)"
+              >删除</el-button
+            >
+            <el-button plain type="warning" @click="opencommand(scope.row)"
+              >执行命令</el-button
+            >
+            <el-button plain type="primary" @click="openpod(scope.row)"
+              >容器管理</el-button
+            >
+            <el-button plain type="primary" @click="openimage(scope.row)"
+              >镜像管理</el-button
+            >
           </el-button-group>
         </template>
       </el-table-column>
     </el-table>
     <!-- 分页栏 -->
     <div v-if="vmdata.length != 0" style="margin-top: 30px">
-      <el-pagination :current-page.sync="curpage" :page-sizes="[10, 20, 30, 40, 50]" :page-size.sync="pagesize"
-        layout="sizes, total, prev, pager, next, jumper" :total="totalvm" background>
+      <el-pagination
+        :current-page.sync="curpage"
+        :page-sizes="[10, 20, 30, 40, 50]"
+        :page-size.sync="pagesize"
+        layout="sizes, total, prev, pager, next, jumper"
+        :total="totalvm"
+        background
+      >
       </el-pagination>
     </div>
 
     <el-dialog title="创建虚拟机" :visible.sync="buildvmvisible">
-      <el-form label-position="top" label-width="80px" :model="formData" :status-icon="true" :rules="vm_rules"
-        ref="formData">
+      <el-form
+        label-position="top"
+        label-width="80px"
+        :model="formData"
+        :status-icon="true"
+        :rules="vm_rules"
+        ref="formData"
+      >
         <el-row :gutter="30">
           <el-col :span="12" :offset="0">
             <el-form-item label="虚拟机名称" prop="name">
-              <el-input style="width: 60%" v-model="formData.name" placeholder="请输入虚拟机英文名称"
-                @blur="validName()"></el-input>
+              <el-input
+                style="width: 60%"
+                v-model="formData.name"
+                placeholder="请输入虚拟机英文名称"
+                @blur="validName()"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
             <el-form-item label="内存" prop="memory">
-              <el-select style="width: 60%" v-model="formData.memory" clearable placeholder="请选择内存大小(GiB)">
-                <el-option v-for="item in memory_options" :key="item.value" :label="item.label" :value="item.value">
+              <el-select
+                style="width: 60%"
+                v-model="formData.memory"
+                clearable
+                placeholder="请选择内存大小(GiB)"
+              >
+                <el-option
+                  v-for="item in memory_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -110,16 +175,36 @@
         <el-row :gutter="30">
           <el-col :span="12" :offset="0">
             <el-form-item label="CPU个数" prop="cpuNum">
-              <el-select style="width: 60%" v-model="formData.cpuNum" clearable placeholder="请选择CPU个数">
-                <el-option v-for="item in cpunum_options" :key="item.value" :label="item.label" :value="item.value">
+              <el-select
+                style="width: 60%"
+                v-model="formData.cpuNum"
+                clearable
+                placeholder="请选择CPU个数"
+              >
+                <el-option
+                  v-for="item in cpunum_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
             <el-form-item label="系统类型" prop="OStype">
-              <el-select style="width: 60%" v-model="formData.OStype" clearable placeholder="请选择系统类型">
-                <el-option v-for="item in ostype_options" :key="item.value" :label="item.label" :value="item.value">
+              <el-select
+                style="width: 60%"
+                v-model="formData.OStype"
+                clearable
+                placeholder="请选择系统类型"
+              >
+                <el-option
+                  v-for="item in ostype_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -129,17 +214,37 @@
         <el-row :gutter="30">
           <el-col :span="12" :offset="0">
             <el-form-item label="虚拟机镜像,#仅支持qcow2格式" prop="ImgName">
-              <el-select style="width: 60%" v-model="formData.ImgName" clearable @visible-change="nsremote"
-                placeholder="请选择虚拟机镜像">
-                <el-option v-for="item in images" :key="item.value" :label="item.label" :value="item.value">
+              <el-select
+                style="width: 60%"
+                v-model="formData.ImgName"
+                clearable
+                @visible-change="nsremote"
+                placeholder="请选择虚拟机镜像"
+              >
+                <el-option
+                  v-for="item in images"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12" :offset="0">
             <el-form-item label="节点" prop="node">
-              <el-select style="width: 60%" v-model="formData.node" clearable placeholder="请选择创建虚拟机所在宿主机节点">
-                <el-option v-for="item in node_options" :key="item.value" :label="item.label" :value="item.value">
+              <el-select
+                style="width: 60%"
+                v-model="formData.node"
+                clearable
+                placeholder="请选择创建虚拟机所在宿主机节点"
+              >
+                <el-option
+                  v-for="item in node_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -149,8 +254,18 @@
         <el-row :gutter="30">
           <el-col :span="12" :offset="0">
             <el-form-item label="网络类型" prop="nettype">
-              <el-select style="width: 60%" v-model="formData.nettype" clearable placeholder="请选择创建虚拟机的网络类型">
-                <el-option v-for="item in nettype_options" :key="item.value" :label="item.label" :value="item.value">
+              <el-select
+                style="width: 60%"
+                v-model="formData.nettype"
+                clearable
+                placeholder="请选择创建虚拟机的网络类型"
+              >
+                <el-option
+                  v-for="item in nettype_options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
                 </el-option>
               </el-select>
             </el-form-item>
@@ -160,7 +275,9 @@
         <el-form-item size="large">
           <div class="vmc-sbm-area">
             <el-button round @click="resetForm('formData')">清空输入</el-button>
-            <el-button round type="primary" @click="vmc_sumbit('formData')">立即创建</el-button>
+            <el-button round type="primary" @click="vmc_sumbit('formData')"
+              >立即创建</el-button
+            >
           </div>
         </el-form-item>
       </el-form>
@@ -169,44 +286,69 @@
     <el-dialog title="执行命令" :visible.sync="commandvisible">
       <el-descriptions title="虚拟机信息">
         <el-descriptions-item label="名称">
-          {{
-
-      this.command_tmp_data.name
-          }}
-    </el-descriptions-item>
+          {{ this.command_tmp_data.name }}
+        </el-descriptions-item>
         <el-descriptions-item label="状态">
-          <el-tag v-if="this.command_tmp_data.state === 'VIR_DOMAIN_PAUSED'" type="warning">挂起</el-tag>
-          <el-tag v-else-if="this.command_tmp_data.state === 'VIR_DOMAIN_RUNNING'">运行</el-tag>
+          <el-tag
+            v-if="this.command_tmp_data.state === 'VIR_DOMAIN_PAUSED'"
+            type="warning"
+            >挂起</el-tag
+          >
+          <el-tag
+            v-else-if="this.command_tmp_data.state === 'VIR_DOMAIN_RUNNING'"
+            >运行</el-tag
+          >
           <el-tag v-else type="danger">关机</el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="cpu个数">{{
-      this.command_tmp_data.cpuNum
-    }}</el-descriptions-item>
+          this.command_tmp_data.cpuNum
+        }}</el-descriptions-item>
         <el-descriptions-item label="分配内存(GiB)">{{
-        this.command_tmp_data.maxMem
-      }}</el-descriptions-item>
+          this.command_tmp_data.maxMem
+        }}</el-descriptions-item>
         <el-descriptions-item label="IP地址">{{
-        this.command_tmp_data.ipaddr
-      }}</el-descriptions-item>
+          this.command_tmp_data.ipaddr
+        }}</el-descriptions-item>
       </el-descriptions>
-      <el-form label-position="top" label-width="80px" :model="commandForm" :status-icon="true" :rules="command_rules"
-        ref="commandForm">
+      <el-form
+        label-position="top"
+        label-width="80px"
+        :model="commandForm"
+        :status-icon="true"
+        :rules="command_rules"
+        ref="commandForm"
+      >
         <el-form-item label="命令" prop="command">
-          <el-input v-model="commandForm.command" placeholder="请输入要执行的命令" type="textarea" :rows="4"
-            clearable></el-input>
+          <el-input
+            v-model="commandForm.command"
+            placeholder="请输入要执行的命令"
+            type="textarea"
+            :rows="4"
+            clearable
+          ></el-input>
         </el-form-item>
         <el-form-item prop="result">
-
           <template slot="label"> 执行结果 </template>
-          <el-input v-model="commandForm.result" placeholder="命令执行的结果将会显示在这里" type="textarea" :rows="4"
-            clearable></el-input>
+          <el-input
+            v-model="commandForm.result"
+            placeholder="命令执行的结果将会显示在这里"
+            type="textarea"
+            :rows="4"
+            clearable
+          ></el-input>
         </el-form-item>
         <el-form-item prop="res_state">
           <div style="float: right">
-            <span style="color: #67c23a; font-size: 15px" v-if="this.commandForm.res_state === 'yes'"><i
-                class="el-icon-success"></i>执行成功</span>
-            <span style="color: #f56c6c; font-size: 15px" v-if="this.commandForm.res_state === 'no'"><i
-                class="el-icon-error"></i>执行出错</span>
+            <span
+              style="color: #67c23a; font-size: 15px"
+              v-if="this.commandForm.res_state === 'yes'"
+              ><i class="el-icon-success"></i>执行成功</span
+            >
+            <span
+              style="color: #f56c6c; font-size: 15px"
+              v-if="this.commandForm.res_state === 'no'"
+              ><i class="el-icon-error"></i>执行出错</span
+            >
           </div>
         </el-form-item>
         <!-- <el-form-item label="端服务器" prop="edgeserver">
@@ -245,14 +387,27 @@
 
         <el-form-item size="large">
           <div style="text-align: right; margin-top: 50px" class="vmc-sbm-area">
-            <el-button round @click="resetForm('commandForm')">清空输入</el-button>
-            <el-button round type="primary" @click="start_command('commandForm')">立即执行</el-button>
+            <el-button round @click="resetForm('commandForm')"
+              >清空输入</el-button
+            >
+            <el-button
+              round
+              type="primary"
+              @click="start_command('commandForm')"
+              >立即执行</el-button
+            >
           </div>
         </el-form-item>
       </el-form>
     </el-dialog>
     <!-- 虚拟机镜像 -->
-    <el-drawer :visible.sync="imagedrawer" direction="ttb" size="90%" @open="imgdopen" v-loading="fullloading">
+    <el-drawer
+      :visible.sync="imagedrawer"
+      direction="ttb"
+      size="90%"
+      @open="imgdopen"
+      v-loading="fullloading"
+    >
       <!-- 头部标题操作 -->
       <div slot="title">
         <el-row :gutter="0">
@@ -262,32 +417,59 @@
             </p>
           </el-col>
           <el-col :span="3" :offset="0">
-            <el-select style="width: 80%" v-model="iamgename" clearable @visible-change="getimg"
-              placeholder="请选择要上传的镜像">
-              <el-option v-for="item in img_list" :key="item.value" :label="item.label" :value="item.value">
+            <el-select
+              style="width: 80%"
+              v-model="iamgename"
+              clearable
+              @visible-change="getimg"
+              placeholder="请选择要上传的镜像"
+            >
+              <el-option
+                v-for="item in img_list"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
               </el-option>
             </el-select>
           </el-col>
 
           <el-col :span="2" :offset="0">
-            <el-button @click="uploadImgToVm" icon="el-icon-circle-plus-outline" size="medium" round
-              plain>上传镜像到虚拟机</el-button>
+            <el-button
+              @click="uploadImgToVm"
+              icon="el-icon-circle-plus-outline"
+              size="medium"
+              round
+              plain
+              >上传镜像到虚拟机</el-button
+            >
           </el-col>
         </el-row>
       </div>
       <div style="margin-left: 20px; margin-right: 20px">
         <!-- 表格区域 -->
-        <el-table :data="cidata.filter(
-      (data) =>
-        !pcisearch ||
-        data.repository.toLowerCase().includes(pcisearch.toLowerCase())
-    )
-      " style="width: 100%" height="700" empty-text="暂无容器镜像"
-          :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
+        <el-table
+          :data="
+            cidata.filter(
+              (data) =>
+                !pcisearch ||
+                data.repository.toLowerCase().includes(pcisearch.toLowerCase())
+            )
+          "
+          style="width: 100%"
+          height="700"
+          empty-text="暂无容器镜像"
+          :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+        >
           <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
           <el-table-column width="80" type="index" label="序号">
           </el-table-column>
-          <el-table-column width="500" sortable label="仓库/镜像名" prop="repository">
+          <el-table-column
+            width="500"
+            sortable
+            label="仓库/镜像名"
+            prop="repository"
+          >
           </el-table-column>
           <el-table-column width="300" sortable label="标签" prop="tag">
           </el-table-column>
@@ -298,15 +480,28 @@
           <el-table-column width="200" sortable label="体积" prop="size">
           </el-table-column>
           <el-table-column align="right">
-
             <template slot="header">
-              <el-input v-model="pcisearch" size="mini" placeholder="输入名称搜索" />
+              <el-input
+                v-model="pcisearch"
+                size="mini"
+                placeholder="输入名称搜索"
+              />
             </template>
 
             <template slot-scope="scope">
               <div style="text-align: center">
-                <el-button plain type="success" @click="startimage(scope.$index, scope.row)">启动镜像</el-button>
-                <el-button plain type="danger" @click="deleteimage(scope.$index, scope.row)">删除</el-button>
+                <el-button
+                  plain
+                  type="success"
+                  @click="startimage(scope.$index, scope.row)"
+                  >启动镜像</el-button
+                >
+                <el-button
+                  plain
+                  type="danger"
+                  @click="deleteimage(scope.$index, scope.row)"
+                  >删除</el-button
+                >
               </div>
             </template>
           </el-table-column>
@@ -314,7 +509,13 @@
       </div>
     </el-drawer>
     <!-- 虚拟机容器 -->
-    <el-drawer :visible.sync="poddrawer" direction="ttb" size="90%" @open="podopen" v-loading="fullloading">
+    <el-drawer
+      :visible.sync="poddrawer"
+      direction="ttb"
+      size="90%"
+      @open="podopen"
+      v-loading="fullloading"
+    >
       <!-- 头部标题操作 -->
       <div slot="title">
         <el-row :gutter="0">
@@ -327,13 +528,19 @@
       </div>
       <div style="margin-left: 20px; margin-right: 20px">
         <!-- 表格区域 -->
-        <el-table :data="poddata.filter(
-      (data) =>
-        !ppodsearch ||
-        data.image.toLowerCase().includes(ppodsearch.toLowerCase())
-    )
-      " style="width: 100%" height="700" empty-text="暂无容器"
-          :header-cell-style="{ background: '#00b8a9', color: '#fff' }">
+        <el-table
+          :data="
+            poddata.filter(
+              (data) =>
+                !ppodsearch ||
+                data.image.toLowerCase().includes(ppodsearch.toLowerCase())
+            )
+          "
+          style="width: 100%"
+          height="700"
+          empty-text="暂无容器"
+          :header-cell-style="{ background: '#00b8a9', color: '#fff' }"
+        >
           <!-- <el-table-column type="selection" width="55"> </el-table-column> -->
           <el-table-column width="80" type="index" label="序号">
           </el-table-column>
@@ -352,17 +559,35 @@
           <el-table-column width="200" sortable label="名字" prop="names">
           </el-table-column>
           <el-table-column align="right">
-
             <template slot="header">
-              <el-input v-model="ppodsearch" size="mini" placeholder="输入名称搜索" />
+              <el-input
+                v-model="ppodsearch"
+                size="mini"
+                placeholder="输入名称搜索"
+              />
             </template>
 
             <template slot-scope="scope">
               <div style="text-align: center">
                 <el-button-group>
-                  <el-button plain type="success" @click="startpod(scope.$index, scope.row)">启动</el-button>
-                  <el-button plain type="warning" @click="stoppod(scope.$index, scope.row)">停止</el-button>
-                  <el-button plain type="danger" @click="deletepod(scope.$index, scope.row)">删除</el-button>
+                  <el-button
+                    plain
+                    type="success"
+                    @click="startpod(scope.$index, scope.row)"
+                    >启动</el-button
+                  >
+                  <el-button
+                    plain
+                    type="warning"
+                    @click="stoppod(scope.$index, scope.row)"
+                    >停止</el-button
+                  >
+                  <el-button
+                    plain
+                    type="danger"
+                    @click="deletepod(scope.$index, scope.row)"
+                    >删除</el-button
+                  >
                 </el-button-group>
               </div>
             </template>
@@ -374,7 +599,7 @@
 </template>
 
 <script>
-import router from '@/router';
+import router from "@/router";
 
 export default {
   name: "VMList",
@@ -584,12 +809,12 @@ export default {
       this.$axios
         .delete(
           this.baseurl +
-          "/docker/deleteContainer?vmName=" +
-          this.vmpod_tmp_data.name +
-          "&endIp=" +
-          this.$store.state.nodeip +
-          "&containerId=" +
-          row.conid
+            "/docker/deleteContainer?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&containerId=" +
+            row.conid
         )
         .then((res) => {
           if (res.data.exitStatus == 0) {
@@ -618,12 +843,12 @@ export default {
       this.$axios
         .post(
           this.baseurl +
-          "/docker/stopContainer?vmName=" +
-          this.vmpod_tmp_data.name +
-          "&endIp=" +
-          this.$store.state.nodeip +
-          "&containerId=" +
-          row.conid
+            "/docker/stopContainer?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&containerId=" +
+            row.conid
         )
         .then((res) => {
           if (res.data.exitStatus == 0) {
@@ -652,12 +877,12 @@ export default {
       this.$axios
         .post(
           this.baseurl +
-          "/docker/startContainer?vmName=" +
-          this.vmpod_tmp_data.name +
-          "&endIp=" +
-          this.$store.state.nodeip +
-          "&containerId=" +
-          row.conid
+            "/docker/startContainer?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&containerId=" +
+            row.conid
         )
         .then((res) => {
           if (res.data.exitStatus == 0) {
@@ -686,14 +911,14 @@ export default {
       this.$axios
         .delete(
           this.baseurl +
-          "/docker/deleteImage?vmName=" +
-          this.vmimg_tmp_data.name +
-          "&endIp=" +
-          this.$store.state.nodeip +
-          "&imageName=" +
-          row.repository +
-          ":" +
-          row.tag
+            "/docker/deleteImage?vmName=" +
+            this.vmimg_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip +
+            "&imageName=" +
+            row.repository +
+            ":" +
+            row.tag
         )
         .then((res) => {
           if (res.data.exitStatus == 0) {
@@ -717,22 +942,43 @@ export default {
           });
         });
     },
+    noderemote() {
+      this.node_options = [];
+      this.$axios
+        .get(this.baseurl + "/node/getNodeList1")
+        .then((res) => {
+          let nodeinfo = res.data.content;
+          for (let i = 0; i < nodeinfo.length; i++) {
+            if (nodeinfo[i].nodeType === "端") {
+              this.node_options.push({
+                label: nodeinfo[i].alias + " : " + nodeinfo[i].nodeIp,
+                value: nodeinfo[i].nodeIp,
+              });
+            }
+          }
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+      this.isloading = false;
+    },
     // 启动镜像
     startimage(idx, row) {
       this.$prompt("请输入启动命令", "启动提示", {
         confirmButtonText: "启动",
         cancelButtonText: "取消",
         inputPlaceholder: "请输入启动命令",
-        inputValue: "docker run -d " + row.repository + ":" + row.tag
+        inputValue: "docker run -d " + row.repository + ":" + row.tag,
       }).then(({ value }) => {
         this.$axios
           .post(
             this.baseurl +
-            "/docker/run?vmName=" +
-            this.vmimg_tmp_data.name +
-            "&endIp=" +
-            this.$store.state.nodeip +
-            "&command=" + value
+              "/docker/run?vmName=" +
+              this.vmimg_tmp_data.name +
+              "&endIp=" +
+              this.$store.state.nodeip +
+              "&command=" +
+              value
           )
           .then((res) => {
             if (res.data.exitStatus == 0) {
@@ -770,11 +1016,11 @@ export default {
         this.$axios
           .post(
             this.baseurl +
-            "/docker/mkdir?vmName=" +
-            this.vmimg_tmp_data.name +
-            "&endIp=" +
-            this.$store.state.nodeip +
-            "&targetPath=/testimg"
+              "/docker/mkdir?vmName=" +
+              this.vmimg_tmp_data.name +
+              "&endIp=" +
+              this.$store.state.nodeip +
+              "&targetPath=/testimg"
           )
           .then((res) => {
             if (res.data.exitStatus == 0) {
@@ -782,13 +1028,13 @@ export default {
               this.$axios
                 .post(
                   this.baseurl +
-                  "/docker/upload?vmName=" +
-                  this.vmimg_tmp_data.name +
-                  "&endIp=" +
-                  this.$store.state.nodeip +
-                  "&fileName=" +
-                  this.iamgename +
-                  "&targetPath=/testimg&sourceIp=39.101.136.242"
+                    "/docker/upload?vmName=" +
+                    this.vmimg_tmp_data.name +
+                    "&endIp=" +
+                    this.$store.state.nodeip +
+                    "&fileName=" +
+                    this.iamgename +
+                    "&targetPath=/testimg&sourceIp=39.101.136.242"
                 )
                 .then((res) => {
                   if (res.data.exitStatus == 0) {
@@ -800,12 +1046,12 @@ export default {
                     this.$axios
                       .post(
                         this.baseurl +
-                        "/docker/import?vmName=" +
-                        this.vmimg_tmp_data.name +
-                        "&endIp=" +
-                        this.$store.state.nodeip +
-                        "&targetPath=/testimg/&imageFileName=" +
-                        this.iamgename
+                          "/docker/import?vmName=" +
+                          this.vmimg_tmp_data.name +
+                          "&endIp=" +
+                          this.$store.state.nodeip +
+                          "&targetPath=/testimg/&imageFileName=" +
+                          this.iamgename
                       )
                       .then((res) => {
                         if (res.data.exitStatus == 0) {
@@ -910,10 +1156,10 @@ export default {
       this.$axios
         .get(
           this.baseurl +
-          "/docker/containerList?vmName=" +
-          this.vmpod_tmp_data.name +
-          "&endIp=" +
-          this.$store.state.nodeip
+            "/docker/containerList?vmName=" +
+            this.vmpod_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip
         )
         .then((res) => {
           this.poddata = this.data_resolver_pod(res.data);
@@ -927,15 +1173,13 @@ export default {
       this.$axios
         .get(
           this.baseurl +
-          "/docker/imageList?vmName=" +
-          this.vmimg_tmp_data.name +
-          "&endIp=" +
-          this.$store.state.nodeip
+            "/docker/imageList?vmName=" +
+            this.vmimg_tmp_data.name +
+            "&endIp=" +
+            this.$store.state.nodeip
         )
         .then((res) => {
-          this.cidata = this.data_resolver_image(
-            res.data
-          );
+          this.cidata = this.data_resolver_image(res.data);
         })
         .catch((err) => {
           console.log("errors", err);
@@ -966,7 +1210,7 @@ export default {
     // 解析数据
     data_resolver_image(sdata) {
       let res = [];
-      let rows = sdata
+      let rows = sdata;
       let i = 1;
       for (; i < rows.length; i++) {
         let cols = rows[i].split("   ");
@@ -1063,7 +1307,7 @@ export default {
     },
 
     refreshIP() {
-      console.log(this.baseurl)
+      console.log(this.baseurl);
       this.$axios
         .get(this.baseurl + "/VMInfo/updateip/" + this.$store.state.nodeip)
         .then((response) => {
@@ -1088,7 +1332,7 @@ export default {
 
     //获取/root/images/下的虚拟机镜像
     nsremote() {
-      console.log(this.baseurl)
+      console.log(this.baseurl);
       this.$axios
         .get(this.baseurl + "/Images/imgList")
         .then((res) => {
@@ -1116,20 +1360,20 @@ export default {
           this.$axios
             .get(
               this.baseurl +
-              "/addVirtual?ImgName=" +
-              this.formData.ImgName +
-              "&name=" +
-              this.formData.name +
-              "&memory=" +
-              this.formData.memory +
-              "&cpuNum=" +
-              this.formData.cpuNum +
-              "&OStype=" +
-              this.formData.OStype +
-              "&nettype=" +
-              this.formData.nettype +
-              "&serverip=" +
-              this.formData.node
+                "/addVirtual?ImgName=" +
+                this.formData.ImgName +
+                "&name=" +
+                this.formData.name +
+                "&memory=" +
+                this.formData.memory +
+                "&cpuNum=" +
+                this.formData.cpuNum +
+                "&OStype=" +
+                this.formData.OStype +
+                "&nettype=" +
+                this.formData.nettype +
+                "&serverip=" +
+                this.formData.node
             )
             .then((res) => {
               if (res.data.success === false) {
@@ -1167,7 +1411,7 @@ export default {
     },
 
     vmstart(row) {
-      console.log(this.baseurl)
+      console.log(this.baseurl);
       this.$axios
         .get(this.baseurl + "/initiate/" + row.name)
         .then((response) => {
@@ -1181,7 +1425,7 @@ export default {
         });
     },
     vmsuspend(row) {
-      console.log(this.baseurl)
+      console.log(this.baseurl);
       this.$axios
         .get(this.baseurl + "/suspended/" + row.name)
         .then((response) => {
@@ -1195,7 +1439,7 @@ export default {
         });
     },
     vmresume(row) {
-      console.log(this.baseurl)
+      console.log(this.baseurl);
       this.$axios.get(this.baseurl + "/resume/" + row.name).then((response) => {
         const data = response.data;
         if (data.success) {
@@ -1207,7 +1451,7 @@ export default {
       });
     },
     vmreboot(row) {
-      console.log(this.baseurl)
+      console.log(this.baseurl);
       this.$axios.get(this.baseurl + "/reboot/" + row.name).then((response) => {
         const data = response.data;
         if (data.success) {
@@ -1260,39 +1504,42 @@ export default {
         });
     },
     vmdelete(row) {
-    if(row.state === 'VIR_DOMAIN_RUNNING'){
-      this.$alert(`该虚拟机正在运行，请将虚拟机关闭后删除`, "提示", {
-        confirmButtonText: "确定",
-        type: "warning",
-      })
-    }else{
-     this.$confirm(`您确定删除该虚拟机吗?`, "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.$axios
-            .post(this.baseurl + "/delete/" + row.name)
-            .then((response) => {
-              const data = response.data;
-              if (data.success) {
-                this.$message.success("删除成功！");
-                this.getVMList(this.baseurl);
-              } else {
-                this.$message.success("删除失败！");
-              }
-            });
-        })
-        .catch(() => {
-          // 取消操作
-          this.$message({
-            type: "info",
-            message: "已取消",
-          });
+      if (row.state === "VIR_DOMAIN_RUNNING") {
+        this.$alert(`该虚拟机正在运行，请将虚拟机关闭后删除`, "提示", {
+          confirmButtonText: "确定",
+          type: "warning",
         });
-    }
+      } else {
+        this.$confirm(`您确定删除该虚拟机吗?`, "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            this.$axios
+              .post(this.baseurl + "/delete/" + row.name)
+              .then((response) => {
+                const data = response.data;
+                if (data.success) {
+                  this.$message.success("删除成功！");
+                  this.getVMList(this.baseurl);
+                } else {
+                  this.$message.success("删除失败！");
+                }
+              });
+          })
+          .catch(() => {
+            // 取消操作
+            this.$message({
+              type: "info",
+              message: "已取消",
+            });
+          });
+      }
+    },
   },
+  mounted() {
+    this.noderemote();
   },
   computed: {
     tmp_nodename_w() {
