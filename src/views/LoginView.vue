@@ -3,11 +3,7 @@
     <div class="waves"></div>
     <div v-if="page == 0">
       <div class="chead">
-        <el-image
-          :src="require('../images/xw.png')"
-          fit="fill"
-          :lazy="true"
-        ></el-image>
+        <el-image :src="require('../images/xw.png')" fit="fill" :lazy="true"></el-image>
         <div>基于虚拟化的资源管理技术研究原型软件</div>
       </div>
       <div class="content">
@@ -20,9 +16,7 @@
               <span class="login-label">密码</span>
               <input v-model="password" class="login-input" type="password" />
             </div>
-            <el-button @click="login" type="info" plain round class="login-btn"
-              >登录</el-button
-            >
+            <el-button @click="login" type="info" plain round class="login-btn">登录</el-button>
           </div>
         </div>
       </div>
@@ -31,94 +25,53 @@
       <div class="box2">
         <div class="frosted__glass2">
           <div style="margin-left: 30px; margin-top: 25px">
-            <el-page-header
-              @back="goBack"
-              :content="names[page - 1] + '详情页面'"
-            >
+            <el-page-header @back="goBack" :content="names[page - 1] + '详情页面'">
             </el-page-header>
           </div>
           <div class="detaillist">
-            <div
-              v-if="sp_nodeinfo[page - 1].length == 0"
-              style="margin-right: 150px; margin-top: 320px"
-            >
+            <div v-if="sp_nodeinfo[page - 1].length == 0" style="margin-right: 150px; margin-top: 320px">
               暂无{{ names[page - 1] }}节点
             </div>
             <div v-else>
-              <div
-                v-for="item in sp_nodeinfo[page - 1]"
-                :key="item.id"
-                style="margin-top: 40px"
-              >
+              <div v-for="item in sp_nodeinfo[page - 1]" :key="item.id" style="margin-top: 40px">
                 <el-row :gutter="0">
                   <el-col :span="15" :offset="0">
                     <div class="nodename">
-                      <i
-                        v-if="item.reachable === true"
-                        class="el-icon-check"
-                      ></i>
-                      <i
-                        v-if="item.reachable === false"
-                        class="el-icon-close"
-                      ></i>
+                      <i v-if="item.reachable === true" class="el-icon-check"></i>
+                      <i v-if="item.reachable === false" class="el-icon-close"></i>
                       {{ item.nodeName }}/{{ item.nodeLocation }}/{{
-                        item.nodeIp
-                      }}
+      item.nodeIp
+    }}
                     </div>
                   </el-col>
                   <el-col :span="2" :offset="1">
-                    <el-button
-                      style="
+                    <el-button style="
                         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
                         width: 60px;
                         height: 60px;
                         font-size: 20px;
-                      "
-                      type="enterbtn"
-                      icon="el-icon-d-arrow-right"
-                      circle
-                      :disabled="!item.reachable"
-                      @click="topage(item)"
-                    ></el-button>
+                      " type="enterbtn" icon="el-icon-d-arrow-right" circle :disabled="!item.reachable"
+                      @click="topage(item)"></el-button>
                   </el-col>
                   <el-col :span="2" :offset="0">
-                    <el-popconfirm
-                      confirm-button-text="确认删除"
-                      cancel-button-text="取消"
-                      confirm-button-type="danger"
-                      cancel-button-type="info"
-                      icon="el-icon-info"
-                      icon-color="gray"
-                      title="要删除这个节点吗？"
-                      @confirm="deletenode(item.id)"
-                    >
-                      <el-button
-                        slot="reference"
-                        style="
+                    <el-popconfirm confirm-button-text="确认删除" cancel-button-text="取消" confirm-button-type="danger"
+                      cancel-button-type="info" icon="el-icon-info" icon-color="gray" title="要删除这个节点吗？"
+                      @confirm="deletenode(item.id)">
+                      <el-button slot="reference" style="
                           box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
                           width: 60px;
                           height: 60px;
                           font-size: 20px;
-                        "
-                        type="deletebtn"
-                        icon="el-icon-delete-solid"
-                        circle
-                      ></el-button>
+                        " type="deletebtn" icon="el-icon-delete-solid" circle></el-button>
                     </el-popconfirm>
                   </el-col>
                   <el-col :span="2" :offset="0">
-                    <el-button
-                      style="
+                    <el-button style="
                         box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
                         width: 60px;
                         height: 60px;
                         font-size: 20px;
-                      "
-                      type="enterbtn"
-                      icon="el-icon-stopwatch"
-                      circle
-                      @click="pingnode(item)"
-                    ></el-button>
+                      " type="enterbtn" icon="el-icon-stopwatch" circle @click="pingnode(item)"></el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -129,8 +82,8 @@
     </div>
   </div>
 </template>
-    
-    <script>
+
+<script>
 class ShaderProgram {
   constructor(holder, options = {}) {
     options = Object.assign(
@@ -186,8 +139,8 @@ class ShaderProgram {
         buffers: {},
         camera: {},
         texture: null,
-        onUpdate: () => {},
-        onResize: () => {},
+        onUpdate: () => { },
+        onResize: () => { },
       },
       options
     );
@@ -866,21 +819,34 @@ export default {
         this.uniforms.size = (h / 400) * pointSize * dpi;
       },
     });
+
+    let socket = new SockJS('/websocket-endpoint');
+    let stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+      stompClient.subscribe('/topic/messages', function (message) {
+        console.log(message);
+      });
+    });
+    function sendMessage() {
+      stompClient.send('/app/send', {}, "asdasd");
+    }
   },
 };
 </script>
-  <style>
+<style>
 .el-button--deletebtn {
   color: #909399;
   background-color: #fff;
   border-color: #fff;
 }
+
 .el-button--deletebtn:focus,
 .el-button--deletebtn:hover {
   background: #faecd8;
   border-color: #faecd8;
   color: #b3b4b6;
 }
+
 .el-button--deletebtn.is-active,
 .el-button--deletebtn:active {
   background: #f56c6c;
@@ -893,12 +859,14 @@ export default {
   background-color: #fff;
   border-color: #fff;
 }
+
 .el-button--enterbtn:focus,
 .el-button--enterbtn:hover {
   background: #f4f4f5;
   border-color: #f4f4f5;
   color: #909399;
 }
+
 .el-button--enterbtn.is-active,
 .el-button--enterbtn:active {
   background: #b3b4b6;
@@ -936,9 +904,11 @@ export default {
 .logintitle {
   font-size: 35px;
 }
+
 .logincontent {
   margin-left: -50px;
 }
+
 .login-label {
   font-size: 20px;
   color: #5e5e5e;
@@ -962,6 +932,7 @@ export default {
 input:hover {
   border: 1px solid #2288ee;
 }
+
 input:focus {
   outline: 1px solid #2288ee;
 }
@@ -1035,10 +1006,11 @@ input:focus {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 </style>
-  <style scoped>
+<style scoped>
 canvas {
   display: block;
 }
+
 .waves {
   position: absolute;
   left: 2px;
@@ -1047,5 +1019,3 @@ canvas {
   bottom: 0;
 }
 </style>
-    
-    

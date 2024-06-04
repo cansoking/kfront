@@ -310,6 +310,10 @@ export default {
     this.curnode = this.$store.state.nodename;
     this.getMachineInfoByIp(this.$store.state.nodeip);
     this.getnodeinfo();
+    this.timer = setInterval(this.getnodeinfo, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
   },
   data() {
     return {
