@@ -310,7 +310,7 @@ export default {
     this.curnode = this.$store.state.nodename;
     this.getMachineInfoByIp(this.$store.state.nodeip);
     this.getnodeinfo();
-    this.timer = setInterval(this.getnodeinfo, 1000);
+    this.timer = setInterval(this.getnodestatus, 1000);
   },
   beforeDestroy() {
     clearInterval(this.timer);
@@ -626,6 +626,16 @@ export default {
     getnodeinfo() {
       this.$axios
         .get(this.baseurl + "/node/getNodeList1")
+        .then((res) => {
+          this.nodeinfo = res.data.content;
+        })
+        .catch((err) => {
+          console.log("errors", err);
+        });
+    },
+    getnodestatus() {
+      this.$axios
+        .get(this.baseurl + "/node/getNodeListWithNetStatus")
         .then((res) => {
           this.nodeinfo = res.data.content;
         })
