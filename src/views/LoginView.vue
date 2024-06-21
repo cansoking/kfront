@@ -609,6 +609,13 @@ export default {
           type: "error",
         });
       } else {
+        // this.$message({
+        //   message: "登录成功",
+        //   type: "success",
+        // });
+        // sessionStorage.setItem("islogin", true);
+        // // sessionStorage.setItem("nodename", 'master1');
+        // this.$router.replace("/world")
         this.$axios
           .post(this.baseurl + "/user/login", {
             userName: this.username,
