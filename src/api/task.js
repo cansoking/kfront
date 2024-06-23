@@ -108,3 +108,13 @@ export const taskManageBatchDelete = (data)=>{
         data
     })
 }
+
+export const getTaskLog = (task_id)=>{
+    return get({
+        url: '/task_log/get_latest_log',
+        data: {
+            task_id
+        },
+        useRequest2: true
+    })
+}
