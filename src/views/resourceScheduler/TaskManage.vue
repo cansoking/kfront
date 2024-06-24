@@ -34,6 +34,12 @@
 
             <el-button slot="reference">查看详情</el-button>
           </el-popover>
+          <el-popover placement="right" width="400" trigger="click">
+            <div>
+              最新状态：{{ task_step }}
+            </div>
+            <el-button @click="handleGetTaskLog(scope.row)" style="margin-left: 6px" slot="reference">查看状态</el-button>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column prop="action" label="操作">
@@ -111,7 +117,7 @@ import {
   deleteTask,
   fetchAllDataType,
   fetchAllTasks,
-  fetchAllTaskType, fetchTask,
+  fetchAllTaskType, fetchTask, getTaskLog,
   taskManageBatchDelete
 } from "@/api/task";
 import { isSuccess } from "@/utils";
@@ -137,7 +143,8 @@ export default {
       },
       multipleSelection: [],
       baseurl: "http://39.101.136.242:8080",
-      execurl: "http://39.101.136.242:8181"
+      execurl: "http://39.101.136.242:8181",
+      task_step: ''
     }
   },
   computed: {
@@ -391,6 +398,15 @@ export default {
         this.$message.success('新增成功')
         this.getAllTaskData()
       })
+    },
+    async handleGetTaskLog({ id }) {
+      const result = await getTaskLog(id).catch(e => e);
+      if (!result.task_step) {
+        this.task_step = ''
+        return this.$message.error(result.message || '请求失败');
+      }
+      this.task_step = result.task_step
+      console.log(result)
     },
   }
 }

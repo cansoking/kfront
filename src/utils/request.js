@@ -3,10 +3,13 @@ import axios from 'axios'
 const request = axios.create({
     baseURL: '//39.101.136.242:8750/',
 })
+const request2 = axios.create({
+    baseURL: '//39.101.136.242:8080/',
+})
 
 
 function http(
-    {url, data, method, config, params}
+    {url, data, method, config, params, useRequest2 = false}
 ) {
     const successHandler = (res) => {
         if (res.data.code === 200)
@@ -19,39 +22,42 @@ function http(
     }
 
     method = method || 'GET'
+    const finalRequest = useRequest2 ? request2 : request
 
     if (method === 'GET') {
         const params = Object.assign(typeof data === 'function' ? data() : data ?? {}, {})
-        return request.get(url, {params, ...config}).then(successHandler, failHandler)
+        return finalRequest.get(url, {params, ...config}).then(successHandler, failHandler)
     }
 
     if (method === 'POST') {
         if (data) {
-            return request.post(url, data, config).then(successHandler, failHandler)
+            return finalRequest.post(url, data, config).then(successHandler, failHandler)
         }
         if (params) {
-            return request.post(url, null, {params, ...config}).then(successHandler, failHandler)
+            return finalRequest.post(url, null, {params, ...config}).then(successHandler, failHandler)
         }
     }
 }
 
 export function get(
-    {url, data, method = 'GET'}
+    {url, data, method = 'GET', useRequest2 = false}
 ) {
     return http({
         url,
         method,
         data,
+        useRequest2,
     })
 }
 
 export function post(
-    {url, data, params, method = 'POST'}
+    {url, data, params, method = 'POST', useRequest2 = false}
 ) {
     return http({
         url,
         method,
         params,
         data,
+        useRequest2,
     })
 }
